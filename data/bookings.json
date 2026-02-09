@@ -1,0 +1,18 @@
+[
+    {
+        "booking_id": 1,
+        "hotel_id": 1,
+        "room_id": 101,
+        "name_client": "Ivan",
+        "checkin_date": "2026-06-01",
+        "checkout_date": "2026-06-10"
+    },
+    {
+        "booking_id": 2,
+        "hotel_id": 1,
+        "room_id": 1,
+        "name_client": "John",
+        "checkin_date": "2021-01-01",
+        "checkout_date": "2021-01-02"
+    }
+]

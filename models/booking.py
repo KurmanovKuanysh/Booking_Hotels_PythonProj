@@ -1,5 +1,7 @@
 from models.booking_status import BookingStatus
+from dataclasses import dataclass
 
+@dataclass
 class Booking:
     booking_id:int
     hotel_id:int
@@ -8,5 +10,5 @@ class Booking:
     checkin_date:str
     checkout_date:str
     total_price:float
-    status: BookingStatus
+    status: str
 
