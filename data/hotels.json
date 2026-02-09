@@ -3,9 +3,14 @@
     "hotel_id": 1,
     "city": "London",
     "name" : "Rixos",
-    "rooms" : [
-      {"r_id": 1, "capacity": 2, "quantity":3, "price": 100, "description": "Superior room"}
-    ]
-
+    "address": "123 Main Street, London, UK",
+    "stars": 5.0
+  },
+  {
+    "hotel_id": 2,
+    "city": "Amesbury",
+    "name" : "St. James's",
+    "address": "London, UK",
+    "stars": 4.0
   }
 ]
