@@ -1,10 +1,12 @@
 from dataclasses import dataclass
+from models.room_types import RoomType
 
 @dataclass
 class Room:
     r_id: int
+    hotel_id: int
+    number: str
+    type: RoomType
     capacity: int
-    floor: int
-    type: str
     price_for_day: float
-    quantity: int
+    floor: int

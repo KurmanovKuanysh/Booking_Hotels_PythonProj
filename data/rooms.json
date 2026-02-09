@@ -1,0 +1,20 @@
+[
+  {
+    "r_id": 101,
+    "hotel_id": 1,
+    "number": "101",
+    "type": "deluxe",
+    "capacity": 2,
+    "price_for_day": 100,
+    "floor": 1
+  },
+  {
+    "r_id": 102,
+    "hotel_id": 1,
+    "number": "102",
+    "type": "deluxe",
+    "capacity": 2,
+    "price_for_day": 100,
+    "floor": 1
+  }
+]
