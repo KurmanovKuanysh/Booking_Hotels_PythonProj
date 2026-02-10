@@ -1,10 +1,15 @@
 from models.booking import Booking
 from models.room import Room
+from storage import Storage
 
 class BookingService:
-    def create_new_booking(self,booking:dict[int,Booking],rooms:dict[int, Room],hotel_id,room_id,name_client,checkin_date,checkout_date):
+    def __init__(self, storage: Storage):
+        self.storage = storage
+        self.bookings: dict[int, Booking] = storage.load_bookings()
+
+    def create_new_booking(self, rooms:dict[int, Room],hotel_id,room_id,name_client,checkin_date,checkout_date):
         room = rooms[room_id]
-        new_id = max(booking.keys()) + 1
+        new_id = max(self.bookings.keys()) + 1
         price = room.price_for_day * 5
         new_booking = Booking(
             booking_id=new_id,
@@ -16,5 +21,5 @@ class BookingService:
             total_price=price,
             status = "confirmed"
         )
-        booking[new_id] = new_booking
-        print("BOOKED!")
+        self.bookings[new_id] = new_booking
+        print("New order, BOOKED!")
