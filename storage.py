@@ -13,7 +13,8 @@ BOOKINGS_PATH = DATA_DIR / "bookings.json"
 ROOMS_PATH = DATA_DIR / "rooms.json"
 
 class Storage:
-    def load_hotels(self) -> dict[int,Hotel]:
+    @staticmethod
+    def load_hotels() -> dict[int,Hotel]:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         if not HOTELS_PATH.exists():
             return {}
@@ -30,8 +31,8 @@ class Storage:
             )
 
         return hotels
-
-    def save_hotels(self, hotels: dict[int, Hotel]) -> None:
+    @staticmethod
+    def save_hotels(hotels: dict[int, Hotel]) -> None:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         hotels_all = []
         for hotel in hotels.values():
@@ -45,8 +46,8 @@ class Storage:
             hotels_all.append(hotel_data)
         with HOTELS_PATH.open("w", encoding="utf-8") as f:
             json.dump(hotels_all, f, ensure_ascii=False, indent=4)
-
-    def load_bookings(self) -> dict[int, Booking]:
+    @staticmethod
+    def load_bookings() -> dict[int, Booking]:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         if not BOOKINGS_PATH.exists():
             return {}
@@ -65,8 +66,8 @@ class Storage:
                 status=b["status"]
             )
         return bookings
-
-    def save_bookings(self, bookings) -> None:
+    @staticmethod
+    def save_bookings(bookings) -> None:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         bookings_all = []
         for booking in bookings.values():
@@ -82,7 +83,8 @@ class Storage:
         with BOOKINGS_PATH.open("w", encoding="utf-8") as f:
             json.dump(bookings_all, f, ensure_ascii=False, indent=4)
 
-    def load_rooms(self) -> dict[int, Room]:
+    @staticmethod
+    def load_rooms() -> dict[int, Room]:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         if not HOTELS_PATH.exists():
             return {}
@@ -100,6 +102,24 @@ class Storage:
                 floor=r["floor"]
             )
         return rooms
+
+    @staticmethod
+    def save_rooms(rooms) -> None:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        rooms_all = []
+        for r in rooms.values():
+            r_data = {
+                "r_id": r.r_id,
+                "hotel_id": r.hotel_id,
+                "number": r.number,
+                "type": r.type,
+                "capacity": r.capacity,
+                "price_for_day": r.price_for_day,
+                "floor": r.floor
+            }
+        rooms_all.append(r_data)
+        with ROOMS_PATH.open("w", encoding="utf-8") as f:
+            json.dump(rooms_all, f, ensure_ascii=False, indent=4)
 
 
 
