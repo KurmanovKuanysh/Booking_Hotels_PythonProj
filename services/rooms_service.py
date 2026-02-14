@@ -1,6 +1,8 @@
 from models.room import Room
 from storage import Storage
 from models.room_types import RoomType
+from models.booking import Booking
+from datetime import date
 
 class RoomsService:
     def __init__(self, storage: Storage):
@@ -14,6 +16,7 @@ class RoomsService:
             if room.hotel_id == h_id:
                 rooms_in_hotel[room.r_id] = room
         return rooms_in_hotel
+
     def get_by_id(self, r_id:int) -> Room | None:
         return self.rooms.get(r_id)
 
@@ -48,3 +51,32 @@ class RoomsService:
             if room.capacity >= persona:
                 rooms_found[room.r_id] = room
         return rooms_found
+
+    def get_available_rooms(self, bookings: dict[int,Booking]) -> dict[int, Room]:
+        a_rooms: dict[int, Room] = {}
+        book = {b.r_id for b in bookings.values()}
+        for room in self.rooms.values():
+            if room.r_id not in book:
+                a_rooms[room.r_id] = room
+        return a_rooms
+
+    # NOT (new_checkout <= existing_checkin OR new_checkin >= existing_checkout)
+    @staticmethod
+    def is_available_rooms(room_id:int, booking: dict[int,Booking], check_in:date, check_out:date) -> bool:
+        for b in booking.values():
+            if b.r_id == room_id:
+                if not (check_out <= b.checkin_date or check_in >= b.checkout_date):
+                    return False
+        return True
+
+
+
+
+
+
+
+
+
+
+
+

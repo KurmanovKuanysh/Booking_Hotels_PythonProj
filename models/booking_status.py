@@ -1,5 +1,7 @@
 
 
 class BookingStatus:
-    RESERVED = "reserved"
+    PENDING = "pending"
     CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"

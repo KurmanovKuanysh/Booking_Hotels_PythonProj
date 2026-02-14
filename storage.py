@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from models import room
 from models.booking import Booking
 from models.hotel import Hotel
 from models.room import Room
+from datetime import datetime
 
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
@@ -58,12 +58,15 @@ class Storage:
             bookings[b["booking_id"]] = Booking(
                 booking_id=b["booking_id"],
                 hotel_id=b["hotel_id"],
-                room_id=b["room_id"],
+                r_id=b["r_id"],
+                guest_name=b["guest_name"],
+                guest_email=b["guest_email"],
                 name_client=b["name_client"],
-                checkin_date=b["checkin_date"],
-                checkout_date=b["checkout_date"],
+                checkin_date=datetime.strptime(b["checkin_date"], "%Y-%m-%d").date(),
+                checkout_date=datetime.strptime(b["checkout_date"], "%Y-%m-%d").date(),
                 total_price=float(b["total_price"]),
-                status=b["status"]
+                status=b["status"],
+                created_at=datetime.fromisoformat(b["created_at"])
             )
         return bookings
     @staticmethod
@@ -74,10 +77,14 @@ class Storage:
             booking_data = {
                 "booking_id": booking.booking_id,
                 "hotel_id": booking.hotel_id,
-                "room_id": booking.room_id,
+                "r_id": booking.room_id,
+                "guest_name": booking.guest_name,
+                "guest_email": booking.guest_email,
                 "name_client": booking.name_client,
-                "checkin_date": booking.checkin_date,
-                "checkout_date": booking.checkout_date,
+                "checkin_date": booking.checkin_date.isoformat(),
+                "checkout_date": booking.checkout_date.isoformat(),
+                "status": booking.status,
+                "created_at": booking.created_at.isoformat() + ""
             }
             bookings_all.append(booking_data)
         with BOOKINGS_PATH.open("w", encoding="utf-8") as f:

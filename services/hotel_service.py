@@ -1,4 +1,5 @@
 #check if room exists
+from models.booking import Booking
 from models.hotel import Hotel
 from storage import Storage
 from models.room import Room
@@ -60,3 +61,12 @@ class HotelService:
                 hotel_id_price_range[hotel.hotel_id] = room_price
                 print(hotel_id_price_range[hotel.hotel_id])
         return hotel_id_price_range
+
+    def get_hotels_by_capacity(self, rooms: dict[int, Room], capacity: int) -> dict[int, Hotel]:
+        hotels_by_capacity = {}
+        for hotel in self.hotels.values():
+            for room in rooms.values():
+                if room.hotel_id == hotel.hotel_id and room.capacity >= capacity:
+                    hotels_by_capacity[hotel.hotel_id] = hotel
+        return hotels_by_capacity
+

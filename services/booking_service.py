@@ -16,10 +16,10 @@ class BookingService:
         self.bookings: dict[int, Booking] = storage.load_bookings()
         self.room_service = rooms_service
 
-    def create_new_booking(self,hotel_id:int,room_id:int,name_client:str,checkin_date,checkout_date) -> Booking | None:
+    def create_new_booking(self,hotel_id:int,r_id:int,name_client:str,checkin_date,checkout_date,email_client: str) -> Booking | None:
         parse_date(checkin_date,checkout_date)
         #checkin/out now is "date type"
-        room = self.room_service.get_by_id(room_id)
+        room = self.room_service.get_by_id(r_id)
         new_id = max(self.bookings.keys()) + 1
         days = (checkout_date - checkin_date).days + 1
         price = room.price_for_day*days
@@ -27,8 +27,9 @@ class BookingService:
         new_booking = Booking(
             booking_id=new_id,
             hotel_id=hotel_id,
-            room_id=room_id,
-            name_client=name_client,
+            r_id=r_id,
+            guest_name=name_client,
+            guest_email=email_client,
             checkin_date=checkin_date,
             checkout_date=checkout_date,
             total_price=price,
@@ -50,3 +51,4 @@ class BookingService:
                 if not checkout_date <= booking.checkin_date or checkin_date >= booking.checkout_date:
                     return False, "Room is not free, for that date range"
         return True, "Room is available!"
+

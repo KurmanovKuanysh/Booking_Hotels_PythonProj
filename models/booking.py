@@ -8,7 +8,6 @@ class Booking:
     r_id:int
     guest_name:str
     guest_email:str
-    name_client:str
     checkin_date:date
     checkout_date:date
     total_price:float

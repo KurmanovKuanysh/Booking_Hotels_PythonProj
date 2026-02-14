@@ -2,12 +2,14 @@ from services.hotel_service import HotelService
 from storage import Storage
 from services.booking_service import BookingService
 from services.rooms_service import RoomsService
-from services.menu_service import menu_main, find_hotel, print_sorted_hotel, filter_hotel
+from views.menu_service import print_sorted_hotel
+from services.filter_service import get_active_filters
 from models.filter import Filter
 from services.input_service import *
-from services.filter_service import show_active_filters
+from views.printers import show_active_filters
 from models.room import RoomType
 from services.room_types_service import choose_room_type
+from views.menus import menu_main, menu_find_hotel, menu_filters
 
 storage = Storage()
 
@@ -25,7 +27,7 @@ while True:
         break
     if choice == "1":
         while True:
-            find_hotel()
+            menu_find_hotel()
             choice_f = text("Enter your choice: ")
             if choice_f == "0":
                 print("Back to main menu")
@@ -46,13 +48,14 @@ while True:
                     continue
                 print(f"Booking details for hotel {hotel.name}........")
             if choice_f == "2":
-                filter_hotel()
-                show_active_filters(filters)
+                menu_filters()
+                show_active_filters(get_active_filters(filters))
                 # print('''
                 # 1)Stars
                 # 2)Capacity
                 # 3)Date in/out
                 # 4)Room Type
+                # 5)Show hotels by this filter
                 # 0)exit filter
                 #     ''')
                 choice_f2 = text("Enter your choice: ")
