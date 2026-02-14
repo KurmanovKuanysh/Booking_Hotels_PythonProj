@@ -5,7 +5,7 @@ from datetime import date
 class Booking:
     booking_id:int
     hotel_id:int
-    room_id:int
+    r_id:int
     name_client:str
     checkin_date:date
     checkout_date:date
