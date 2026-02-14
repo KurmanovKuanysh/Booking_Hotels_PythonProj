@@ -1,20 +1,41 @@
 [
-  {
-    "r_id": 101,
-    "hotel_id": 1,
-    "number": "101",
-    "type": "deluxe",
-    "capacity": 2,
-    "price_for_day": 100,
-    "floor": 1
-  },
-  {
-    "r_id": 102,
-    "hotel_id": 1,
-    "number": "102",
-    "type": "deluxe",
-    "capacity": 2,
-    "price_for_day": 100,
-    "floor": 1
-  }
+  { "r_id": 1, "hotel_id": 1, "number": "101", "type": "standard", "capacity": 2, "price_for_day": 120, "floor": 1 },
+  { "r_id": 2, "hotel_id": 1, "number": "102", "type": "deluxe", "capacity": 2, "price_for_day": 180, "floor": 1 },
+  { "r_id": 3, "hotel_id": 1, "number": "201", "type": "suite", "capacity": 4, "price_for_day": 320, "floor": 2 },
+
+  { "r_id": 4, "hotel_id": 2, "number": "101", "type": "standard", "capacity": 2, "price_for_day": 90, "floor": 1 },
+  { "r_id": 5, "hotel_id": 2, "number": "102", "type": "family", "capacity": 4, "price_for_day": 150, "floor": 1 },
+  { "r_id": 6, "hotel_id": 2, "number": "201", "type": "suite", "capacity": 3, "price_for_day": 210, "floor": 2 },
+
+  { "r_id": 7, "hotel_id": 3, "number": "301", "type": "standard", "capacity": 2, "price_for_day": 200, "floor": 3 },
+  { "r_id": 8, "hotel_id": 3, "number": "302", "type": "deluxe", "capacity": 2, "price_for_day": 260, "floor": 3 },
+  { "r_id": 9, "hotel_id": 3, "number": "401", "type": "presidential", "capacity": 5, "price_for_day": 600, "floor": 4 },
+
+  { "r_id": 10, "hotel_id": 4, "number": "101", "type": "standard", "capacity": 2, "price_for_day": 80, "floor": 1 },
+  { "r_id": 11, "hotel_id": 4, "number": "102", "type": "economy", "capacity": 1, "price_for_day": 50, "floor": 1 },
+  { "r_id": 12, "hotel_id": 4, "number": "201", "type": "deluxe", "capacity": 2, "price_for_day": 140, "floor": 2 },
+
+  { "r_id": 13, "hotel_id": 5, "number": "501", "type": "standard", "capacity": 2, "price_for_day": 170, "floor": 5 },
+  { "r_id": 14, "hotel_id": 5, "number": "502", "type": "deluxe", "capacity": 2, "price_for_day": 230, "floor": 5 },
+  { "r_id": 15, "hotel_id": 5, "number": "601", "type": "suite", "capacity": 4, "price_for_day": 350, "floor": 6 },
+
+  { "r_id": 16, "hotel_id": 6, "number": "701", "type": "standard", "capacity": 2, "price_for_day": 250, "floor": 7 },
+  { "r_id": 17, "hotel_id": 6, "number": "702", "type": "deluxe", "capacity": 3, "price_for_day": 310, "floor": 7 },
+  { "r_id": 18, "hotel_id": 6, "number": "801", "type": "penthouse", "capacity": 5, "price_for_day": 700, "floor": 8 },
+
+  { "r_id": 19, "hotel_id": 7, "number": "101", "type": "standard", "capacity": 2, "price_for_day": 110, "floor": 1 },
+  { "r_id": 20, "hotel_id": 7, "number": "102", "type": "family", "capacity": 4, "price_for_day": 190, "floor": 1 },
+  { "r_id": 21, "hotel_id": 7, "number": "201", "type": "suite", "capacity": 3, "price_for_day": 240, "floor": 2 },
+
+  { "r_id": 22, "hotel_id": 8, "number": "301", "type": "standard", "capacity": 2, "price_for_day": 300, "floor": 3 },
+  { "r_id": 23, "hotel_id": 8, "number": "302", "type": "deluxe", "capacity": 2, "price_for_day": 420, "floor": 3 },
+  { "r_id": 24, "hotel_id": 8, "number": "401", "type": "royal", "capacity": 6, "price_for_day": 950, "floor": 4 },
+
+  { "r_id": 25, "hotel_id": 9, "number": "101", "type": "economy", "capacity": 2, "price_for_day": 95, "floor": 1 },
+  { "r_id": 26, "hotel_id": 9, "number": "102", "type": "standard", "capacity": 2, "price_for_day": 130, "floor": 1 },
+  { "r_id": 27, "hotel_id": 9, "number": "201", "type": "suite", "capacity": 3, "price_for_day": 210, "floor": 2 },
+
+  { "r_id": 28, "hotel_id": 10, "number": "501", "type": "standard", "capacity": 2, "price_for_day": 220, "floor": 5 },
+  { "r_id": 29, "hotel_id": 10, "number": "502", "type": "deluxe", "capacity": 2, "price_for_day": 290, "floor": 5 },
+  { "r_id": 30, "hotel_id": 10, "number": "601", "type": "suite", "capacity": 4, "price_for_day": 410, "floor": 6 }
 ]

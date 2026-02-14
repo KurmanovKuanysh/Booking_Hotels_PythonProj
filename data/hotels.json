@@ -2,15 +2,71 @@
   {
     "hotel_id": 1,
     "city": "London",
-    "name" : "Rixos",
+    "name": "Rixos",
     "address": "123 Main Street, London, UK",
     "stars": 5.0
   },
   {
     "hotel_id": 2,
     "city": "Amesbury",
-    "name" : "St. James's",
-    "address": "London, UK",
+    "name": "St. James's",
+    "address": "London Road, Amesbury, UK",
     "stars": 4.0
+  },
+  {
+    "hotel_id": 3,
+    "city": "Paris",
+    "name": "Le Grand Hotel",
+    "address": "5 Avenue Anatole, Paris, France",
+    "stars": 5.0
+  },
+  {
+    "hotel_id": 4,
+    "city": "Berlin",
+    "name": "City Inn",
+    "address": "Alexanderplatz 7, Berlin, Germany",
+    "stars": 3.0
+  },
+  {
+    "hotel_id": 5,
+    "city": "Tokyo",
+    "name": "Sakura Stay",
+    "address": "1-2-3 Shinjuku, Tokyo, Japan",
+    "stars": 4.5
+  },
+  {
+    "hotel_id": 6,
+    "city": "London",
+    "name": "Manhattan Palace",
+    "address": "742 Broadway, London, British",
+    "stars": 5.0
+  },
+  {
+    "hotel_id": 7,
+    "city": "Almaty",
+    "name": "Mountain View Hotel",
+    "address": "Dostyk Ave 52, Almaty, Kazakhstan",
+    "stars": 4.0
+  },
+  {
+    "hotel_id": 8,
+    "city": "Dubai",
+    "name": "Golden Sands Resort",
+    "address": "Jumeirah Beach Road, Dubai, UAE",
+    "stars": 5.0
+  },
+  {
+    "hotel_id": 9,
+    "city": "Rome",
+    "name": "Colosseum Hotel",
+    "address": "Via dei Fori Imperiali, Rome, Italy",
+    "stars": 3.5
+  },
+  {
+    "hotel_id": 10,
+    "city": "Sydney",
+    "name": "Harbour Lights",
+    "address": "12 Opera House Street, Sydney, Australia",
+    "stars": 4.5
   }
 ]
