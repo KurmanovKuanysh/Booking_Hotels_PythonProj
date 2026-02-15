@@ -3,6 +3,7 @@ from storage import Storage
 from models.room_types import RoomType
 from models.booking import Booking
 from datetime import date
+from models.booking_status import BookingStatus
 
 class RoomsService:
     def __init__(self, storage: Storage):
@@ -64,10 +65,15 @@ class RoomsService:
     @staticmethod
     def is_available_rooms(room_id:int, booking: dict[int,Booking], check_in:date, check_out:date) -> bool:
         for b in booking.values():
-            if b.r_id == room_id:
-                if not (check_out <= b.checkin_date or check_in >= b.checkout_date):
-                    return False
+            if b.r_id != room_id:
+                continue
+            if b.status not in (BookingStatus.PENDING, BookingStatus.CONFIRMED):
+                continue
+            x = not (check_out <= b.checkin_date or check_in >= b.checkout_date)
+            if x:
+                return False
         return True
+
 
 
 
