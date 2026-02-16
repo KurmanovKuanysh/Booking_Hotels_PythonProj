@@ -17,8 +17,9 @@ def get_active_filters(filters: Filter) -> dict:
         active_filters["Capacity"] = filters.capacity
     if getattr(filters, "room_type", None):
         active_filters["Room type"] = filters.room_type
-    if getattr(filters, "date_from", None) and getattr(filters, "date_to", None):
+    if getattr(filters, "date_from", None):
         active_filters["Date from"] = filters.date_from
+    if getattr(filters, "date_to", None):
         active_filters["Date to"] = filters.date_to
 
         d_from = _to_date_(getattr(filters, "date_from", None))
@@ -35,17 +36,15 @@ def get_hotels_by_filters(hotels: dict[int, Hotel], filters: Filter) -> dict[int
     city = getattr(filters, "city", None)
     stars_from = getattr(filters, "stars_from", None)
     stars_to = getattr(filters, "stars_to", None)
-    for h_id,h in hotels.values():
-        if city:
-            if h.city.strip().lower() != city.strip().lower():
-                continue
-            if stars_from is not None:
-                if h.stars < float(stars_from):
-                    continue
-            if stars_to is not None:
-                if h.stars > float(stars_to):
-                    continue
-            hotels_by_filters[h_id] = h
+    for h_id,h in hotels.items():
+        if city and h.city.strip().lower() != city.strip().lower():
+            continue
+        if stars_from is not None and h.stars < float(stars_from):
+            continue
+        if stars_to is not None and h.stars > float(stars_to):
+            continue
+        hotels_by_filters[h_id] = h
+
     return hotels_by_filters
 
 
