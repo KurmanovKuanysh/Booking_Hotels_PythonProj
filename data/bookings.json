@@ -8,7 +8,7 @@
     "checkin_date": "2026-07-01",
     "checkout_date": "2026-07-05",
     "total_price": 440,
-    "status": "paid",
+    "status": "confirmed",
     "created_at": "2026-02-14T10:15:00"
   },
   {
@@ -20,7 +20,7 @@
     "checkin_date": "2026-08-12",
     "checkout_date": "2026-08-15",
     "total_price": 1800,
-    "status": "reserved",
+    "status": "confirmed",
     "created_at": "2026-02-14T10:20:00"
   },
   {
@@ -29,11 +29,10 @@
     "r_id": 15,
     "guest_name": "Kenji Tanaka",
     "guest_email": "kenji.tanaka@gmail.com",
-    "name_client": "Kenji",
     "checkin_date": "2026-09-03",
     "checkout_date": "2026-09-10",
     "total_price": 2450,
-    "status": "paid",
+    "status": "confirmed",
     "created_at": "2026-02-14T10:30:00"
   },
   {
@@ -42,7 +41,6 @@
     "r_id": 24,
     "guest_name": "Ahmed Hassan",
     "guest_email": "ahmed.hassan@gmail.com",
-    "name_client": "Ahmed",
     "checkin_date": "2026-12-20",
     "checkout_date": "2026-12-27",
     "total_price": 6650,
@@ -53,9 +51,8 @@
     "booking_id": 7,
     "hotel_id": 10,
     "r_id": 30,
-    "guest_name": "Emma Wilson",
-    "guest_email": "emma.wilson@gmail.com",
-    "name_client": "Emma",
+    "guest_name": "Kuka Kurmanov",
+    "guest_email": "kukatop01@gmail.com",
     "checkin_date": "2026-11-01",
     "checkout_date": "2026-11-06",
     "total_price": 2050,
