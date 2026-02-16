@@ -47,3 +47,23 @@ def text_date_range(prompt: str = "Enter date range (YYYY-MM-DD):") -> tuple[dat
                 continue
             return d_in, d_out
 
+def text_email(prompt: str = "Enter email:") -> str:
+    while True:
+        email = input(prompt).strip()
+        if " " in email:
+            print("Email must not contain spaces")
+        if email.count("@") != 1:
+            print("Email must contain exactly one @")
+        index = email.index("@")
+        if index < 1:
+            print("Email must start with letter")
+        if email[index + 1] == '.':
+            print("Email must not end with dot")
+        if email.find(".", index) == -1:
+            print("Email must contain dot")
+        last_dot = email.rfind(".")
+        if len(email[last_dot + 1:]) < 2:
+            print("Email must end with at least 2 letters after dot")
+        else:
+            return email
+
