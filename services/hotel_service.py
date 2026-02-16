@@ -43,11 +43,6 @@ class HotelService:
             if min_stars <= hotel.stars <= max_stars:
                 hotels_sorted_stars[hotel.hotel_id] = hotel
         return hotels_sorted_stars
-    def print_hotels(self):
-        print("\nHotel List:")
-        print(f"{'ID': <3}{'NAME': <19}{'CITY': <15}{'STARS': <10}")
-        for hotel in self.hotels.values():
-            print(f"{hotel.hotel_id: <3}{hotel.name: <19}{hotel.city: <15}{hotel.stars: <10}")
 
     def get_price_range(self, rooms: dict[int, Room], min_price: float, max_price: float) -> dict[int, list]:
         hotel_id_price_range = {}
