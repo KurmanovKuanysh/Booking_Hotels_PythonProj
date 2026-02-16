@@ -16,7 +16,7 @@ class BookingService:
         self.bookings: dict[int, Booking] = storage.load_bookings()
         self.room_service = rooms_service
 
-    def create_new_booking(self,hotel_id:int,r_id:int,name_client:str,checkin_date,checkout_date,email_client: str) -> Booking | None:
+    def create_new_booking(self,hotel_id:int,r_id:int,name_client:str,checkin_date,checkout_date,email_client: str) -> bool:
         parse_date(checkin_date,checkout_date)
         #checkin/out now is "date type"
         room = self.room_service.get_by_id(r_id)
@@ -36,7 +36,7 @@ class BookingService:
             status = "confirmed"
         )
         self.bookings[new_id] = new_booking
-        print("New order, BOOKED!")
+        return True
 
 
     def check_availability(self,rooms:dict[int, Room],hotel_id:int,room_id:int,checkin_date:date,checkout_date:date) -> tuple[bool,str]:
@@ -52,3 +52,25 @@ class BookingService:
                     return False, "Room is not free, for that date range"
         return True, "Room is available!"
 
+    def get_user_bookings(self, user_email: str) -> dict[int, Booking] | None:
+        user_bookings = {}
+        for booking in self.bookings.values():
+            if booking.guest_email != user_email:
+                continue
+            if booking.status != "confirmed":
+                continue
+            user_bookings[booking.booking_id] = booking
+        return user_bookings
+
+    def get_all_bookings(self) -> dict[int, Booking] | None:
+        return self.bookings
+
+    def get_booking_by_id(self, booking_id: int) -> Booking | None:
+        return self.bookings.get(booking_id)
+
+    def get_hotel_id_by_booking_id(self, booking_id: int) -> int | None:
+        return self.bookings.get(booking_id).hotel_id
+
+
+    def get_room_id_by_booking_id(self, booking_id: int) -> int | None:
+        return self.bookings.get(booking_id).r_id
