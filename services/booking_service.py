@@ -16,8 +16,7 @@ class BookingService:
         self.bookings: dict[int, Booking] = storage.load_bookings()
         self.room_service = rooms_service
 
-    def create_new_booking(self,hotel_id:int,r_id:int,name_client:str,checkin_date,checkout_date,email_client: str) -> bool:
-        parse_date(checkin_date,checkout_date)
+    def create_new_booking_reserve(self,hotel_id:int,r_id:int,name_client:str,checkin_date,checkout_date,email_client: str) -> bool:
         #checkin/out now is "date type"
         room = self.room_service.get_by_id(r_id)
         new_id = max(self.bookings.keys()) + 1
@@ -33,7 +32,8 @@ class BookingService:
             checkin_date=checkin_date,
             checkout_date=checkout_date,
             total_price=price,
-            status = "confirmed"
+            status = "confirmed",
+            created_at=datetime.now()
         )
         self.bookings[new_id] = new_booking
         return True
