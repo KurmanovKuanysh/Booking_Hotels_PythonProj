@@ -21,6 +21,22 @@ class RoomsService:
     def get_by_id(self, r_id:int) -> Room | None:
         return self.rooms.get(r_id)
 
+    def get_by_price_range(self, min_price: int, max_price: int) -> dict[int, Room]:
+        rooms_found = {}
+        for room in self.rooms.values():
+            if min_price <= room.price_for_day <= max_price:
+                rooms_found[room.r_id] = room
+        return rooms_found
+
+    def get_price_range(self, rooms_new:dict[int,Room]) -> dict:
+        min_price = 0
+        max_price = max(rooms_new.values(), key=lambda x: x.price_for_day).price_for_day
+        ranges = {
+            "min_price": min_price,
+            "max_price": max_price
+        }
+        return ranges
+
     def sort_by_price(self, min_price: int, max_price: int) -> dict[int, Room]:
         if min_price > max_price:
             return {}
