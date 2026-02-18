@@ -1,7 +1,7 @@
-from dataclasses import dataclass
+from enum import Enum
 
-@dataclass
-class RoomType:
+
+class RoomType(Enum):
     DELUXE = "DELUXE"
     GENERAL = "GENERAL"
     PRESIDENT = "PRESIDENT"
