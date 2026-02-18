@@ -1,62 +1,98 @@
 [
-  {
-    "booking_id": 3,
-    "hotel_id": 7,
-    "r_id": 19,
-    "guest_name": "Alex Kim",
-    "guest_email": "alex.kim@gmail.com",
-    "checkin_date": "2026-07-01",
-    "checkout_date": "2026-07-05",
-    "total_price": 440,
-    "status": "confirmed",
-    "created_at": "2026-02-14T10:15:00"
-  },
-  {
-    "booking_id": 4,
-    "hotel_id": 3,
-    "r_id": 9,
-    "guest_name": "Maria Lopez",
-    "guest_email": "maria.lopez@gmail.com",
-    "checkin_date": "2026-08-12",
-    "checkout_date": "2026-08-15",
-    "total_price": 1800,
-    "status": "confirmed",
-    "created_at": "2026-02-14T10:20:00"
-  },
-  {
-    "booking_id": 5,
-    "hotel_id": 5,
-    "r_id": 15,
-    "guest_name": "Kenji Tanaka",
-    "guest_email": "kenji.tanaka@gmail.com",
-    "checkin_date": "2026-09-03",
-    "checkout_date": "2026-09-10",
-    "total_price": 2450,
-    "status": "confirmed",
-    "created_at": "2026-02-14T10:30:00"
-  },
-  {
-    "booking_id": 6,
-    "hotel_id": 8,
-    "r_id": 24,
-    "guest_name": "Ahmed Hassan",
-    "guest_email": "ahmed.hassan@gmail.com",
-    "checkin_date": "2026-12-20",
-    "checkout_date": "2026-12-27",
-    "total_price": 6650,
-    "status": "reserved",
-    "created_at": "2026-02-14T10:40:00"
-  },
-  {
-    "booking_id": 7,
-    "hotel_id": 10,
-    "r_id": 30,
-    "guest_name": "Kuka Kurmanov",
-    "guest_email": "kukatop01@gmail.com",
-    "checkin_date": "2026-11-01",
-    "checkout_date": "2026-11-06",
-    "total_price": 2050,
-    "status": "cancelled",
-    "created_at": "2026-02-14T10:50:00"
-  }
+    {
+        "booking_id": 3,
+        "hotel_id": 7,
+        "r_id": 19,
+        "guest_name": "Alex Kim",
+        "guest_email": "alex.kim@gmail.com",
+        "checkin_date": "2026-07-01",
+        "checkout_date": "2026-07-05",
+        "total_price": 10000.0,
+        "status": "confirmed",
+        "created_at": "2026-02-14T10:15:00"
+    },
+    {
+        "booking_id": 4,
+        "hotel_id": 3,
+        "r_id": 9,
+        "guest_name": "Maria Lopez",
+        "guest_email": "maria.lopez@gmail.com",
+        "checkin_date": "2026-08-12",
+        "checkout_date": "2026-08-15",
+        "total_price": 10000.0,
+        "status": "confirmed",
+        "created_at": "2026-02-14T10:20:00"
+    },
+    {
+        "booking_id": 5,
+        "hotel_id": 5,
+        "r_id": 15,
+        "guest_name": "Kenji Tanaka",
+        "guest_email": "kenji.tanaka@gmail.com",
+        "checkin_date": "2026-09-03",
+        "checkout_date": "2026-09-10",
+        "total_price": 10000.0,
+        "status": "confirmed",
+        "created_at": "2026-02-14T10:30:00"
+    },
+    {
+        "booking_id": 6,
+        "hotel_id": 8,
+        "r_id": 24,
+        "guest_name": "Ahmed Hassan",
+        "guest_email": "ahmed.hassan@gmail.com",
+        "checkin_date": "2026-12-20",
+        "checkout_date": "2026-12-27",
+        "total_price": 10000.0,
+        "status": "reserved",
+        "created_at": "2026-02-14T10:40:00"
+    },
+    {
+        "booking_id": 7,
+        "hotel_id": 10,
+        "r_id": 30,
+        "guest_name": "Kuka Kurmanov",
+        "guest_email": "kukatop01@gmail.com",
+        "checkin_date": "2026-11-01",
+        "checkout_date": "2026-11-06",
+        "total_price": 10000.0,
+        "status": "cancelled",
+        "created_at": "2026-02-14T10:50:00"
+    },
+    {
+        "booking_id": 8,
+        "hotel_id": 7,
+        "r_id": 19,
+        "guest_name": "Kuka",
+        "guest_email": "kuka@kbtu.kz",
+        "checkin_date": "2024-10-10",
+        "checkout_date": "2024-11-10",
+        "total_price": 10000.0,
+        "status": "confirmed",
+        "created_at": "2026-02-16T15:06:59.694461"
+    },
+    {
+        "booking_id": 9,
+        "hotel_id": 5,
+        "r_id": 13,
+        "guest_name": "Aiym",
+        "guest_email": "Assa@mail.ru",
+        "checkin_date": "2025-10-12",
+        "checkout_date": "2025-10-13",
+        "total_price": 340.0,
+        "status": "confirmed",
+        "created_at": "2026-02-17T09:41:23.547093"
+    },
+    {
+        "booking_id": 10,
+        "hotel_id": 1,
+        "r_id": 1,
+        "guest_name": "Lina",
+        "guest_email": "Lina@kbtu.kz",
+        "checkin_date": "2026-02-17",
+        "checkout_date": "2026-02-17",
+        "total_price": 120.0,
+        "status": "confirmed",
+        "created_at": "2026-02-17T17:59:36.437806"
+    }
 ]
