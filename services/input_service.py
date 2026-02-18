@@ -3,8 +3,12 @@ from datetime import datetime, date
 
 class Inputs:
 
-    def text(self,prompt: str) -> str:
-            return input(prompt).strip()
+    def text(self,prompt: str) -> str | None:
+            x = input(prompt).strip()
+            if x == "0":
+                print("Canceled!")
+                return None
+            return x
     def text_int(self,prompt: str, min_value: int | None = None, max_value: int | None = None ):
             while True:
                 s = input(prompt)
@@ -30,13 +34,20 @@ class Inputs:
                 print("pls enter y/n (y or n) ")
     def text_date_range(self,prompt: str = "Enter date range (YYYY-MM-DD):") -> tuple[date, date] | None:
             while True:
-                d_in = input(prompt + " From: ").strip()
+                d_in = input(prompt + " From(0 to exit): ").strip()
+                if d_in == "0":
+                    return None
                 try:
                     d_in = datetime.strptime(d_in, "%Y-%m-%d").date()
                 except ValueError:
                     print("Enter valid date (YYYY-MM-DD) format only")
                     continue
-                d_out = input(prompt + " To: ").strip()
+                if d_in < date.today():
+                    print("Date must be today or in future")
+                    continue
+                d_out = input(prompt + " To(0 to exit): ").strip()
+                if d_out == "0":
+                    return None
                 try:
                     d_out = datetime.strptime(d_out, "%Y-%m-%d").date()
                 except ValueError:
@@ -49,6 +60,9 @@ class Inputs:
     def text_email(self,prompt: str = "Enter email:") -> str | None:
         while True:
             email = input(prompt).strip()
+            if email == "0":
+                print("Canceled!")
+                return None
             if " " in email:
                 print("Email cannot contain spaces")
                 continue
