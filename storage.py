@@ -76,11 +76,12 @@ class Storage:
             booking_data = {
                 "booking_id": booking.booking_id,
                 "hotel_id": booking.hotel_id,
-                "r_id": booking.room_id,
+                "r_id": booking.r_id,
                 "guest_name": booking.guest_name,
                 "guest_email": booking.guest_email,
                 "checkin_date": booking.checkin_date.isoformat(),
                 "checkout_date": booking.checkout_date.isoformat(),
+                "total_price": booking.total_price,
                 "status": booking.status,
                 "created_at": booking.created_at.isoformat() + ""
             }
