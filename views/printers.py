@@ -22,11 +22,8 @@ class Printers:
         for room in rooms.values():
             print(f"{room.r_id: <3}{room.capacity: <15}{room.type: <15}{room.hotel_id: <10}{room.price_for_day: <15}")
     def print_room_types(self,room_types: RoomType):
-        print("\nRoom Types Available:")
-        print(getattr(room_types, "DELUXE", None))
-        print(getattr(room_types, "GENERAL", None))
-        print(getattr(room_types, "PRESIDENT", None))
-        print(getattr(room_types, "FAMILY", None))
+        for room_type in room_types:
+            print(room_type)
     def print_user_bookings(self,bookings: dict[int, Booking], hotels: dict[int, Hotel], rooms: dict[int, Room]):
         if not bookings:
             print("No bookings found!")
