@@ -4,6 +4,8 @@ from models.room import Room
 from datetime import date, datetime
 from typing import Optional
 from services.rooms_service import RoomsService
+from models.room_types import RoomType
+from models.booking import Booking
 
 
 class FilterService:
@@ -11,11 +13,26 @@ class FilterService:
         self.filters = filters
 
     def set_filter_stars(self, stars_from: int, stars_to: int):
-        self.filters.stars_from = stars_from
-        self.filters.stars_to = stars_to
+        if stars_from < 1 or stars_to < 1:
+            raise Exception("Stars must be greater than 0")
+        setattr(self.filters, "stars_from", stars_from)
+        setattr(self.filters, "stars_to", stars_to)
 
     def set_filter_city(self, city: str):
-        self.filters.city = city
+        setattr(self.filters, "city", city)
+    def set_filter_capacity(self, capacity: int):
+        if capacity < 1:
+            raise Exception("Capacity must be greater than 0")
+        setattr(self.filters, "capacity", capacity)
+
+    def set_filter_room_type(self, room_type: RoomType):
+        if room_type not in ["GENERAL", "FAMILY", "PRESIDENT", "DELUXE"]:
+            raise Exception("Invalid room type")
+        setattr(self.filters, "room_type", room_type)
+
+    def set_filter_price_range(self, price_from: int, price_to: int):
+        setattr(self.filters, "price_from", price_from)
+        setattr(self.filters, "price_to", price_to)
 
     def get_active_filters(self) -> dict:
         active_filters: dict = {}
@@ -45,7 +62,7 @@ class FilterService:
         stars_from = getattr(self.filters, "stars_from", None)
         stars_to = getattr(self.filters, "stars_to", None)
         for h_id, h in hotels.items():
-            if city and h.city.strip().lower() != city.strip().lower():
+            if city and h.city.strip().lower() not in city.strip().lower():
                 continue
             if stars_from is not None and h.stars < float(stars_from):
                 continue
@@ -65,6 +82,13 @@ class FilterService:
             if room_type.strip().upper() != room.type:
                 return False
         return True
+
+    def get_rooms_by_filter(self, rooms: dict[int, Room]) -> dict[int, Room]:
+        rooms_by_filter: dict[int, Room] = {}
+        for r_id, r in rooms.items():
+            if self.get_room_by_filter(r):
+                rooms_by_filter[r_id] = r
+        return rooms_by_filter
 
     def _to_date_(self, x) -> Optional[date]:
         if x is None:
