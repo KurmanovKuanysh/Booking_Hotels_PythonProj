@@ -5,7 +5,6 @@ from datetime import date, datetime
 from typing import Optional
 from services.rooms_service import RoomsService
 from models.room_types import RoomType
-from models.booking import Booking
 
 
 class FilterService:

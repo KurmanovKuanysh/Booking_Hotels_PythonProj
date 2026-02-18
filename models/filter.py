@@ -10,5 +10,7 @@ class Filter:
     stars_to: float = 5
     capacity: Optional[int] = None
     room_type: Optional[RoomType] = None
+    price_from: Optional[float] = None
+    price_to: Optional[float] = None
     date_from: Optional[date] = None
     date_to: Optional[date] = None
