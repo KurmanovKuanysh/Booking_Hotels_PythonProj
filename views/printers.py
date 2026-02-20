@@ -16,6 +16,13 @@ class Printers:
         print(f"{'ID': <3}{'NAME': <19}{'CITY': <15}{'STARS': <10}")
         for hotel in hotels.values():
             print(f"{hotel.hotel_id: <3}{hotel.name: <19}{hotel.city: <15}{hotel.stars: <10}")
+    def print_hotel(self, hotel: Hotel):
+        name = getattr(hotel,'name')
+        city = getattr(hotel,'city')
+        address = getattr(hotel,'address')
+        stars = getattr(hotel,'stars')
+        print(f"{name: <19}{city: <15}{address: <15}{stars: <10}")
+
     def print_rooms(self,rooms: dict[int, Room]):
         print("\nRoom List For Hotel:")
         print(f"{'ID': <3}{'CAPACITY': <15}{'TYPE': <15}{'HOTEL ID': <10}{'PRICE PER DAY': <15}")
@@ -24,6 +31,11 @@ class Printers:
     def print_room_types(self,room_types: RoomType):
         for room_type in room_types:
             print(room_type)
+    def print_bookings(self,bookings: dict[int, Booking]):
+        print("\nBooking List:")
+        print(f"{'ID': <3}{'HOTEL ID': <15}{'ROOM ID': <15}{'CHECK-IN': <15}{'CHECK-OUT': <15}{'TOTAL PRICE': <15}")
+        for booking in bookings.values():
+            print(f"{booking.booking_id: <3}{booking.hotel_id: <15}{booking.r_id: <15}{booking.checkin_date: <15}{booking.checkout_date: <15}{booking.total_price: <15}")
     def print_user_bookings(self,bookings: dict[int, Booking], hotels: dict[int, Hotel], rooms: dict[int, Room]):
         if not bookings:
             print("No bookings found!")

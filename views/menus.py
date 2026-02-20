@@ -3,6 +3,7 @@ class Menu:
         print("""
     1) Find hotel
     2) My bookings
+    3) Admin panel
     0) Exit
     """)
 
@@ -25,6 +26,7 @@ class Menu:
         print("""
     1) Room Filters
     2) Show all rooms
+    3) Continue Booking
     0) Back
         """)
 
@@ -43,3 +45,25 @@ class Menu:
     1) Book hotel
     0) Back
     ''')
+
+    def menu_admin_panel(self):
+        print('''
+    1) Hotels Edit
+    2) Rooms Edit
+    3) Show all bookings
+        ''')
+
+    def menu_hotels_edit(self):
+        print('''
+    1) Add hotel
+    2) Edit existing hotel
+    3) Delete hotel
+    0) Exit
+        ''')
+    def menu_rooms_edit(self):
+        print('''
+    1) Add room
+    2) Edit existing room
+    3) Delete room
+    0) Exit
+        ''')
