@@ -53,7 +53,7 @@ class BookingService:
         return True, "Room is available!"
 
     def get_user_bookings(self, user_email: str) -> dict[int, Booking] | None:
-        user_bookings = {}
+        user_bookings: dict[int, Booking]  = {}
         for booking in self.bookings.values():
             if booking.guest_email != user_email:
                 continue
