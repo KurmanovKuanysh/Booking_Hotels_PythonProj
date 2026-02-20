@@ -1,11 +1,12 @@
 from models.hotel import Hotel
 from models.room import Room
 from models.room_types import RoomType
-from services import booking_service, hotel_service
-from models.room_types import RoomType
+from datetime import date
+
 
 class App:
-    def __init__(self, booking_s, hotel_s, room_s, printers, input_service, filters, menu):
+    def __init__(self,storage, booking_s, hotel_s, room_s, printers, input_service, filters, menu, room_typex, admin):
+        self.storage = storage
         self.bookings = booking_s
         self.hotels = hotel_s
         self.rooms = room_s
@@ -13,7 +14,8 @@ class App:
         self.inp = input_service
         self.filter_s = filters
         self.menu = menu
-        self.rooms_types = RoomType
+        self.rooms_types = room_typex
+        self.adm = admin
 
     def main_menu_flow(self):
         while True:
@@ -26,6 +28,8 @@ class App:
                     self.find_hotel_menu_flow()
                 case "2":
                     self.user_bookings_menu_flow()
+                case "3":
+                    self.admin_panel_menu_flow()
                 case _:
                     print("Invalid choice")
                     continue
@@ -151,7 +155,7 @@ class App:
     def choose_room_menu_flow(self, rooms_new: dict[int, Room], hotel_id: int):
         while True:
             print("Chosen Hotel")
-            self.pr.print_hotels(self.hotels.get_by_id(hotel_id))
+            self.pr.print_hotel(self.hotels.get_by_id(hotel_id))
             print("\nRooms:")
             self.pr.print_rooms(rooms_new)
             room_id = self.inp.text_int("Enter room id(0 to exit): ", min_value=0)
@@ -161,10 +165,10 @@ class App:
                 print("Room not found, try again!")
                 continue
             print(f"\nChosen Room {room_id}\n")
-            self.date_range_menu_flow(room_id)
+            self.date_range_menu_flow(room_id, hotel_id)
 
 
-    def date_range_menu_flow(self, room_id: int):
+    def date_range_menu_flow(self, room_id: int, hotel_id: int):
         while True:
             print("Enter check in/out date!")
             dates = self.inp.text_date_range()
@@ -172,24 +176,28 @@ class App:
                 print("Canceled!")
                 break
             check_in, check_out = dates
-            if not self.rooms.is_available_rooms(room_id, self.bookings, check_in, check_out):
+            if not self.rooms.is_available_rooms(room_id, self.bookings.bookings, check_in, check_out):
                 print("Room is not available for that date range!")
                 continue
             print("Room is available!")
-            if self.book_room_menu_flow(room_id):
-                break
+            if self.book_room_menu_flow(room_id, check_in, check_out, hotel_id):
+                print("Main menu")
+                self.main_menu_flow()
+            else:
+                print("Canceled!")
 
 
-    def book_room_menu_flow(self, room_id: int) -> bool:
+    def book_room_menu_flow(self, room_id: int, check_in: date, check_out: date, hotel_id: int) -> bool:
         user_name = self.inp.text("Enter Your name(0 to exit):")
         if user_name is None:
             return False
         user_email = self.inp.text_email("Enter Your email(0 to exit):")
         if user_email is None:
             return False
-        if not self.bookings.create_new_booking(room_id, user_name, user_email):
+        if not self.bookings.create_new_booking_reserve(hotel_id,room_id, user_name, check_in, check_out, user_email):
             return False
         print("Booking successful!")
+        self.storage.save_bookings(self.bookings.bookings)
         return True
 
     def room_filters_menu_flow(self, rooms_new: dict[int, Room], hotel_id: int):
@@ -234,3 +242,16 @@ class App:
                     self.choose_room_menu_flow(rooms_new, hotel_id)
                 case _:
                     print("Invalid choice")
+    def admin_panel_menu_flow(self):
+        while True:
+            self.menu.menu_admin_panel()
+            choice = self.inp.text("Enter your choice: ")
+            match choice:
+                case None:
+                    return
+                case "1":
+                    self.menu.menu_hotels_edit()
+                case "2":
+                    self.menu.menu_rooms_edit()
+                case "3":
+                    self.pr.print_bookings(self.bookings.bookings.get_all_bookings())
