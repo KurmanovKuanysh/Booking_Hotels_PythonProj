@@ -32,7 +32,7 @@ class BookingService:
             checkin_date=checkin_date,
             checkout_date=checkout_date,
             total_price=price,
-            status = "confirmed",
+            status = "pending",
             created_at=datetime.now()
         )
         self.bookings[new_id] = new_booking
