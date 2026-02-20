@@ -30,8 +30,6 @@ class HotelService:
     def get_by_id(self, hotel_id: int) -> Hotel | None:
         return self.hotels.get(hotel_id)
 
-    def get_by_id_hotels(self, hotel_id: int, hotels:dict[int, Hotel]) -> Hotel | None:
-        return hotels.get(hotel_id)
 
     def sort_by_stars(self, min_stars: float, max_stars: float) -> dict[int, Hotel]:
         if min_stars > max_stars:
