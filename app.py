@@ -42,7 +42,7 @@ class App:
             if not user_bookings:
                 print("No bookings found")
                 break
-            self.pr.print_user_bookings(user_bookings, self.hotels, self.rooms)
+            self.pr.print_user_bookings(user_bookings, self.hotels.hotels, self.rooms.rooms)
             break
 
 
