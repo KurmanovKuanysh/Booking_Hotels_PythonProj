@@ -51,6 +51,23 @@ class Menu:
     1) Hotels Edit
     2) Rooms Edit
     3) Show all bookings
+    0) Back
+        ''')
+    def menu_admin_panel_hotels(self):
+        print('''
+    1) Add hotel
+    2) Edit existing hotel
+    3) Delete hotel
+    4) Show all hotels
+    0) Back
+        ''')
+    def menu_admin_panel_rooms(self):
+        print('''
+    1) Add room
+    2) Edit existing room
+    3) Delete room
+    4) Show all rooms
+    0) Back
         ''')
 
     def menu_hotels_edit(self):
