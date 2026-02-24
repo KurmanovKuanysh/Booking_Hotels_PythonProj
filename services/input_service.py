@@ -24,6 +24,22 @@ class Inputs:
                     print(f"Enter value less than {max_value}")
                     continue
                 return value
+
+    def text_float(self, prompt: str, min_value: int | None = None, max_value: int | None = None):
+        while True:
+            s = input(prompt)
+            try:
+                value = float(s)
+            except ValueError:
+                print("Enter integer!")
+                continue
+            if min_value is not None and value < min_value:
+                print(f"Enter value greater than {min_value}")
+                continue
+            if max_value is not None and value > max_value:
+                print(f"Enter value less than {max_value}")
+                continue
+            return value
     def text_yes_no(self,prompt: str = "Enter ur choice, yes or no (y/n)?") -> bool:
             while True:
                 s = input(prompt).lower().strip()
