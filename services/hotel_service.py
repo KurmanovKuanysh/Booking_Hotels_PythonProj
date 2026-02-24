@@ -9,6 +9,13 @@ class HotelService:
         self.storage = storage
         self.hotels: dict[int, Hotel] = storage.load_hotels()
 
+    def add_hotel(self, hotel: Hotel) -> bool:
+        self.hotels[hotel.hotel_id] = hotel
+        if self.storage.save_hotels(self.hotels):
+            return True
+        return False
+
+
     def find_by_name(self, name: str) -> dict[int,Hotel]:
         if not name:
             return {}
