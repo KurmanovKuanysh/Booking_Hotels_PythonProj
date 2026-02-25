@@ -74,4 +74,3 @@ class Printers:
             print(f"{'Total price:':<15}{b.total_price}")
 
             print("=" * 55)
-
