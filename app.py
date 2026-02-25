@@ -186,6 +186,26 @@ class App:
             else:
                 print("Canceled!")
 
+    def payment_menu_flow(self):
+        self.pr.print_payment_menu()
+        choice = self.inp.text("Enter your choice: ")
+        match choice:
+            case None:
+                return
+            case "1":
+                print("Pay by card")
+            case "2":
+                print("Pay by Kaspi")
+            case "3":
+                print("Pay by cash")
+            case "4":
+                print("Booking Details")
+            case "5":
+                print("Change the date or room")
+            case "0":
+                return
+            case _:
+                print("Invalid choice")
 
     def book_room_menu_flow(self, room_id: int, check_in: date, check_out: date, hotel_id: int) -> bool:
         user_name = self.inp.text("Enter Your name(0 to exit):")
@@ -250,8 +270,111 @@ class App:
                 case None:
                     return
                 case "1":
-                    self.menu.menu_hotels_edit()
+                    self.admin_hotels_menu_flow()
                 case "2":
                     self.menu.menu_rooms_edit()
                 case "3":
                     self.pr.print_bookings(self.bookings.bookings.get_all_bookings())
+                case "4":
+                    self.pr.print_hotels(self.hotels.hotels)
+                    while True:
+                        self.menu.menu_admin_show_rooms()
+                        choice = self.inp.text("Enter your choice: ")
+                        match choice:
+                            case None:
+                                return
+                            case "1":
+                                h_id = self.enter_hotel_id()
+                                print(f"Rooms in hotel {h_id}:")
+                                self.pr.print_rooms(self.rooms.get_by_hotel_id(h_id))
+                            case "2":
+                                self.pr.print_rooms(self.rooms.rooms)
+                            case _:
+                                print("Invalid choice")
+                                continue
+    def enter_hotel_id(self) -> int | None:
+        while True:
+            hotel_id = self.inp.text_int("Enter hotel id(0 to back) ", min_value=0)
+            if hotel_id == 0:
+                print("Canceled!")
+                break
+            if not self.hotels.get_by_id(hotel_id):
+                print("Hotel not found!")
+                continue
+            return hotel_id
+    def admin_hotels_menu_flow(self):
+        while True:
+            self.menu.menu_admin_panel_hotels()
+            choice = self.inp.text("Enter your choice: ")
+            match choice:
+                case None:
+                    return
+                case "1":
+                    if self.admin_hotel_add_menu_flow():
+                        print("Hotel added successfully!")
+                    else:
+                        print("Hotel not added!")
+                case "2":
+                    self.admin_hotel_edit_menu_flow()
+    def admin_hotel_edit_menu_flow(self):
+        print("Enter hotel id to edit:(0 to back): ")
+        h_id = self.inp.text_int("Enter your hotel ID: ")
+        if h_id == 0:
+            return
+        while True:
+            if self.hotels.get_by_id(h_id) is None:
+                print("Hotel not found!")
+                break
+            self.pr.print_hotel(self.hotels.get_by_id(h_id))
+            self.menu.menu_hotels_edit()
+            choice = self.inp.text("Enter your choice: ")
+            new_name = None
+            new_city = None
+            new_stars = None
+            match choice:
+                case None:
+                    return
+                case "1":
+                    new_stars = self.inp.text_float("Enter new stars(0 to back): ")
+                    if new_stars is None:
+                        return
+                case "2":
+                    new_name = self.inp.text("Enter new name(0 to back): ").strip().capitalize()
+                    if new_name is None:
+                        return
+                case "3":
+                    new_city = self.inp.text("Enter new city(0 to back): ").strip().capitalize()
+                    if new_city is None:
+                        return
+                case _:
+                    print("Invalid choice")
+                    continue
+            if new_name is None and new_city is None and new_stars is None:
+                print("No changes made!")
+            self.adm.edit_exist_hotel(self.hotels.hotels , h_id, new_name, new_city, new_stars)
+            break
+
+
+    def admin_hotel_add_menu_flow(self) -> bool:
+        hotel_name = self.inp.text("Enter hotel name(0 to back): ").title()
+        if hotel_name is None:
+            return False
+        hotel_address = self.inp.text("Enter hotel address(0 to back`: ").strip()
+        if hotel_address is None:
+            return False
+        hotel_city = self.inp.text("Enter hotel city(0 to back): ").title()
+        if hotel_city is None:
+            return False
+        hotel_stars = self.inp.text_float("Enter hotel stars(0 to back): ", min_value=1, max_value=5)
+        if hotel_stars is None:
+            return False
+        new_hotel = Hotel(
+            hotel_id = max(self.hotels.hotels.keys()) + 1 if self.hotels.hotels else 1,
+            city = hotel_city,
+            name = hotel_name,
+            address= hotel_address,
+            stars = float(hotel_stars)
+        )
+        if self.hotels.add_hotel(new_hotel):
+            return True
+        return False
