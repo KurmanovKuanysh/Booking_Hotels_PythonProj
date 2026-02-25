@@ -62,6 +62,19 @@ class BookingService:
             user_bookings[booking.booking_id] = booking
         return user_bookings
 
+    def cancel_booking(self, booking_id: int) -> bool:
+        booking = self.bookings.get(booking_id)
+        if booking is None:
+            return False
+        del self.bookings[booking_id]
+        return True
+    def confirm_booking(self, booking_id: int) -> bool:
+        booking = self.bookings.get(booking_id)
+        if booking is None:
+            return False
+        booking.status = "confirmed"
+        return True
+
     def get_all_bookings(self) -> dict[int, Booking] | None:
         return self.bookings
 
