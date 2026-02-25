@@ -61,7 +61,7 @@ class FilterService:
         stars_from = getattr(self.filters, "stars_from", None)
         stars_to = getattr(self.filters, "stars_to", None)
         for h_id, h in hotels.items():
-            if city and h.city.strip().lower() not in city.strip().lower():
+            if city and city.strip().lower() not in h.city.strip().lower():
                 continue
             if stars_from is not None and h.stars < float(stars_from):
                 continue
