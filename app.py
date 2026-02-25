@@ -180,34 +180,56 @@ class App:
                 print("Room is not available for that date range!")
                 continue
             print("Room is available!")
-            if self.book_room_menu_flow(room_id, check_in, check_out, hotel_id):
-                print("Main menu")
-                self.main_menu_flow()
+            x,email = self.book_room_menu_flow(room_id, check_in, check_out, hotel_id)
+            if x:
+                self.payment_menu_flow(email)
             else:
                 print("Canceled!")
 
-    def payment_menu_flow(self):
-        self.pr.print_payment_menu()
+    def payment_menu_flow(self, user_email: str):
+        self.menu.print_payment_menu()
         choice = self.inp.text("Enter your choice: ")
         match choice:
             case None:
                 return
             case "1":
-                print("Pay by card")
+                print("Pay by card(to do)")
+                card_number = self.inp.text("Enter card number: ")
+                card_cvv = self.inp.text("Enter card cvv: ",min_value=100, max_value=999)
+                if self.complete_booking_menu_flow(user_email):
+                    print("Booking successful!")
+                    self.storage.save_bookings(self.bookings.bookings)
+                    return
             case "2":
-                print("Pay by Kaspi")
+                print("Pay by Kaspi(to do_)")
+                if self.complete_booking_menu_flow(user_email):
+                    print("Booking successful!")
+                    self.storage.save_bookings(self.bookings.bookings)
+                    return
             case "3":
-                print("Pay by cash")
+                print("Pay by cash(to do)")
+                if self.complete_booking_menu_flow(user_email):
+                    print("Booking successful!")
+                    self.storage.save_bookings(self.bookings.bookings)
+                    return
             case "4":
                 print("Booking Details")
+                self.pr.print_user_bookings([self.bookings.get_booking_by_email(user_email)], self.hotels.hotels, self.rooms.rooms)
+                return
             case "5":
-                print("Change the date or room")
+                print("Change the date or room(to do)")
+                return
             case "0":
+                print("Canceled!")
                 return
             case _:
                 print("Invalid choice")
-
-    def book_room_menu_flow(self, room_id: int, check_in: date, check_out: date, hotel_id: int) -> bool:
+    def complete_booking_menu_flow(self, email: str) -> bool:
+        booking = self.bookings.get_booking_id_by_email(email)
+        if self.bookings.set_booking_status(booking, "confirmed"):
+            return True
+        return False
+    def book_room_menu_flow(self, room_id: int, check_in: date, check_out: date, hotel_id: int) -> tuple[bool, str] | bool:
         user_name = self.inp.text("Enter Your name(0 to exit):")
         if user_name is None:
             return False
@@ -216,9 +238,9 @@ class App:
             return False
         if not self.bookings.create_new_booking_reserve(hotel_id,room_id, user_name, check_in, check_out, user_email):
             return False
-        print("Booking successful!")
+        print("Booking successful reserved!")
         self.storage.save_bookings(self.bookings.bookings)
-        return True
+        return True , user_email
 
     def room_filters_menu_flow(self, rooms_new: dict[int, Room], hotel_id: int):
         while True:
@@ -272,9 +294,9 @@ class App:
                 case "1":
                     self.admin_hotels_menu_flow()
                 case "2":
-                    self.menu.menu_rooms_edit()
+                    self.admin_rooms_menu_flow()
                 case "3":
-                    self.pr.print_bookings(self.bookings.bookings.get_all_bookings())
+                    self.pr.print_bookings(self.bookings.get_all_bookings())
                 case "4":
                     self.pr.print_hotels(self.hotels.hotels)
                     while True:
@@ -315,11 +337,26 @@ class App:
                     else:
                         print("Hotel not added!")
                 case "2":
-                    self.admin_hotel_edit_menu_flow()
+                    self.admin_rooms_menu_flow()
+                case "3":
+                    self.delete_hotel_flow()
+                case "4":
+                    self.pr.print_hotels(self.hotels.hotels)
+                case _:
+                    print("Invalid choice")
+    def delete_hotel_flow(self):
+        h_id = self.inp.text_int("Enter hotel id to delete(0 to back): ", min_value=0)
+        if h_id is None:
+            return
+        if self.hotels.delete_hotel(h_id):
+            print("Hotel deleted successfully!")
+        else:
+            print("Hotel not found!")
+
     def admin_hotel_edit_menu_flow(self):
         print("Enter hotel id to edit:(0 to back): ")
         h_id = self.inp.text_int("Enter your hotel ID: ")
-        if h_id == 0:
+        if h_id is None:
             return
         while True:
             if self.hotels.get_by_id(h_id) is None:
@@ -378,3 +415,185 @@ class App:
         if self.hotels.add_hotel(new_hotel):
             return True
         return False
+
+    def admin_rooms_menu_flow(self):
+        while True:
+            self.menu.menu_admin_panel_rooms()
+            choice = self.inp.text("Enter your choice: ")
+            match choice:
+                case None | "0":
+                    return
+                case "1":
+                    h_id = self.inp.text_int("Enter hotel id to edit rooms(0 to back): ", min_value=0)
+                    if h_id is None:
+                        continue
+                    self.pr.print_rooms(self.rooms.get_by_hotel_id(h_id))
+                case "2":
+                    self.pr.print_rooms(self.rooms.rooms)
+                case "3":
+                    self.admin_room_edit_flow()
+                case "4":
+                    self.add_room_flow()
+                case "5":
+                    self.delete_room_flow()
+                case _:
+                    print("Invalid choice")
+
+    def add_room_flow(self):
+        r_id = max(self.rooms.rooms.keys()) + 1 if self.rooms.rooms else 1
+        hotel_id = self.inp.text_int("Enter hotel id(0 to back): ", min_value=0)
+        if hotel_id is None:
+            return
+        number = self.inp.text_int("Enter room number(0 to back): ", min_value=0)
+        if number is None:
+            return
+        for v in self.rooms.rooms.values():
+            if v.hotel_id == hotel_id and str(v.number) == number:
+                print("Room already exists in this hotel!")
+                return
+        room_type = self.inp.text("Enter room type(0 to back): ").strip().upper()
+        if room_type is None:
+            return
+        capacity = self.inp.text_int("Enter room capacity(0 to back): ", min_value=0)
+        if capacity is None:
+            return
+        room_price = self.inp.text_int("Enter room price(0 to back: ", min_value=0)
+        if room_price is None:
+            return
+        floor = self.inp.text_int("Enter room floor(0 to back: ", min_value=0)
+        if floor is None:
+            return
+        new_room = Room(
+            r_id = r_id,
+            hotel_id = hotel_id,
+            number = number,
+            type = RoomType(room_type),
+            capacity = capacity,
+            price_for_day = room_price,
+            floor = floor
+        )
+        self.rooms.add_room(new_room)
+        self.storage.save_rooms(self.rooms.rooms)
+        print("Room added successfully!")
+
+    def edit_room_flow(self):
+        room_id = self.inp.text_int("Enter room id to edit(0 to back): ", min_value=0)
+        if room_id is None:
+            return
+        room = self.rooms.rooms.get_by_id(room_id)
+        if not room:
+            print("Room not found!")
+            return
+        while True:
+            self.menu.menu_rooms_edit()
+            choice = self.inp.text("Enter your choice: ")
+            match choice:
+                case None | "0":
+                    return
+                case "1":
+                    new_hotel_id = self.inp.text_int("Enter new hotel id(0 to back): ", min_value=0)
+                    if new_hotel_id is None:
+                        continue
+                    if self.hotels.get_by_id(new_hotel_id) is None:
+                        print("Hotel not found!")
+                        continue
+                    self.rooms.update_room(room, hotel_id=new_hotel_id)
+                case "2":
+                    new_number = self.inp.text_int("Enter new room number(0 to back): ", min_value=0)
+                    if new_number is None:
+                        continue
+                    for k,v in self.rooms.rooms.items():
+                        if v.number == new_number and k != room_id:
+                            print("Room already exists!")
+                            continue
+                    self.rooms.update_room(room, number=new_number)
+                case "3":
+                    new_type = self.inp.text("Enter new room type(0 to back): ").strip().upper()
+                    if new_type is None:
+                        continue
+                    try:
+                        self.rooms.update_room(room, type=RoomType(new_type))
+                    except ValueError:
+                        print("Invalid room type!")
+                        continue
+                case "4":
+                    new_capacity = self.inp.text_int("Enter new room capacity(0 to back): ", min_value=0)
+                    if new_capacity is None:
+                        continue
+                    self.rooms.update_room(room, capacity=new_capacity)
+                case "5":
+                    new_price = self.inp.text_int("Enter new room price(0 to back: ", min_value=0)
+                    if new_price is None:
+                        continue
+                    self.rooms.update_room(room, price_for_day=new_price)
+                case "6":
+                    new_floor = self.inp.text_int("Enter new room floor(0 to back: ", min_value=0)
+                    if new_floor is None:
+                        continue
+                    self.rooms.update_room(room, floor=new_floor)
+                case _:
+                    print("Invalid choice")
+
+
+    def delete_room_flow(self):
+        delete_id = self.inp.text_int("Enter room id to delete(0 to back): ", min_value=0)
+        if delete_id is None:
+            return
+        self.rooms.delete_room(delete_id)
+        self.storage.save_rooms(self.rooms.rooms)
+        print("Room deleted successfully!")
+
+    def admin_room_edit_flow(self):
+        self.pr.print_rooms(self.rooms.rooms)
+        room_id = self.inp.text_int("Enter room id to edit(0 to back): ", min_value=0)
+        if room_id is None:
+            return
+        room = self.rooms.get_by_id(room_id)
+        if not room:
+            print("Room not found!")
+            return
+        while True:
+            print(f"Editing room {room_id}")
+            print('''
+            1) Price
+            2) Capacity
+            3) Room Type
+            4) Hotel ID
+            0) Save and Back
+            ''')
+            choice = self.inp.text("Choose option: ")
+            match choice:
+                case None | "0":
+                    self.storage.save_rooms(self.rooms.rooms)
+                    print("Saving...")
+                    return
+                case "1":
+                    new_price = self.inp.text_int("New price: ", min_value=1)
+                    if new_price is None:
+                        continue
+                    room.price_for_day = new_price
+                case "2":
+                    new_capacity = self.inp.text_int("New capacity: ", min_value=1)
+                    if new_capacity is None:
+                        continue
+                    room.capacity = new_capacity
+                case "3":
+                    self.pr.print_room_types(self.rooms_types)
+                    rt = self.inp.text("Enter room type: ")
+                    if rt is None:
+                        continue
+                    try:
+                        room.type = RoomType(rt.upper())
+                    except ValueError:
+                        print("Invalid room type!")
+                case "4":
+                    new_hotel_id = self.inp.text_int("New hotel id: ", min_value=1)
+                    if new_hotel_id is None:
+                        continue
+                    if not self.hotels.get_by_id(new_hotel_id):
+                        print("Hotel not found!")
+                        continue
+                    room.hotel_id = new_hotel_id
+
+                case _:
+                    print("Invalid choice")
