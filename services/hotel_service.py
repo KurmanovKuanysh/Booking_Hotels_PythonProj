@@ -73,3 +73,9 @@ class HotelService:
                     hotels_by_capacity[hotel.hotel_id] = hotel
         return hotels_by_capacity
 
+    def have_active_booking(self, bookings: dict[int, Booking]) -> bool:
+        for hotel in self.hotels.values():
+            for booking in bookings.values():
+                if hotel.hotel_id == booking.hotel_id:
+                    return True
+        return False
