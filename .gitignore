@@ -10,8 +10,7 @@ build/
 
 # Virtual environments
 venv/
-env/
-ENV/
+.idea/
 
 # Testing
 .pytest_cache/
@@ -25,3 +24,4 @@ ENV/
 # OS specific
 .DS_Store
 Thumbs.db
+

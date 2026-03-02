@@ -51,12 +51,13 @@ class RoomsService:
         return rooms_found
 
     def sort_by_type(self, room_type: str) -> dict[int, Room]:
-        if room_type not in self.room_types:
+        try:
+            rt = RoomType(room_type.upper())
+        except ValueError:
             return {}
         rooms_found = {}
-        room_type = room_type.upper()
         for room in self.rooms.values():
-            if room.type == room_type:
+            if room.type == rt:
                 rooms_found[room.r_id] = room
         return rooms_found
 
@@ -76,6 +77,37 @@ class RoomsService:
             if room.r_id not in book:
                 a_rooms[room.r_id] = room
         return a_rooms
+
+    def update_room(self, room: Room, **kwargs) -> bool:
+        for key, value in kwargs.items():
+            if key == "hotel_id":
+                room.hotel_id = value
+            elif key == "number":
+                room.number = value
+            elif key == "type":
+                if isinstance(value, RoomType):
+                    room.type = value
+                else:
+                    try:
+                        room.type = RoomType(str(value).upper())
+                    except ValueError:
+                        return False
+            elif key == "capacity":
+                room.capacity = value
+            elif key == "price_for_day":
+                room.price_for_day = value
+            elif key == "floor":
+                room.floor = value
+            else:
+                return False
+        return True
+    def add_room(self, room: Room) -> bool:
+        self.rooms[room.r_id] = room
+        return True
+
+    def delete_room(self, room_id: int) -> bool:
+        self.rooms.pop(room_id, None)
+        return True
 
     # NOT (new_checkout <= existing_checkin OR new_checkin >= existing_checkout)
     @staticmethod

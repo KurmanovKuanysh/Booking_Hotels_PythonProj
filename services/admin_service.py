@@ -1,3 +1,4 @@
+from models.booking import Booking
 from models.hotel import Hotel
 from models.room import Room
 from models.room_types import RoomType
@@ -106,6 +107,7 @@ class Admin():
     def edit_room(
             self,
             rooms: dict[int, Room],
+            bookings: dict[int, Booking],
             room_id: int,
             new_number: str | None,
             new_type: str | None,
@@ -115,6 +117,9 @@ class Admin():
     ) -> tuple[bool, str]:
         if room_id not in rooms:
             return False, "Room not found!"
+        for i,b in bookings.items():
+            if b.r_id == room_id and b.status == "confirmed" or b.status == "pending":
+                return False, "Cannot edit room while it is booked!"
         indicator = False
         if new_number is not None:
             for r in rooms.values():

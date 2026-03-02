@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from models.room_types import RoomType
 
 from models.booking import Booking
 from models.hotel import Hotel
@@ -92,7 +93,7 @@ class Storage:
     @staticmethod
     def load_rooms() -> dict[int, Room]:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        if not HOTELS_PATH.exists():
+        if not ROOMS_PATH.exists():
             return {}
         with ROOMS_PATH.open("r",encoding="utf-8") as f:
             data = json.load(f)
@@ -102,7 +103,7 @@ class Storage:
                 r_id = r["r_id"],
                 hotel_id=r["hotel_id"],
                 number=r["number"],
-                type=r["type"],
+                type=RoomType(r["type"]),
                 capacity=r["capacity"],
                 price_for_day=float(r["price_for_day"]),
                 floor=r["floor"]
@@ -118,12 +119,12 @@ class Storage:
                 "r_id": r.r_id,
                 "hotel_id": r.hotel_id,
                 "number": r.number,
-                "type": r.type,
+                "type": r.type.value,
                 "capacity": r.capacity,
                 "price_for_day": r.price_for_day,
                 "floor": r.floor
             }
-        rooms_all.append(r_data)
+            rooms_all.append(r_data)
         with ROOMS_PATH.open("w", encoding="utf-8") as f:
             json.dump(rooms_all, f, ensure_ascii=False, indent=4)
 

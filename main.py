@@ -1,4 +1,3 @@
-from models.room_types import RoomType
 from services.hotel_service import HotelService
 from storage import Storage
 from services.booking_service import BookingService
@@ -9,7 +8,7 @@ from services.input_service import Inputs
 from models.filter import Filter
 from views.menus import Menu
 from services.admin_service import Admin
-from app import App
+from app import *
 
 def main():
     storage = Storage()

@@ -23,11 +23,13 @@ class Printers:
         stars = getattr(hotel,'stars')
         print(f"{name: <19}{city: <15}{address: <15}{stars: <10}")
 
-    def print_rooms(self,rooms: dict[int, Room]):
+    def print_rooms(self, rooms: dict[int, Room]):
         print("\nRoom List For Hotel:")
-        print(f"{'ID': <3}{'CAPACITY': <15}{'TYPE': <15}{'HOTEL ID': <10}{'PRICE PER DAY': <15}")
+        print(f"{'ID':<4}{'CAP':<6}{'TYPE':<12}{'HOTEL':<8}{'FLOOR':<7}{'PRICE/DAY':<10}")
         for room in rooms.values():
-            print(f"{room.r_id: <3}{room.capacity: <15}{room.type: <15}{room.hotel_id: <10}{room.price_for_day: <15}")
+            r_type = room.type.value if isinstance(room.type, RoomType) else str(room.type).upper()
+            print(
+                f"{room.r_id:<4}{room.capacity:<6}{r_type:<12}{room.hotel_id:<8}{room.floor:<7}{room.price_for_day:<10}")
     def print_room_types(self,room_types: RoomType):
         for room_type in room_types:
             print(room_type)

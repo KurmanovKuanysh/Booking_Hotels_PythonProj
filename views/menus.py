@@ -26,7 +26,7 @@ class Menu:
         print("""
     1) Room Filters
     2) Show all rooms
-    3) Continue Booking
+    3) Choose room
     0) Back
         """)
 
@@ -79,7 +79,7 @@ class Menu:
     ║ Дополнительно:                                               ║
     ║  5) 📄 Посмотреть детали брони                               ║
     ║  6) 🔁 Изменить даты / номер                                 ║
-    ║  0) 🔙 Назад                                                 ║
+    ║  0) 🔙 Назад(Отменить бронирование)                                                 ║
     ╠══════════════════════════════════════════════════════════════╣
     ║ Примечание:                                                  ║
     ║ • Условия отмены и возврата зависят от тарифа.               ║
@@ -88,14 +88,20 @@ class Menu:
 
     Введите номер пункта и нажмите Enter: 
     ''')
+
     def menu_admin_panel_rooms(self):
-        print('''
-    1) Add room
-    2) Edit existing room
-    3) Delete room
-    4) Show all rooms
-    0) Back
-        ''')
+        print("""
+    ==================== ROOMS ADMIN =====================
+
+      1) Show rooms by hotel
+      2) Show all rooms
+      3) Edit room
+      4) Add room
+      5) Delete room
+      0) Back
+
+    ======================================================
+    """)
     def menu_admin_show_rooms(self):
         print('''
     1) Show rooms by hotel id
@@ -113,8 +119,11 @@ class Menu:
         ''')
     def menu_rooms_edit(self):
         print('''
-    1) Add room
-    2) Edit existing room
-    3) Delete room
-    0) Exit
+    1) Edit room's hotel id
+    2) Edit room's number
+    3) Edit room's type
+    4) Edit room's capacity
+    5) Edit room's price
+    6) Edit room's floor
+    0) Save and Back
         ''')

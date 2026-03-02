@@ -94,5 +94,65 @@
         "total_price": 120.0,
         "status": "confirmed",
         "created_at": "2026-02-17T17:59:36.437806"
+    },
+    {
+        "booking_id": 11,
+        "hotel_id": 4,
+        "r_id": 10,
+        "guest_name": "Linda Amanda",
+        "guest_email": "Rose@rose.com",
+        "checkin_date": "2026-02-25",
+        "checkout_date": "2026-02-26",
+        "total_price": 160.0,
+        "status": "pending",
+        "created_at": "2026-02-20T16:36:12.321583"
+    },
+    {
+        "booking_id": 12,
+        "hotel_id": 9,
+        "r_id": 25,
+        "guest_name": "Gulim",
+        "guest_email": "gulim@gmail.com",
+        "checkin_date": "2026-02-25",
+        "checkout_date": "2026-02-26",
+        "total_price": 190.0,
+        "status": "pending",
+        "created_at": "2026-02-25T14:29:48.229650"
+    },
+    {
+        "booking_id": 13,
+        "hotel_id": 1,
+        "r_id": 2,
+        "guest_name": "Lola",
+        "guest_email": "lola@gmail.com",
+        "checkin_date": "2026-02-25",
+        "checkout_date": "2026-02-27",
+        "total_price": 540.0,
+        "status": "pending",
+        "created_at": "2026-02-25T14:39:39.900294"
+    },
+    {
+        "booking_id": 14,
+        "hotel_id": 1,
+        "r_id": 1,
+        "guest_name": "Lola",
+        "guest_email": "Lola@gmail.com",
+        "checkin_date": "2026-02-26",
+        "checkout_date": "2026-02-28",
+        "total_price": 360.0,
+        "status": "pending",
+        "created_at": "2026-02-25T14:40:53.471482"
+    },
+    {
+        "booking_id": 15,
+        "hotel_id": 1,
+        "r_id": 1,
+        "guest_name": "Lola",
+        "guest_email": "Lola@gmail.com",
+        "checkin_date": "2026-02-25",
+        "checkout_date": "2026-02-26",
+        "total_price": 240.0,
+        "status": "pending",
+        "created_at": "2026-02-25T14:41:33.252692"
     }
 ]

@@ -52,6 +52,19 @@ class BookingService:
                     return False, "Room is not free, for that date range"
         return True, "Room is available!"
 
+    def get_booking_id_by_email(self, email: str) -> int | None:
+        for booking in self.bookings.values():
+            if booking.guest_email == email:
+                return booking.booking_id
+        return None
+
+    def set_booking_status(self, booking_id: int, status: str) -> bool:
+        booking = self.bookings.get(booking_id)
+        if booking is None:
+            return False
+        booking.status = status
+        return True
+
     def get_user_bookings(self, user_email: str) -> dict[int, Booking] | None:
         user_bookings: dict[int, Booking]  = {}
         for booking in self.bookings.values():

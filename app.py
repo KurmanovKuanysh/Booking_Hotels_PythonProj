@@ -2,6 +2,8 @@ from models.hotel import Hotel
 from models.room import Room
 from models.room_types import RoomType
 from datetime import date
+from app.services.booking_service import is_room_available
+from app.services.booking_service import create_booking
 
 
 class App:
@@ -176,7 +178,9 @@ class App:
                 print("Canceled!")
                 break
             check_in, check_out = dates
-            if not self.rooms.is_available_rooms(room_id, self.bookings.bookings, check_in, check_out):
+            #////////////////////////////////////////////////////////////////////////////////////////////
+            if not is_room_available(room_id, check_in, check_out):
+            #///////////////////////////////////////////////////////////////////////////////////////////
                 print("Room is not available for that date range!")
                 continue
             print("Room is available!")
@@ -236,6 +240,13 @@ class App:
         user_email = self.inp.text_email("Enter Your email(0 to exit):")
         if user_email is None:
             return False
+        # user = user = get_user_by_email(user_email)
+        # booking_id = create_booking(
+        #     room_id=room_id,
+        #     user_id=user["id"],
+        #     date_from=check_in,
+        #     date_to=check_out,
+        # )
         if not self.bookings.create_new_booking_reserve(hotel_id,room_id, user_name, check_in, check_out, user_email):
             return False
         print("Booking successful reserved!")
