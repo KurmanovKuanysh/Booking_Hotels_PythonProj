@@ -162,7 +162,7 @@ class App:
                         print("No hotels found")
                         continue
                     self.pr.print_hotels(hotels)
-                    self.booking_choice_menu_flow(hotels)
+                    self.booking_choice_menu_flow()
                 case _:
                     print("Invalid choice")
                     continue
@@ -193,24 +193,14 @@ class App:
                 print("\nNo hotels found")
                 break
             self.pr.print_hotels(hotels)
-            self.booking_choice_menu_flow(hotels)
+            self.booking_choice_menu_flow()
             return
 
-    def booking_choice_menu_flow(self, hotels: dict[int, Hotel]):
+    def booking_choice_menu_flow(self):
         while True:
-            print("Wanna book hotel? (y/n)")
-            choice = self.inp.text_yes_no()
-            if choice:
-                self.booking_menu_flow(hotels)
-            else:
-                break
-            return
-    def booking_menu_flow(self, hotels: dict[int, Hotel]):
-        while True:
-            self.pr.print_hotels(hotels)
-            hotel_id = self.inp.text_int("Enter hotel id(0 to back):", min_value=0)
+            hotel_id = self.inp.text_int("Enter hotel id to book(0 to back):", min_value=0)
             if hotel_id == 0:
-                break
+                return
             hotel = self.hotel.get_hotel_by_id(hotel_id)
             if not hotel:
                 print("Hotel not found, try again or change Filters!")
@@ -219,6 +209,7 @@ class App:
             rooms = self.room.list_rooms_by_hotel_id(hotel_id)
             self.from_hotel_to_room_flow(rooms, hotel_id)
             return
+
 
     def from_hotel_to_room_flow(self, rooms: list[Room], hotel_id: int):
         while True:
@@ -230,6 +221,18 @@ class App:
                 case "1":
                     print("\nOpening filters...\n")
                     self.room_filters_menu_flow(rooms, hotel_id)
+                    continue
+                case "2":
+                    print("\nAll rooms:\n")
+                    self.pr.print_rooms(rooms)
+                    continue
+                case "3":
+                    print("\nChoose room:\n")
+                    self.choose_room_flow(rooms, hotel_id)
+                    return
+                case _:
+                    print("Invalid choice")
+                    continue
 
     def room_filters_menu_flow(self, rooms: list[Room], hotel_id: int):
         while True:
@@ -252,15 +255,21 @@ class App:
                     continue
 
                 case "2":
+                    room_types = self.room_type.get_types(rooms)
                     self.pr.print_room_types(self.room_type.get_types(rooms))
+
                     room_type = self.inp.text("Enter room type(0 to exit): ")
                     if room_type is None:
                         break
-                    if room_type.strip().lower() not in self.room_type.get_types(rooms):
-                        print("No such room type")
+
+                    room_type_name = room_type.strip().lower()
+
+                    if room_type_name not in [rt.type_name.lower() for rt in room_types]:
+                        print("Invalid room type")
                         continue
-                    self.room_filters["room_type"] = room_type.strip().lower()
-                    print(f"Saved room type {room_type}!\n")
+
+                    self.room_filters["room_type"] = room_type_name
+                    print(f"Saved room type {room_type_name}!\n")
                     continue
                 case "3":
                     max_capacity = max(rooms, key=lambda x: x.capacity).capacity
