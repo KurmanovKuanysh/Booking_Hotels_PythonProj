@@ -1,7 +1,4 @@
-from typing import Optional
-from past_files.models.hotel import Hotel
-from past_files.models.room import Room
-from datetime import date
+from app.models import Hotel, Room
 
 class App:
     def __init__(self, menus, inp, pr, hotel, room, booking, user, room_type):
