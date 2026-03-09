@@ -41,6 +41,7 @@ class Menu:
     3) Room capacity
     4) Show all rooms
     5) Continue Booking
+    6) Reset Filters
     0) Back
     """)
 

@@ -69,3 +69,16 @@ class Printer:
         for hotel in hotels:
             print(f"{hotel.id:<3}{hotel.name:<19}{hotel.city:<20}{hotel.stars:<10}")
 
+    def print_room_filters(self, room_filters: dict):
+        print("Room Filters:")
+        for key, value in room_filters.items():
+            if value is None:
+                continue
+            print(f"{key}: {value}")
+
+    def print_hotel_filters(self, hotel_filters: dict):
+        print("Hotel Filters:")
+        for key, value in hotel_filters.items():
+            if value is None:
+                continue
+            print(f"{key}: {value}")
