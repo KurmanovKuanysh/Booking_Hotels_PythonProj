@@ -61,11 +61,11 @@ class Printer:
             print(f"{room.id:<4}{room.capacity:<6}{room.r_t_id:<12}{room.h_id:<8}{room.floor:<7}{room.price_per_day:<10}")
 
     def print_hotel(self, hotel: Hotel):
-        print(f"{'ID': <3}{'NAME': <19}{'CITY': <15}{'STARS': <10}")
-        print(f"{hotel.id: <3}{hotel.name: <19}{hotel.city: <15}{hotel.stars: <10}")
+        print(f"{'ID': <3}{'NAME': <19}{'CITY': <20}{'STARS': <10}")
+        print(f"{hotel.id: <3}{hotel.name: <19}{hotel.city: <20}{hotel.stars: <10}")
 
     def print_hotels(self, hotels: list[Hotel]):
-        print(f"{'ID': <3}{'NAME': <19}{'CITY': <15}{'STARS': <10}")
+        print(f"{'ID': <3}{'NAME': <19}{'CITY': <20}{'STARS': <10}")
         for hotel in hotels:
-            print(f"{hotel.id:<3}{hotel.name:<19}{hotel.city:<15}{hotel.stars:<10}")
+            print(f"{hotel.id:<3}{hotel.name:<19}{hotel.city:<20}{hotel.stars:<10}")
 
