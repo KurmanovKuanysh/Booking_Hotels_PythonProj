@@ -101,6 +101,6 @@ class RoomService:
         if price_to:
             rooms = rooms.where(Room.price_per_day <= float(price_to))
         if room_type:
-            rooms = rooms.where(Room.room_type == room_type)
+            rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == room_type)
 
         return list(self.session.scalars(rooms).all())
