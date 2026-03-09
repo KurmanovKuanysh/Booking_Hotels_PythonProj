@@ -144,6 +144,8 @@ class App:
 
     def filters_menu_flow(self):
         while True:
+            if self.hotel_filters:
+                self.pr.print_hotel_filters(self.hotel_filters)
             self.menus.menu_filters()
             choice = self.inp.text("Enter your choice: ")
             match choice:
@@ -236,6 +238,8 @@ class App:
 
     def room_filters_menu_flow(self, rooms: list[Room], hotel_id: int):
         while True:
+            if self.room_filters:
+                self.pr.print_room_filters(self.room_filters)
             self.menus.room_filters_menu()
             choice = self.inp.text("Enter your choice: ")
             match choice:
@@ -287,7 +291,21 @@ class App:
                     self.pr.print_rooms(rooms_filtered)
                     continue
                 case "5":
-                    self.choose_room_flow(rooms, hotel_id)
+                    rooms_filtered = self.room.get_rooms_by_filter(hotel_id, self.room_filters)
+                    if not rooms_filtered:
+                        print("No rooms found, try again or change Filters!")
+                        continue
+                    self.choose_room_flow(rooms_filtered, hotel_id)
+                case "6":
+                    self.room_filters = {
+                        "hotel_id": None,
+                        "price_from": None,
+                        "price_to": None,
+                        "capacity": None,
+                        "room_type": None,
+                    }
+                    print("Filters cleared!")
+                    continue
                 case _:
                     print("Invalid choice")
                     continue
