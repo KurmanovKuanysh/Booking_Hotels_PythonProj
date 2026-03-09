@@ -67,19 +67,16 @@ class RoomService:
         )
 
     def is_room_available(self, r_id:int, check_in: date, check_out: date) -> bool:
-        room = self.session.scalars(
-            select(Room)
-            .join(Booking, Booking.r_id == Room.id)
-            .where(Room.id == Booking.r_id,
-                   Room.id == r_id,
-                   Booking.status.not_in(["confirmed", "pending"]),
-                   Booking.check_out >= check_in,
-                   Booking.check_in <= check_out
-                   )
-        ).one_or_none()
-        if room:
-            return False
-        return True
+        booking = self.session.scalars(
+            select(Booking)
+            .where(
+                Booking.r_id == r_id,
+                Booking.status.in_(["confirmed", "pending"]),
+                Booking.check_out >= check_in,
+                Booking.check_in <= check_out
+            )
+        ).first()
+        return booking is None
 
     def get_price_range(self, rooms:list[Room]) -> dict[str,float]:
         min_price = min(room.price_per_day for room in rooms)
