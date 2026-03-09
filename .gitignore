@@ -8,10 +8,12 @@ __pycache__/
 dist/
 build/
 
-# Virtual environments
 venv/
+
+
 .idea/
 
+.idea/workspace.xml
 # Testing
 .pytest_cache/
 
@@ -24,4 +26,5 @@ venv/
 # OS specific
 .DS_Store
 Thumbs.db
+
 

@@ -6,32 +6,41 @@
   <component name="ChangeListManager">
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Booking.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Booking.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/.idea/Booking.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/.idea/Booking.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/data/bookings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/data/bookings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/data/hotels.json" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/data/hotels.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/data/rooms.json" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/data/rooms.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/services/admin_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/services/admin_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/services/booking_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/services/booking_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/services/rooms_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/services/rooms_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/storage.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/storage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/views/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/views/menus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Booking/views/printers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Booking/views/printers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/bookings.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/bookings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/hotels.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/hotels.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rooms.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/rooms.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/admin_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/admin_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/booking_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/booking_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/rooms_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/rooms_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage.py" beforeDir="false" afterPath="$PROJECT_DIR$/storage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/menus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/printers.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/printers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Booking" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db/connection.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db/migrate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db/seed.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/booking_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/hotel_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/hotel_service_sql.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/room_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/bookings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hotels.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/rooms.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/booking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/booking_status.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/filter.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hotel.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/room.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/room_types.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirments.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirments.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/admin_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/booking_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/filter_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/hotel_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/input_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/room_types_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/rooms_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/menus.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/printers.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +48,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="1363" />
+    <option name="cachedIndexableFilesCount" value="39" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -87,39 +96,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.main.executor": "Run",
-    "Python.migrate.executor": "Run",
-    "Python.seed.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/TUF/Desktop/Booking",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.hotel.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.migrate.executor&quot;: &quot;Run&quot;,
+    &quot;Python.seed.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/TUF/Desktop/Booking&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\TUF\Desktop\Booking\past_files" />
+      <recent name="C:\Users\TUF\Desktop\Booking" />
+      <recent name="C:\Users\TUF\Desktop\Booking\app\past_files" />
       <recent name="C:\Users\TUF\Desktop\Booking\app\core" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.seed">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Booking" />
       <option name="ENV_FILES" value="" />
@@ -159,7 +172,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/db/migrate.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\TUF\Desktop\Booking\app\past_files\migrate.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -183,7 +196,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="RUN_TOOL" value="" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/db/seed.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\TUF\Desktop\Booking\app\past_files\seed.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -194,8 +207,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.seed" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.migrate" />
       </list>
     </recent_temporary>
@@ -219,16 +232,37 @@
       <workItem from="1772277303335" duration="8888000" />
       <workItem from="1772358934101" duration="4568000" />
       <workItem from="1772366522087" duration="36000" />
-      <workItem from="1772433009529" duration="9997000" />
+      <workItem from="1772433009529" duration="19552000" />
+      <workItem from="1772555534197" duration="7793000" />
+      <workItem from="1772621486346" duration="11160000" />
+      <workItem from="1772727084746" duration="8310000" />
+      <workItem from="1772856382411" duration="1777000" />
+      <workItem from="1772889147115" duration="9346000" />
+      <workItem from="1772966363596" duration="13746000" />
+      <workItem from="1772990444570" duration="56000" />
+      <workItem from="1773040697930" duration="698000" />
+      <workItem from="1773041436648" duration="426000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/past_files/services/booking_service.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Booking$hotel.coverage" NAME="hotel Coverage Results" MODIFIED="1772559538010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/services" />
     <SUITE FILE_PATH="coverage/Booking$migrate.coverage" NAME="migrate Coverage Results" MODIFIED="1772435736995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
-    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1772438502414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
-    <SUITE FILE_PATH="coverage/Booking$main.coverage" NAME="main Coverage Results" MODIFIED="1772443462878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/Booking$main.coverage" NAME="main Coverage Results" MODIFIED="1772728262899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1772895887706" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
   </component>
 </project>

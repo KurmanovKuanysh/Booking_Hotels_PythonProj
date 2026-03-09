@@ -3,13 +3,15 @@ from datetime import datetime, date
 
 class Inputs:
 
-    def text(self,prompt: str) -> str | None:
+    @staticmethod
+    def text(prompt: str) -> str | None:
             x = input(prompt).strip()
             if x == "0":
                 print("Canceled!")
                 return None
             return x
-    def text_int(self,prompt: str, min_value: int | None = None, max_value: int | None = None ):
+    @staticmethod
+    def text_int(prompt: str, min_value: int | None = None, max_value: int | None = None ):
             while True:
                 s = input(prompt)
                 try:
@@ -25,7 +27,8 @@ class Inputs:
                     continue
                 return value
 
-    def text_float(self, prompt: str, min_value: int | None = None, max_value: int | None = None):
+    @staticmethod
+    def text_float(prompt: str, min_value: int | None = None, max_value: int | None = None):
         while True:
             s = input(prompt)
             try:
@@ -40,7 +43,9 @@ class Inputs:
                 print(f"Enter value less than {max_value}")
                 continue
             return value
-    def text_yes_no(self,prompt: str = "Enter ur choice, yes or no (y/n)?") -> bool:
+
+    @staticmethod
+    def text_yes_no(prompt: str = "Enter ur choice, yes or no (y/n)?") -> bool:
             while True:
                 s = input(prompt).lower().strip()
                 if s in ("y", "yes"):
@@ -48,7 +53,8 @@ class Inputs:
                 if s in ("n", "no"):
                     return False
                 print("pls enter y/n (y or n) ")
-    def text_date_range(self,prompt: str = "Enter date range (YYYY-MM-DD):") -> tuple[date, date] | None:
+    @staticmethod
+    def text_date_range(prompt: str = "Enter date range (YYYY-MM-DD):") -> tuple[date, date] | None:
             while True:
                 d_in = input(prompt + " From(0 to exit): ").strip()
                 if d_in == "0":
@@ -73,7 +79,9 @@ class Inputs:
                     print("From date must be before To date")
                     continue
                 return d_in, d_out
-    def text_email(self,prompt: str = "Enter email:") -> str | None:
+
+    @staticmethod
+    def text_email(prompt: str = "Enter email:") -> str | None:
         while True:
             email = input(prompt).strip()
             if email == "0":
@@ -105,3 +113,15 @@ class Inputs:
                 print("Email must contain at least 2 letters after dot")
                 continue
             return email
+
+    @staticmethod
+    def text_password(prompt: str = "Enter password:") -> str | None:
+        while True:
+            password = input(prompt).strip()
+            if password == "0":
+                print("Canceled!")
+                return None
+            if len(password) < 8:
+                print("Password must be at least 8 characters long")
+                continue
+            return password

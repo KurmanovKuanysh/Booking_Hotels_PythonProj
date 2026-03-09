@@ -16,10 +16,14 @@ class Menu:
 
     def menu_filters(self):
         print("""
+=====Setting Filters=====
+
     1) City
     2) Stars
     3) Show hotels by this filter
     0) Back
+    
+=====Setting Filters=====
     """)
 
     def menu_choose_room_filter(self):
@@ -126,4 +130,11 @@ class Menu:
     5) Edit room's price
     6) Edit room's floor
     0) Save and Back
+        ''')
+
+    def login_menu(self):
+        print('''
+        1) Login
+        2) Register
+        0) Exit
         ''')
