@@ -10,6 +10,7 @@ class Hotel(Base):
     city: Mapped[text] = mapped_column(nullable=False)
     address: Mapped[text] = mapped_column(nullable=False)
     stars: Mapped[numeric_10_2] = mapped_column(nullable=False)
+    description: Mapped[text] = mapped_column(nullable=True)
 
     #relationship
     room = relationship("Room", back_populates="hotel")

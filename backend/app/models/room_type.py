@@ -8,6 +8,7 @@ class RoomType(Base):
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
     type_name: Mapped[text] = mapped_column(nullable=False)
+    description: Mapped[text] = mapped_column(nullable=True)
 
     #relationship
     room = relationship("Room", back_populates="room_type")

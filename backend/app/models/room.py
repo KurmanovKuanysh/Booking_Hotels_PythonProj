@@ -13,6 +13,7 @@ class Room(Base):
     capacity: Mapped[int] = mapped_column(nullable=False)
     price_per_day: Mapped[numeric_10_2] = mapped_column(nullable=False)
     floor: Mapped[int] = mapped_column(nullable=False)
+    description: Mapped[text] = mapped_column(nullable=True)
 
     #relationship
     room_type = relationship("RoomType", back_populates="room")
