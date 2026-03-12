@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update
-
+from sqlalchemy import select
 from backend.app.models.booking import Booking
 from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
@@ -11,32 +10,56 @@ class RoomService:
     def __init__(self, session: Session):
         self.session = session
 
-    def add_room(self, h_id:int,room_number:str, r_t_id:int, price_per_day:float, capacity:int, floor:int):
+    def add_room(
+            self,
+            h_id:int,
+            room_number:str,
+            r_t_id:int,
+            capacity:int,
+            price_per_day:float,
+            floor:int,
+            description:str
+    ):
         room = Room(
             h_id=h_id,
             room_number=room_number,
             r_t_id=r_t_id,
             capacity=capacity,
             price_per_day=price_per_day,
-            floor=floor
+            floor=floor,
+            description=description
         )
         self.session.add(room)
         self.session.commit()
         self.session.refresh(room)
         return room
 
-    def delete_room(self, r_id:int):
+    def delete_room(self, r_id:int) -> bool:
         try:
-            self.session.execute(
-                update(Room)
-                .where(Room.id == r_id)
-                .values(is_deleted=True)
-            )
+            room = self.get_room_by_id(r_id)
+            if not room:
+                print("Room not found")
+                return False
+            room_booked = self.session.scalars(
+                select(Booking)
+                .where(Booking.r_id == r_id,
+                       Booking.status.in_(["confirmed", "pending"])
+                       )
+            ).first()
+            if room_booked:
+                print("Room is booked")
+                return False
+            self.session.delete(room)
             self.session.commit()
-            self.session.refresh(Room)
+            return True
+
         except Exception as e:
+            self.session.rollback()
             print(f"Error deleting room: {e}")
             raise
+
+    def get_rooms(self) -> list[Room]:
+        return list(self.session.scalars(select(Room)).all())
 
     def list_rooms_by_hotel_id(self, h_id:int) -> list[Room]:
         return list(self.session.scalars(select(Room).where(Room.h_id == h_id)).all())
@@ -104,3 +127,28 @@ class RoomService:
             rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == room_type)
 
         return list(self.session.scalars(rooms).all())
+
+    def edit_room(self, edit: dict):
+        if "id" not in edit:
+            raise ValueError("Room id is required")
+        room = self.get_room_by_id(edit["id"])
+        if room is None:
+            raise ValueError("Room not found")
+        if "room_number" in edit and edit["room_number"] is not None:
+            same_room_number = self.session.scalars(
+                select(Room).where(Room.room_number == edit["room_number"], Room.id != room.id)
+            )
+            if same_room_number.all():
+                raise ValueError("Room number already exists on Rooms")
+            if len(edit["room_number"]) > 10:
+                raise ValueError("Room number must be at most 10 characters long")
+            room.room_number = edit["room_number"].strip()
+        if "r_t_id" in edit and edit["r_t_id"] is not None:
+            room_type = self.session.scalars(select(RoomType).where(RoomType.id == edit["r_t_id"])).first()
+            if room_type is None:
+                raise ValueError("Room type not found")
+            room.r_t_id = edit["r_t_id"]
+        if "capacity" in edit and edit["capacity"] is not None:
+            if not isinstance(edit["capacity"], int):
+                raise ValueError("Capacity must be an integer")
+            room.capacity = edit["capacity"]
