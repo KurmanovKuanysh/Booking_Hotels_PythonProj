@@ -137,5 +137,6 @@ class Menu:
         print('''
         1) Login
         2) Register
+        4) Login Fast
         0) Exit
         ''')
