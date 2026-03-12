@@ -8,20 +8,23 @@ from backend.app.services.room_type import RoomTypeService
 from backend.app.utils.views.printers import Printer
 from backend.app.services.additional.input_service import Inputs
 from backend.app.utils.views.menus import Menu
+from backend.app.services.admin import Admin
 
 from backend.app.app import App
 
-room = RoomService(SessionLocal())
-booking = BookingService(SessionLocal())
-user = UserService(SessionLocal())
-hotel = HotelService(SessionLocal())
-room_type = RoomTypeService(SessionLocal())
+session = SessionLocal()
+try:
+    room = RoomService(session)
+    booking = BookingService(session)
+    user = UserService(session)
+    hotel = HotelService(session)
+    room_type = RoomTypeService(session)
+    admin = Admin(session)
+    printers = Printer(hotel, room, booking, user)
+    input_service = Inputs()
+    menus = Menu()
 
-printers = Printer(hotel, room, booking, user)
-input_service = Inputs()
-menus = Menu()
-
-app = App(
+    app = App(
     inp=input_service,
     pr=printers,
     hotel=hotel,
@@ -29,8 +32,11 @@ app = App(
     booking=booking,
     user=user,
     menus=menus,
-    room_type=room_type
-)
+    room_type=room_type,
+    admin=admin
+    )
+finally:
+    session.close()
 
 def main():
     app.login_menu_flow()

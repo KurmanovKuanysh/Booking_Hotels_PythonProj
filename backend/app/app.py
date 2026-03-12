@@ -1,7 +1,7 @@
-from backend.app.models import Room
+from backend.app.models.room import Room
 
 class App:
-    def __init__(self, menus, inp, pr, hotel, room, booking, user, room_type):
+    def __init__(self, menus, inp, pr, hotel, room, booking, user, room_type, admin):
         self.menus = menus
         self.inp = inp
         self.pr = pr
@@ -10,6 +10,7 @@ class App:
         self.booking = booking
         self.user = user
         self.room_type = room_type
+        self.admin = admin
 
         self.current_user = None
 
@@ -113,8 +114,8 @@ class App:
                     print("Invalid choice")
                     continue
     def admin_panel_menu_flow(self):
-        print("Admin")
-        return
+        while True:
+            self.menus.admin_panel_menu()
 
     def user_bookings_menu_flow(self):
         if self.current_user is None:
@@ -349,6 +350,7 @@ class App:
             if new_booking is not None:
                 print("Booking reserved!")
                 self.payment_menu_flow()
+                return
             else:
                 print("Booking failed!")
                 continue
@@ -363,24 +365,38 @@ class App:
                 case "1":
                     print("Pay by card(to do)")
                     card_number = self.inp.text("Enter card number: ")
-                    card_cvv = self.inp.text("Enter card cvv: ", min_value=100, max_value=999)
-                    if self.booking.get_last_booking_of_user(self.current_user.id):
+                    if card_number is None:
+                        print("Canceled!")
+                        return
+                    card_cvv = self.inp.text_int("Enter card cvv: ", min_value=100, max_value=999)
+
+                    last_booked = self.booking.get_last_booking_of_user(self.current_user.id)
+                    if last_booked:
+                        self.booking.confirm_booking(last_booked.id)
                         print("Booking successful!")
                         return
+
                 case "2":
                     print("Pay by Kaspi(to do)")
-                    if self.booking.get_last_booking_of_user(self.current_user.id):
+                    last_booked = self.booking.get_last_booking_of_user(self.current_user.id)
+                    if last_booked:
+                        self.booking.confirm_booking(last_booked.id)
                         print("Booking successful!")
                         return
                 case "3":
                     print("Pay by cash(to do)")
-                    if self.booking.get_last_booking_of_user(self.current_user.id):
+                    last_booked = self.booking.get_last_booking_of_user(self.current_user.id)
+                    if last_booked:
+                        self.booking.confirm_booking(last_booked.id)
                         print("Booking successful!")
                         return
                 case "4":
                     print("Booking Details")
-                    bookings = self.booking.get_bookings_by_user_id(self.current_user.id)
-                    self.pr.print_user_bookings(bookings)
+                    booking = self.booking.get_last_booking_of_user(self.current_user.id)
+                    if not booking:
+                        print("No bookings found")
+                        return
+                    self.pr.print_user_bookings(list(booking))
                     return
                 case "5":
                     print("Change the date or room(to do)")
