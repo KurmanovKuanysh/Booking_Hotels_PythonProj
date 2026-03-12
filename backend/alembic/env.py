@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-from backend.app import Base
+from backend.app.db.base import Base
 from sqlalchemy import engine_from_config, create_engine
 from sqlalchemy import pool
 
@@ -13,7 +13,8 @@ load_dotenv()
 DB_NAME = os.getenv('DB_NAME', 'booking')
 DB_USER = os.getenv('DB_USER', 'postgres')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
-
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
 # from app.models.hotel import Hotel
 # from app.models.room import Room
 # from app.models.room_type import RoomType
@@ -40,7 +41,8 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
+def get_db_url() -> str:
+    return f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -53,7 +55,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}"
+    url = get_db_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -73,7 +75,7 @@ def run_migrations_online() -> None:
 
     """
     engine = create_engine(
-        f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@postgres:5432/{DB_NAME}",
+        get_db_url(),
         poolclass=pool.NullPool,
     )
 
