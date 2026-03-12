@@ -15,6 +15,13 @@ class UserService:
         self.session.refresh(user)
         return user
 
+    def delete_user(self, user_id: int) -> bool:
+        user = self.get_user_by_id(user_id)
+        if user:
+            self.session.delete(user)
+            self.session.commit()
+            return True
+        return False
 
     def get_user_by_email(self, email: str) -> User:
         email_user = self.session.scalars(select(User).where(User.email == email)).first()
@@ -28,12 +35,9 @@ class UserService:
         name_user = self.session.scalars(select(User).where(User.name == name)).all()
         return list(name_user)
 
-    def list_users(self) -> list[User]:
+    def get_users(self) -> list[User]:
         all_users = self.session.scalars(select(User)).all()
         return list(all_users)
-
-    def remove_user(self, user_id: int) -> bool:
-        return True if self.session.delete(self.get_user_by_id(user_id))  else False
 
     def register_user(self, name: str, email: str, password: str, role = "USER"):
         return self.add_user(name, email, password ,role)
@@ -41,3 +45,33 @@ class UserService:
     def check_password(self,user_id: int, password: str) -> bool:
         user = self.get_user_by_id(user_id)
         return user.password == password
+
+    def edit_user(self, edit: dict) -> User:
+        if "id" not in edit:
+            raise ValueError("User id is required")
+        user = self.get_user_by_id(edit["id"])
+        if user is None:
+            raise ValueError("User not found")
+        if "name" in edit and edit["name"] is not None:
+            if len(edit["name"]) < 3:
+                raise ValueError("Name must be at least 3 characters long")
+            if len(edit["name"]) > 100:
+                raise ValueError("Name must be at most 100 characters long")
+            user.name = edit["name"].strip()
+        if "email" in edit and edit["email"] is not None:
+            if len(edit["email"]) < 3:
+                raise ValueError("Email must be at least 3 characters long")
+            if len(edit["email"]) > 255:
+                raise ValueError("Email must be at most 100 characters long")
+            user.email = edit["email"].strip()
+        if "password" in edit and edit["password"] is not None:
+            if len(edit["password"]) < 6:
+                raise ValueError("Password must be at least 6 characters")
+            user.password = edit["password"]
+        if "role" in edit and edit["role"] is not None:
+            if edit["role"] not in ["ADMIN", "USER"]:
+                raise ValueError("Role must be ADMIN or USER")
+            user.role = edit["role"]
+        self.session.commit()
+        self.session.refresh(user)
+        return user
