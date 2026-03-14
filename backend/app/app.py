@@ -137,6 +137,7 @@ class App:
         pass
 
     def admin_booking_flow(self):
+        pass
     def user_bookings_menu_flow(self):
         if self.current_user is None:
             print("You are not logged in!")
