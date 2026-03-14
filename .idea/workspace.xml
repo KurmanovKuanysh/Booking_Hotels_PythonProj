@@ -5,44 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/alembic/versions/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/core/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/db/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/db/__init___.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/services/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/services/additional/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/utils/views/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/README" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/README" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/script.py.mako" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/script.py.mako" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/versions/db2b335647ff_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/versions/db2b335647ff_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db/__init___.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/db/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db/init_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/db/init_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db/session.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/db/session.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/booking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/hotel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/room_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room_type.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/additional/input_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/additional/input_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/booking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/hotel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/room_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room_type.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/utils/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/views/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/utils/views/menus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/views/printers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/utils/views/printers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seed.py" beforeDir="false" afterPath="$PROJECT_DIR$/seed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +14,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="40" />
+    <option name="cachedIndexableFilesCount" value="56" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -98,34 +62,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.hotel.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.migrate.executor&quot;: &quot;Run&quot;,
-    &quot;Python.seed.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/TUF/Desktop/Booking&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.hotel.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.migrate.executor": "Run",
+    "Python.seed.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/TUF/Desktop/Booking",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\TUF\Desktop\Booking\backend" />
@@ -247,7 +211,18 @@
       <workItem from="1773041436648" duration="4387000" />
       <workItem from="1773068256898" duration="805000" />
       <workItem from="1773078860800" duration="603000" />
-      <workItem from="1773131170037" duration="4808000" />
+      <workItem from="1773131170037" duration="7272000" />
+      <workItem from="1773163516701" duration="3895000" />
+      <workItem from="1773216357847" duration="3934000" />
+      <workItem from="1773220829165" duration="772000" />
+      <workItem from="1773222286759" duration="3291000" />
+      <workItem from="1773247881540" duration="217000" />
+      <workItem from="1773250969141" duration="688000" />
+      <workItem from="1773253782649" duration="26000" />
+      <workItem from="1773322671584" duration="9910000" />
+      <workItem from="1773401549536" duration="673000" />
+      <workItem from="1773461107690" duration="603000" />
+      <workItem from="1773512438795" duration="10055000" />
     </task>
     <servers />
   </component>
