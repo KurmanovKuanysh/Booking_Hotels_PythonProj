@@ -115,8 +115,28 @@ class App:
                     continue
     def admin_panel_menu_flow(self):
         while True:
-            self.menus.admin_panel_menu()
+            self.menus.menu_admin_panel()
+            choice = self.inp.text("Enter your choice: ")
+            match choice:
+                case None:
+                    return
+                case "1":
+                    self.admin_hotel_flow()
+                case "2":
+                    self.admin_room_flow()
+                case "3":
+                    self.admin_booking_flow()
+                case "4":
+                    self.admin_user_flow()
+    def admin_hotel_flow(self):
+        pass
 
+    def admin_room_flow(self):
+        pass
+    def admin_user_flow(self):
+        pass
+
+    def admin_booking_flow(self):
     def user_bookings_menu_flow(self):
         if self.current_user is None:
             print("You are not logged in!")
