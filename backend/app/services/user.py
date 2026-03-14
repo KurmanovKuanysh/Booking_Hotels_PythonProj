@@ -7,7 +7,7 @@ class UserService:
         self.session = session
 
     def add_user(self, name: str, email: str, password: str, role: str):
-        if self.get_user_by_email(email):
+        if self.find_user_by_email(email):
             raise ValueError("User with this email already exists")
         user = User(name=name, email=email, password=password, role=role)
         self.session.add(user)
@@ -23,8 +23,15 @@ class UserService:
             return True
         return False
 
+    def find_user_by_email(self, email: str):
+        return self.session.scalars(
+            select(User).where(User.email == email)
+        ).one_or_none()
+
     def get_user_by_email(self, email: str) -> User:
-        email_user = self.session.scalars(select(User).where(User.email == email)).first()
+        email_user = self.find_user_by_email(email)
+        if not email_user:
+            raise ValueError("User not found")
         return email_user
 
     def get_user_by_id(self, user_id: int) -> User:
