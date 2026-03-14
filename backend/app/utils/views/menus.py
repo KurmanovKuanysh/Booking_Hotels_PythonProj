@@ -53,12 +53,13 @@ class Menu:
 
     def menu_admin_panel(self):
         print('''
-    1) Hotels Edit
-    2) Rooms Edit
-    3) Show all bookings
-    4) Show all hotels
+    1) Hotels Control
+    2) Rooms Control
+    3) Bookings Control
+    4) User Control
     0) Back
         ''')
+
     def menu_admin_panel_hotels(self):
         print('''
     1) Add hotel
