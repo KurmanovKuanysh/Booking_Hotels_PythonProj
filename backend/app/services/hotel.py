@@ -9,6 +9,10 @@ class HotelService:
     def __init__(self, session: Session):
         self.session = session
     def add_hotel(self, name: str, city: str, stars: float, address: str):
+        if self.get_hotel_by_name(name):
+            raise ValueError("Hotel with this name already exists")
+        if self.get_hotel_by_address(address):
+            raise ValueError("Hotel with this address already exists")
         hotel = Hotel(
             name=name,
             city=city,
@@ -53,6 +57,13 @@ class HotelService:
             select(Hotel).where(Hotel.city == city.strip().lower())
         ).all()
         return list(hotels)
+
+    def get_hotel_by_address(self,address: str) -> Hotel | None:
+        hotel = self.session.scalar(
+            select(Hotel)
+            .where(Hotel.address == address.strip())
+        )
+        return hotel
 
     def get_hotel_by_name(self, name:str) -> list[Hotel] | None:
         hotel = self.session.scalars(
