@@ -20,6 +20,11 @@ class RoomService:
             floor:int,
             description:str
     ):
+        if self.session.scalars(
+            select(Room)
+            .where(Room.room_number == room_number)
+        ):
+            raise ValueError("Room number already exists on Rooms")
         room = Room(
             h_id=h_id,
             room_number=room_number,
