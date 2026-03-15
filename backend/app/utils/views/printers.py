@@ -81,3 +81,10 @@ class Printer:
             if value is None:
                 continue
             print(f"{key}: {value}")
+
+    def print_users(self, users):
+        print(f"\n{'ID':<5}{'NAME':<20}{'EMAIL':<30}{'ROLE':<10}")
+        print("-" * 65)
+        for u in users:
+            print(f"{u.id:<5}{u.name:<20}{u.email:<30}{u.role:<10}")
+        print()

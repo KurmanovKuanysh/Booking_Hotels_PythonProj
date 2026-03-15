@@ -141,3 +141,38 @@ class Menu:
         4) Login Fast
         0) Exit
         ''')
+
+    def menu_admin_panel_users(self):
+        print('''
+    1) Show users
+    2) Add user
+    3) Edit user
+    4) Delete user
+    0) Back
+        ''')
+
+    def menu_admin_users_edit(self):
+        print('''
+    1) Edit user's name
+    2) Edit user's email
+    3) Edit user's password
+    4) Edit user's role
+    0) Back
+        ''')
+
+    def menu_admin_panel_bookings(self):
+        print('''
+    1) Show bookings
+    2) Add booking
+    3) Edit booking
+    4) Delete booking
+    0) Back
+        ''')
+
+    def menu_admin_bookings_edit(self):
+        print('''
+    1) Edit Booking Status
+    2) Edit Booking Date
+    3) Edit Booking Room
+    0) Back
+        ''')
