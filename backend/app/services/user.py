@@ -34,6 +34,9 @@ class UserService:
             raise ValueError("User not found")
         return email_user
 
+    def exists_user_email(self, email: str) -> bool:
+        return self.find_user_by_email(email) is not None
+
     def get_user_by_id(self, user_id: int) -> User:
         id_user = self.session.scalars(select(User).where(User.id == user_id)).first()
         return id_user
