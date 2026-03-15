@@ -66,8 +66,50 @@ def test_get_user_by_email(session:Session, user_one: User):
     user_by_email = service.get_user_by_email(user_one.email)
     assert user_by_email == user_one
 
-def test_get_user_by_email_not_found(session:Session, user_one: User):
+def test_get_user_by_email_not_found(session:Session):
     service = UserService(session)
 
     with pytest.raises(ValueError, match="User not found"):
         service.get_user_by_email("nonexistent@gmail.com")
+
+def test_delete_user_return_true(session: Session, user_one: User):
+    service = UserService(session)
+
+    user = service.get_user_by_id(user_one.id)
+    assert user == user_one
+
+    deleted = service.delete_user(user_one.id)
+    assert deleted is True
+
+def test_delete_user_return_false(session: Session, user_one: User):
+    service = UserService(session)
+
+    deleted = service.delete_user(-1)
+    assert deleted is False
+
+    user = service.get_user_by_id(user_one.id)
+    assert user == user_one
+
+    delete_user = service.delete_user(user_one.id)
+    assert delete_user is True
+
+def test_edit_user_return_user(session: Session, user_one: User):
+    service = UserService(session)
+
+    user = service.get_user_by_id(user_one.id)
+    assert user.name == user_one.name
+
+    edit: dict = {
+        "id": user_one.id,
+        "name": "New Name",
+        "email": "newmail@mail.ru",
+        "password": "newpassword",
+        "role": "USER"
+    }
+
+    edited_user = service.edit_user(edit)
+    assert edited_user.name == "New Name"
+    assert edited_user.email == "newmail@mail.ru"
+    assert edited_user.password == "newpassword"
+    assert edited_user.role == "USER"
+
