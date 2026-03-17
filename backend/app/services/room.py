@@ -5,6 +5,8 @@ from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
 from datetime import date
 
+from fastapi import HTTPException
+
 
 class RoomService:
     def __init__(self, session: Session):
@@ -23,8 +25,8 @@ class RoomService:
         if self.session.scalars(
             select(Room)
             .where(Room.room_number == room_number)
-        ):
-            raise ValueError("Room number already exists on Rooms")
+        ).all():
+            raise HTTPException(status_code=409, detail="Room number already exists on Rooms")
         room = Room(
             h_id=h_id,
             room_number=room_number,
@@ -43,8 +45,7 @@ class RoomService:
         try:
             room = self.get_room_by_id(r_id)
             if not room:
-                print("Room not found")
-                return False
+                raise HTTPException(status_code=404, detail="Room not found")
             room_booked = self.session.scalars(
                 select(Booking)
                 .where(Booking.r_id == r_id,
@@ -52,16 +53,18 @@ class RoomService:
                        )
             ).first()
             if room_booked:
-                print("Room is booked")
-                return False
+                raise HTTPException(status_code=400, detail="Room has active bookings!")
             self.session.delete(room)
             self.session.commit()
             return True
 
+        except HTTPException:
+            self.session.rollback()
+            raise
         except Exception as e:
             self.session.rollback()
-            print(f"Error deleting room: {e}")
-            raise
+            raise HTTPException(status_code=500, detail=f"Error deleting room: {e}")
+
 
     def get_rooms(self) -> list[Room]:
         return list(self.session.scalars(select(Room)).all())
@@ -73,12 +76,14 @@ class RoomService:
         return self.session.scalars(select(Room).where(Room.id == r_id)).first()
 
     def list_rooms_by_price(self, min_price: float, max_price: float) -> list[Room]:
-        return list(self.session.scalars(
+        return list(
+            self.session.scalars(
             select(Room).where(
                 Room.price_per_day >= min_price,
                 Room.price_per_day <= max_price )
             ).all()
         )
+
 
     def list_rooms_by_type(self, room_type:str) -> list[Room]:
         return list(self.session.scalars(
@@ -114,46 +119,77 @@ class RoomService:
             "max": float(max_price),
         }
 
-    def get_rooms_by_filter(self,h_id: int , r_filter: dict) -> list[Room]:
-        capacity = r_filter.get("capacity")
-        price_from = r_filter.get("price_from")
-        price_to = r_filter.get("price_to")
-        room_type = r_filter.get("room_type")
-
-        rooms = select(Room).where(Room.h_id == h_id)
-
+    def get_rooms_by_filter(
+            self,
+            hotel_id: int,
+            capacity: int | None = None,
+            min_price: float | None = None,
+            max_price: float | None = None,
+            room_type: str | None = None
+    ) -> list[Room]:
+        rooms = select(Room).where(Room.h_id == hotel_id)
         if capacity:
             rooms = rooms.where(Room.capacity >= int(capacity))
-        if price_from:
-            rooms = rooms.where(Room.price_per_day >= float(price_from))
-        if price_to:
-            rooms = rooms.where(Room.price_per_day <= float(price_to))
+        if min_price:
+            rooms = rooms.where(Room.price_per_day >= float(min_price))
+        if max_price:
+            rooms = rooms.where(Room.price_per_day <= float(max_price))
         if room_type:
             rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == room_type)
 
         return list(self.session.scalars(rooms).all())
 
-    def edit_room(self, edit: dict):
-        if "id" not in edit:
-            raise ValueError("Room id is required")
-        room = self.get_room_by_id(edit["id"])
+    def edit_room(
+            self,
+            hotel_id:int,
+            room_id:int,
+            room_number:str | None = None,
+            r_t_id:int | None = None,
+            capacity:int | None = None,
+            price_per_day:float | None = None,
+            floor:int | None = None,
+            description:str | None = None
+    ):
+        room = self.get_room_by_id(room_id)
         if room is None:
-            raise ValueError("Room not found")
-        if "room_number" in edit and edit["room_number"] is not None:
-            same_room_number = self.session.scalars(
-                select(Room).where(Room.room_number == edit["room_number"], Room.id != room.id)
+            raise HTTPException(status_code=404, detail="Room not found")
+        if room.h_id != hotel_id:
+            raise HTTPException(status_code=404, detail="Room not found in this hotel")
+        if room_number is not None:
+            same_room_number = self.session.scalar(
+                select(Room)
+                .where(
+                    Room.h_id == hotel_id,
+                    Room.room_number == room_number.strip(),
+                    Room.id != room.id
+                )
             )
-            if same_room_number.all():
-                raise ValueError("Room number already exists on Rooms")
-            if len(edit["room_number"]) > 10:
-                raise ValueError("Room number must be at most 10 characters long")
-            room.room_number = edit["room_number"].strip()
-        if "r_t_id" in edit and edit["r_t_id"] is not None:
-            room_type = self.session.scalars(select(RoomType).where(RoomType.id == edit["r_t_id"])).first()
+            if same_room_number:
+                raise HTTPException(status_code=409, detail="Room number already exists in this hotel")
+            if len(room_number) > 10:
+                raise HTTPException(status_code=400, detail="Room number must be at most 10 characters long")
+            room.room_number = room_number.strip()
+        if r_t_id is not None:
+            room_type = self.session.scalars(select(RoomType).where(RoomType.id == r_t_id)).first()
             if room_type is None:
-                raise ValueError("Room type not found")
-            room.r_t_id = edit["r_t_id"]
-        if "capacity" in edit and edit["capacity"] is not None:
-            if not isinstance(edit["capacity"], int):
-                raise ValueError("Capacity must be an integer")
-            room.capacity = edit["capacity"]
+                raise HTTPException(status_code=404, detail="Room type not found")
+            room.r_t_id = r_t_id
+        if capacity is not None:
+            if capacity < 1:
+                raise HTTPException(status_code=400, detail="Capacity must be at least 1")
+            room.capacity = capacity
+        if price_per_day is not None:
+            if price_per_day < 0:
+                raise HTTPException(status_code=400, detail="Price per day must be at least 0")
+            room.price_per_day = price_per_day
+        if floor is not None:
+            if floor < 0:
+                raise HTTPException(status_code=400, detail="Floor must be at least 0")
+            room.floor = floor
+        if description is not None:
+            if len(description) > 255:
+                raise HTTPException(status_code=400, detail="Description must be at most 255 characters long")
+            room.description = description
+        self.session.commit()
+        self.session.refresh(room)
+        return room

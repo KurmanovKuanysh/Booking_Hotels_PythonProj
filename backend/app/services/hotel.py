@@ -5,19 +5,30 @@ from backend.app.models.booking import Booking
 from backend.app.models.room import Room
 from datetime import date
 
+from fastapi import HTTPException
+
 class HotelService:
     def __init__(self, session: Session):
         self.session = session
-    def add_hotel(self, name: str, city: str, stars: float, address: str):
+    def add_hotel(
+            self,
+            name: str,
+            city: str,
+            stars: float,
+            address: str,
+            description: str = None
+    ):
         if self.get_hotel_by_name(name):
-            raise ValueError("Hotel with this name already exists")
+            raise HTTPException(status_code=409, detail="Hotel with this name already exists")
         if self.get_hotel_by_address(address):
-            raise ValueError("Hotel with this address already exists")
+            raise HTTPException(status_code=409, detail="Hotel with this address already exists")
+
         hotel = Hotel(
             name=name,
             city=city,
             address=address,
-            stars=stars
+            stars=stars,
+            description=description
         )
         self.session.add(hotel)
         self.session.commit()
@@ -28,28 +39,29 @@ class HotelService:
         try:
             hotel = self.get_hotel_by_id(hotel_id)
             if not hotel:
-                print("Hotel not found")
-                return False
+                raise HTTPException(status_code=404, detail="Hotel not found")
             if self.hotel_have_active_booking(hotel_id):
-                print("Hotel have active booking")
-                return False
+                raise HTTPException(status_code=409, detail="Hotel have active booking")
             rooms = self.session.scalars(select(Room).where(Room.h_id == hotel_id)).all()
             for room in rooms:
                 self.session.delete(room)
             self.session.delete(hotel)
             self.session.commit()
             return True
-
+        except HTTPException as e:
+            self.session.rollback()
+            raise
         except Exception as e:
             self.session.rollback()
-            print(f"Error deleting hotel: {e}")
-            raise
+            raise HTTPException(status_code=500, detail=f"Error deleting hotel: {e}")
 
     def get_hotels(self) -> list[Hotel]:
         return list(self.session.scalars(select(Hotel)).all())
 
     def get_hotel_by_id(self, hotel_id: int) -> Hotel | None:
         hotel = self.session.scalars(select(Hotel).where(Hotel.id == hotel_id)).first()
+        if not hotel:
+            raise HTTPException(status_code=404, detail="Hotel not found")
         return hotel
 
     def list_hotels_by_city(self, city: str) -> list[Hotel]:
@@ -72,18 +84,22 @@ class HotelService:
         return list(hotel)
 
     def list_hotels_by_stars(self, stars_from: float, stars_to: float) -> list[Hotel]:
+        if stars_from < 1 or stars_from > 5:
+            raise HTTPException(status_code=400, detail="Stars must be between 1 and 5")
+        if stars_from > stars_to:
+            stars_from, stars_to = stars_to, stars_from
         hotels = self.session.scalars(
             select(Hotel).where(Hotel.stars >= stars_from, Hotel.stars <= stars_to)
         ).all()
         return list(hotels)
 
-    def list_hotels_by_filter(self, hotel_filters: dict) -> list[Hotel]:
-        stars_from = hotel_filters.get("stars_from")
-        stars_to = hotel_filters.get("stars_to")
-        city = hotel_filters.get("city")
-
+    def list_hotels_by_filter(
+            self,
+            stars_from: float | float = 1,
+            stars_to: float | float = 5,
+            city: str | None = None,
+    ) -> list[Hotel]:
         hotels = select(Hotel).where(Hotel.stars >= stars_from, Hotel.stars <= stars_to)
-
         if city is not None:
             hotels = hotels.where(Hotel.city.ilike(f"%{city}%"))
 
