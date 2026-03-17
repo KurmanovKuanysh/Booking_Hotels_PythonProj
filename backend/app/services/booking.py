@@ -135,7 +135,7 @@ class BookingService:
         #     self.session.refresh(booking)
         return booking
 
-    def edit_booking(self, edit: dict) -> Booking:
+    def edit_booking(self, edit: dict) -> Booking | None:
         if "id" not in edit:
             raise ValueError("Booking id is required")
         booking = self.get_booking_by_id(edit["id"])
