@@ -38,8 +38,6 @@ class HotelService:
     def delete_hotel(self, hotel_id: int) -> bool:
         try:
             hotel = self.get_hotel_by_id(hotel_id)
-            if not hotel:
-                raise HTTPException(status_code=404, detail="Hotel not found")
             if self.hotel_have_active_booking(hotel_id):
                 raise HTTPException(status_code=409, detail="Hotel have active booking")
             rooms = self.session.scalars(select(Room).where(Room.h_id == hotel_id)).all()
@@ -48,8 +46,7 @@ class HotelService:
             self.session.delete(hotel)
             self.session.commit()
             return True
-        except HTTPException as e:
-            self.session.rollback()
+        except HTTPException:
             raise
         except Exception as e:
             self.session.rollback()
@@ -129,42 +126,73 @@ class HotelService:
         )
         return list(self.session.scalars(hotels_active).all())
 
-    def edit_hotel(self, edit: dict) -> Hotel:
-        if "id" not in edit:
-            raise ValueError("Hotel id is required")
-        hotel = self.get_hotel_by_id(edit["id"])
+    from fastapi import HTTPException
+    from sqlalchemy import select
+
+    def edit_hotel(
+            self,
+            hotel_id: int,
+            name: str | None = None,
+            city: str | None = None,
+            address: str | None = None,
+            stars: float | None = None,
+            description: str | None = None
+    ) -> Hotel:
+        hotel = self.get_hotel_by_id(hotel_id)
         if hotel is None:
-            raise ValueError("Hotel not found")
+            raise HTTPException(status_code=404, detail="Hotel not found")
 
-        if "name" in edit and edit["name"] is not None:
-            if len(edit["name"]) < 3:
-                raise ValueError("Hotel name must be at least 3 characters long")
-            if len(edit["name"]) > 100:
-                raise ValueError("Hotel name must be at most 100 characters long")
-            if self.session.scalars(select(Hotel).where(Hotel.name == edit["name"], Hotel.id != hotel.id)).all():
-                raise ValueError("Hotel name already exists on Hotels")
-            hotel.name = edit["name"].strip()
+        if name is not None:
+            name = name.strip()
+            if len(name) < 3:
+                raise HTTPException(status_code=400, detail="Hotel name must be at least 3 characters long")
+            if len(name) > 100:
+                raise HTTPException(status_code=400, detail="Hotel name must be at most 100 characters long")
+            same_name = self.session.scalar(
+                select(Hotel).where(
+                    Hotel.name == name,
+                    Hotel.id != hotel.id
+                )
+            )
+            if same_name:
+                raise HTTPException(status_code=409, detail="Hotel name already exists")
+            hotel.name = name
 
-        if "city" in edit and edit["city"] is not None:
-            if len(edit["city"]) < 3:
-                raise ValueError("Hotel city must be at least 3 characters long")
-            if len(edit["city"]) > 100:
-                raise ValueError("Hotel city must be at most 100 characters long")
-            hotel.city = edit["city"].strip()
+        if city is not None:
+            city = city.strip()
 
-        if "address" in edit and edit["address"] is not None:
-            if len(edit["address"]) < 3:
-                raise ValueError("Address must be at least 3 characters long")
-            if self.session.scalars(select(Hotel).where(Hotel.address == edit["address"], Hotel.id != hotel.id)).all():
-                raise ValueError("Address already exists on Hotels")
-            hotel.address = edit["address"]
+            if len(city) < 3:
+                raise HTTPException(status_code=400, detail="Hotel city must be at least 3 characters long")
+            if len(city) > 100:
+                raise HTTPException(status_code=400, detail="Hotel city must be at most 100 characters long")
 
-        if "stars" in edit and edit["stars"] is not None:
-            if not isinstance(edit["stars"], float):
-                raise ValueError("Stars must be a float")
-            if not edit["stars"] > 0.0 and not edit["stars"] <= 5.0:
-                raise ValueError("Stars must be between 1 and 5")
-            hotel.stars = edit["stars"]
+            hotel.city = city
+
+        if address is not None:
+            address = address.strip()
+
+            if len(address) < 3:
+                raise HTTPException(status_code=400, detail="Address must be at least 3 characters long")
+
+            same_address = self.session.scalar(
+                select(Hotel).where(
+                    Hotel.address == address,
+                    Hotel.id != hotel.id
+                )
+            )
+            if same_address:
+                raise HTTPException(status_code=409, detail="Address already exists on Hotels")
+            hotel.address = address
+        if stars is not None:
+            if stars < 1.0 or stars > 5.0:
+                raise HTTPException(status_code=400, detail="Stars must be between 1 and 5")
+            hotel.stars = stars
+        if description is not None:
+            description = description.strip()
+
+            if len(description) > 255:
+                raise HTTPException(status_code=400, detail="Description must be at most 255 characters long")
+            hotel.description = description
         self.session.commit()
         self.session.refresh(hotel)
 
