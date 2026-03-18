@@ -53,6 +53,25 @@ def get_hotels_by_filter(
         stars_to=stars_to,
         city=city
     )
+@router.patch("/{hotel_id}/edit", response_model=HotelRead)
+def edit_hotel(
+        hotel_id: int,
+        name: str | None = None,
+        city: str | None = None,
+        address: str | None = None,
+        stars: float | None = None,
+        description: str | None = None,
+        db: Session = Depends(get_db)
+):
+    service = HotelService(db)
+    return service.edit_hotel(
+        hotel_id=hotel_id,
+        name=name,
+        city=city,
+        address=address,
+        stars=stars,
+        description=description
+    )
 @router.get("/{hotel_id}", response_model=HotelRead)
 def get_hotel_by_id(hotel_id: int, db: Session = Depends(get_db)):
     service = HotelService(db)
@@ -61,3 +80,4 @@ def get_hotel_by_id(hotel_id: int, db: Session = Depends(get_db)):
 def delete_hotel(hotel_id: int, db: Session = Depends(get_db)):
     service = HotelService(db)
     return service.delete_hotel(hotel_id)
+
