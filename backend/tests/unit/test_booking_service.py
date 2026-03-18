@@ -24,8 +24,6 @@ def user_one(session: Session):
 
 @pytest.fixture
 def booking_one(session: Session, room_one, user_one):
-    service = BookingService(session)
-
     booking = Booking(
         r_id = room_one.id,
         check_in = date.today() + timedelta(days=3),
@@ -87,3 +85,35 @@ def test_add_booking_return_booking(session: Session, room_one, user_one):
     )
 
     assert result == booking
+
+def test_get_booking_by_id_return_booking(session: Session, booking_one):
+    service = BookingService(session)
+
+    booking = service.get_booking_by_id(booking_one.id)
+    assert booking == booking_one
+
+def test_get_booking_by_id_return_none(session: Session):
+    service = BookingService(session)
+
+    booking = service.get_booking_by_id(-1)
+    assert booking is None
+
+def test_edit_booking_return_booking(session: Session, booking_one):
+    service = BookingService(session)
+
+    booking = service.get_booking_by_id(booking_one.id)
+    assert booking.status == "confirmed"
+    assert booking.check_in == date.today() + timedelta(days=3)
+
+    edit = {
+        "id": booking_one.id,
+        "check_in": date.today() + timedelta(days=4),
+        "check_out": date.today() + timedelta(days=5),
+        "status": "cancelled"
+    }
+
+    edited_booking = service.edit_booking(edit)
+
+    assert edited_booking.check_in == date.today() + timedelta(days=4)
+    assert edited_booking.check_out == date.today() + timedelta(days=5)
+    assert edited_booking.status == "cancelled"
