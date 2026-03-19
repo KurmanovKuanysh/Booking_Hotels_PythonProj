@@ -20,7 +20,7 @@ def create_booking(
         status=booking.status,
         user_id=booking.user_id
     )
-@router.patch("/{booking_id}/status", response_model=bool)
+@router.patch("/{booking_id}/admin/status", response_model=bool)
 def update_booking_status(
         booking_id: int,
         status: str,
@@ -31,7 +31,7 @@ def update_booking_status(
         booking_id=booking_id,
         status=status
     )
-@router.patch("/admin/status_update", response_model=bool)
+@router.patch("/admin/status_update", response_model=list[BookingRead])
 def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.check_update_completed_bookings()
@@ -62,14 +62,12 @@ def edit_booking(
         status=booking.status,
         user_id=booking.user_id
     )
-
-
 @router.get("/{booking_id}", response_model=BookingRead)
 def get_booking_by_id(booking_id: int, db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.get_booking_by_id(booking_id)
 
-@router.get("/{booking_id}", response_model=str)
+@router.get("/{booking_id}/status", response_model=str)
 def get_booking_status(booking_id: int, db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.get_booking_status(booking_id)

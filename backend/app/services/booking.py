@@ -6,6 +6,8 @@ from backend.app.models.room import Room
 from datetime import date
 from fastapi import HTTPException
 
+from backend.app.schemas.booking import BookingRead
+
 ALLOWED_STATUSES = {"pending", "confirmed", "cancelled", "completed"}
 
 class BookingService:
@@ -19,6 +21,16 @@ class BookingService:
             check_out: date,
             status: str,
             user_id: int) -> Booking:
+        booked_room = self.session.scalar(
+            select(Booking)
+            .where(Booking.r_id == r_id,
+                   Booking.status.in_(["confirmed", "pending"]),
+                   Booking.check_in < check_out,
+                   Booking.check_out > check_in
+                   )
+        )
+        if booked_room:
+            raise HTTPException(status_code=409, detail="Room is already booked")
         if check_in > check_out:
             raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
         if status not in ALLOWED_STATUSES:
@@ -40,7 +52,7 @@ class BookingService:
         if not booking:
             raise HTTPException(status_code=404, detail="Booking not found")
         if self.get_booking_status(booking_id) in ("confirmed", "pending"):
-            raise HTTPException(status_code=400, detail="Booking cannot be deleted")
+            raise HTTPException(status_code=400, detail="Booking cannot be deleted, Booking status is not completed")
         self.session.delete(booking)
         self.session.commit()
         return True
@@ -48,7 +60,7 @@ class BookingService:
     def get_booking_status(self, booking_id: int) -> str:
         booking = self.get_booking_by_id(booking_id)
         if not booking:
-            raise ValueError("Booking not found")
+            raise HTTPException(status_code=404, detail="Booking not found")
         return booking.status
 
     def cancel_booking(self, booking_id: int) -> bool:
@@ -66,16 +78,20 @@ class BookingService:
             return True
         return False
 
-    def check_update_completed_bookings(self) -> bool:
+    def check_update_completed_bookings(self) -> list[BookingRead]:
         bookings = self.session.scalars(
             select(Booking)
             .where(Booking.check_out <= date.today(),
                    Booking.status.in_(["confirmed"]))
         ).all()
+        if not bookings:
+            return []
+        changed = []
         for booking in bookings:
             booking.status = "completed"
+            changed.append(booking)
         self.session.commit()
-        return True
+        return changed
 
     def has_confirmed_booking(self, user_id: int) -> bool:
         user = self.session.scalar(select(User).where(User.id == user_id))
