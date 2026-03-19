@@ -76,10 +76,14 @@ class RoomService:
     def get_room_by_id(self, r_id:int) -> Room | None:
         room = self.session.scalars(select(Room).where(Room.id == r_id)).first()
         if not room:
-            raise HTTPException(status_code=404, detail="Room not found")
+            raise HTTPException(status_code=400, detail="Not Valid ID requested")
         return room
 
     def list_rooms_by_price(self, min_price: float, max_price: float) -> list[Room]:
+        if min_price < 0 or max_price < 0:
+            raise HTTPException(status_code=400, detail="Price must be greater than 0")
+        if min_price > max_price:
+            min_price, max_price = max_price, min_price
         return list(
             self.session.scalars(
             select(Room).where(
@@ -116,6 +120,8 @@ class RoomService:
         return booking is None
 
     def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
+        if check_in > check_out:
+            raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
         available_rooms = []
         for room in rooms:
             if self.is_room_available(room.id, check_in, check_out):
