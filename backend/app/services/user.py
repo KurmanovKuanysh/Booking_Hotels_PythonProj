@@ -5,6 +5,8 @@ from backend.app.models import Booking
 from backend.app.models.user import User
 from fastapi import HTTPException
 
+from backend.app.schemas.user import UserRead
+
 from backend.app.security.auth import hash_password, verify_password
 
 
@@ -49,10 +51,12 @@ class UserService:
     def exists_user_email(self, email: str) -> bool:
         return self.find_user_by_email(email) is not None
 
-    def get_user_by_id(self, user_id: int) -> User:
+    def get_user_by_id(self, user_id: int) -> UserRead:
         user = self.session.scalars(
             select(User)
             .where(User.id == user_id)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         return user
 
     def get_users_by_name(self, name: str) -> list[User]:
@@ -61,7 +65,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
         return list(users)
 
-    def get_users(self) -> list[User]:
+    def get_users(self) -> list[UserRead]:
         all_users = self.session.scalars(select(User)).all()
         return list(all_users)
 
