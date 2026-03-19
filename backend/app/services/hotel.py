@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.orm import Session
 from backend.app.models.hotel import Hotel
 from backend.app.models.booking import Booking
@@ -18,9 +18,11 @@ class HotelService:
             address: str,
             description: str = None
     ):
-        if self.get_hotel_by_name(name):
+        existing_name = self.session.scalar(select(Hotel).where(func.lower(Hotel.name) == name.strip().lower()))
+        if existing_name:
             raise HTTPException(status_code=409, detail="Hotel with this name already exists")
-        if self.get_hotel_by_address(address):
+        existing_address = self.session.scalar(select(Hotel).where(func.lower(Hotel.address) == address.strip().lower()))
+        if existing_address:
             raise HTTPException(status_code=409, detail="Hotel with this address already exists")
 
         hotel = Hotel(
@@ -67,14 +69,14 @@ class HotelService:
         ).all()
         return list(hotels)
 
-    def get_hotel_by_address(self,address: str) -> Hotel | None:
-        hotel = self.session.scalar(
+    def get_hotels_by_address(self,address: str) -> list[Hotel] | list[None]:
+        hotel = list(self.session.scalars(
             select(Hotel)
-            .where(Hotel.address == address.strip())
-        )
+            .where(Hotel.address.ilike(f"%{address.strip()}%"))
+        ).all())
         return hotel
 
-    def get_hotel_by_name(self, name:str) -> list[Hotel] | None:
+    def get_hotels_by_name(self, name:str) -> list[Hotel] | None:
         hotel = self.session.scalars(
             select(Hotel).where(Hotel.name.ilike(f"%{name.strip().lower()}%"))
         ).all()
@@ -150,7 +152,7 @@ class HotelService:
                 raise HTTPException(status_code=400, detail="Hotel name must be at most 100 characters long")
             same_name = self.session.scalar(
                 select(Hotel).where(
-                    Hotel.name == name,
+                    func.lower(Hotel.name) == name.lower(),
                     Hotel.id != hotel.id
                 )
             )
@@ -176,7 +178,7 @@ class HotelService:
 
             same_address = self.session.scalar(
                 select(Hotel).where(
-                    Hotel.address == address,
+                    func.lower(Hotel.address) == address.lower(),
                     Hotel.id != hotel.id
                 )
             )
