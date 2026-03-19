@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+
+from backend.app.models import Hotel
 from backend.app.models.booking import Booking
 from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
@@ -24,9 +26,11 @@ class RoomService:
     ):
         if self.session.scalars(
             select(Room)
-            .where(Room.room_number == room_number)
+            .join(Hotel, Hotel.id == Room.h_id)
+            .where(Hotel.id == h_id,
+                Room.room_number == room_number)
         ).all():
-            raise HTTPException(status_code=409, detail="Room number already exists on Rooms")
+            raise HTTPException(status_code=409, detail="Room number already exists in this hotel")
         room = Room(
             h_id=h_id,
             room_number=room_number,
@@ -44,8 +48,6 @@ class RoomService:
     def delete_room(self, r_id:int) -> bool:
         try:
             room = self.get_room_by_id(r_id)
-            if not room:
-                raise HTTPException(status_code=404, detail="Room not found")
             room_booked = self.session.scalars(
                 select(Booking)
                 .where(Booking.r_id == r_id,
@@ -59,21 +61,23 @@ class RoomService:
             return True
 
         except HTTPException:
-            self.session.rollback()
             raise
         except Exception as e:
             self.session.rollback()
             raise HTTPException(status_code=500, detail=f"Error deleting room: {e}")
 
 
-    def get_rooms(self) -> list[Room]:
+    def get_all_rooms(self) -> list[Room]:
         return list(self.session.scalars(select(Room)).all())
 
     def list_rooms_by_hotel_id(self, h_id:int) -> list[Room]:
         return list(self.session.scalars(select(Room).where(Room.h_id == h_id)).all())
 
     def get_room_by_id(self, r_id:int) -> Room | None:
-        return self.session.scalars(select(Room).where(Room.id == r_id)).first()
+        room = self.session.scalars(select(Room).where(Room.id == r_id)).first()
+        if not room:
+            raise HTTPException(status_code=404, detail="Room not found")
+        return room
 
     def list_rooms_by_price(self, min_price: float, max_price: float) -> list[Room]:
         return list(
@@ -111,7 +115,15 @@ class RoomService:
         ).first()
         return booking is None
 
-    def get_price_range(self, rooms:list[Room]) -> dict[str,float]:
+    def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
+        available_rooms = []
+        for room in rooms:
+            if self.is_room_available(room.id, check_in, check_out):
+                available_rooms.append(room)
+        return available_rooms
+
+    @staticmethod
+    def get_rooms_price_range(rooms:list[Room]) -> dict[str,float]:
         min_price = min(room.price_per_day for room in rooms)
         max_price = max(room.price_per_day for room in rooms)
         return {
@@ -128,13 +140,13 @@ class RoomService:
             room_type: str | None = None
     ) -> list[Room]:
         rooms = select(Room).where(Room.h_id == hotel_id)
-        if capacity:
-            rooms = rooms.where(Room.capacity >= int(capacity))
-        if min_price:
-            rooms = rooms.where(Room.price_per_day >= float(min_price))
-        if max_price:
-            rooms = rooms.where(Room.price_per_day <= float(max_price))
-        if room_type:
+        if capacity is not None:
+            rooms = rooms.where(Room.capacity >= capacity)
+        if min_price is not None:
+            rooms = rooms.where(Room.price_per_day >= min_price)
+        if max_price is not None:
+            rooms = rooms.where(Room.price_per_day <= max_price)
+        if room_type is not None:
             rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == room_type)
 
         return list(self.session.scalars(rooms).all())
@@ -151,11 +163,11 @@ class RoomService:
             description:str | None = None
     ):
         room = self.get_room_by_id(room_id)
-        if room is None:
-            raise HTTPException(status_code=404, detail="Room not found")
         if room.h_id != hotel_id:
             raise HTTPException(status_code=404, detail="Room not found in this hotel")
         if room_number is not None:
+            if len(room_number) > 10:
+                raise HTTPException(status_code=400, detail="Room number must be at most 10 characters long")
             same_room_number = self.session.scalar(
                 select(Room)
                 .where(
@@ -166,8 +178,6 @@ class RoomService:
             )
             if same_room_number:
                 raise HTTPException(status_code=409, detail="Room number already exists in this hotel")
-            if len(room_number) > 10:
-                raise HTTPException(status_code=400, detail="Room number must be at most 10 characters long")
             room.room_number = room_number.strip()
         if r_t_id is not None:
             room_type = self.session.scalars(select(RoomType).where(RoomType.id == r_t_id)).first()
