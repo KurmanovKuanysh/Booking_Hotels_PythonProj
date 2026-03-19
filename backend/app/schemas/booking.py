@@ -1,0 +1,19 @@
+from pydantic import BaseModel, Field
+from datetime import date
+
+class BookingBase(BaseModel):
+    r_id: int = Field(gt=0)
+    check_in: date
+    check_out: date
+    status: str = Field(min_length=3, max_length=100)
+    user_id: int = Field(gt=0)
+
+class BookingRead(BookingBase):
+    id: int
+
+class BookingEdit(BaseModel):
+    r_id: int | None = Field(default=None, gt=0)
+    check_in: date | None = Field(default=None)
+    check_out: date | None = Field(default=None)
+    status: str | None = Field(default=None, min_length=3, max_length=100)
+    user_id: int | None = Field(default=None, gt=0)

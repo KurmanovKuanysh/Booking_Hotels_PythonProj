@@ -19,6 +19,5 @@ class Booking(Base):
     room = relationship("Room", back_populates="booking")
 
     __table_args__ = (
-        CheckConstraint("check_in <= check_out AND check_in >= CURRENT_DATE", name="check_in_check"),
         CheckConstraint("status in ('pending', 'confirmed', 'cancelled', 'completed')", name="status_check"),
     )

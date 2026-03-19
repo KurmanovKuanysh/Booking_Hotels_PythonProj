@@ -4,6 +4,7 @@ from backend.app.models.booking import Booking
 from backend.app.models.user import User
 from backend.app.models.room import Room
 from datetime import date
+from fastapi import HTTPException
 
 ALLOWED_STATUSES = {"pending", "confirmed", "cancelled", "completed"}
 
@@ -19,9 +20,9 @@ class BookingService:
             status: str,
             user_id: int) -> Booking:
         if check_in > check_out:
-            raise ValueError("Check-in date must be before check-out date")
+            raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
         if status not in ALLOWED_STATUSES:
-            raise ValueError("Invalid status")
+            raise HTTPException(status_code=400, detail="Invalid status")
         new_booking = Booking(
             r_id=r_id,
             check_in=check_in,
@@ -37,9 +38,9 @@ class BookingService:
     def delete_booking(self, booking_id: int) -> bool:
         booking = self.get_booking_by_id(booking_id)
         if not booking:
-            raise ValueError("Booking not found")
-        if self.get_booking_status(booking_id) in ("completed", "pending"):
-            raise ValueError("Booking cannot be deleted")
+            raise HTTPException(status_code=404, detail="Booking not found")
+        if self.get_booking_status(booking_id) in ("confirmed", "pending"):
+            raise HTTPException(status_code=400, detail="Booking cannot be deleted")
         self.session.delete(booking)
         self.session.commit()
         return True
@@ -69,7 +70,7 @@ class BookingService:
         bookings = self.session.scalars(
             select(Booking)
             .where(Booking.check_out <= date.today(),
-                   Booking.status.not_in(["completed","cancelled"]))
+                   Booking.status.in_(["confirmed"]))
         ).all()
         for booking in bookings:
             booking.status = "completed"
@@ -90,10 +91,10 @@ class BookingService:
 
     def update_booking_status(self, booking_id: int, status: str) -> bool:
         if status.strip().lower() not in ALLOWED_STATUSES:
-            raise ValueError("Invalid status")
+            raise HTTPException(status_code=400, detail="Invalid status")
         booking = self.get_booking_by_id(booking_id)
         if not booking:
-            return False
+            raise HTTPException(status_code=404, detail="Booking not found")
         booking.status = status.strip().lower()
         self.session.commit()
         return True
@@ -135,49 +136,56 @@ class BookingService:
         #     self.session.refresh(booking)
         return booking
 
-    def edit_booking(self, edit: dict) -> Booking | None:
-        if "id" not in edit:
-            raise ValueError("Booking id is required")
-        booking = self.get_booking_by_id(edit["id"])
-        if booking is None:
-            raise ValueError("Booking not found")
+    def edit_booking(
+            self,
+            booking_id: int,
+            r_id: int | None = None,
+            check_in: date | None = None,
+            check_out: date | None = None,
+            status: str | None = None,
+            user_id: int | None = None,
 
-        if "r_id" in edit and edit["r_id"] is not None:
+    ) -> Booking | None:
+        booking = self.get_booking_by_id(booking_id)
+        if booking is None:
+            raise HTTPException(status_code=404, detail="Booking not found")
+
+        if r_id is not None:
             room = self.session.scalar(
                 select(Room)
-                .where(Room.id == edit["r_id"])
+                .where(Room.id == r_id)
             )
             if room is None:
-                raise ValueError("Room not found")
-            booking.r_id = edit["r_id"]
+                raise HTTPException(status_code=404, detail="Room not found")
+            booking.r_id = r_id
 
-        if ("check_in" in edit and edit["check_in"] is not None) and ("check_out" in edit and edit["check_out"] is not None):
-            if edit["check_in"] > edit["check_out"]:
-                raise ValueError("Check-in date must be before check-out date")
+        if check_in and check_out:
+            if check_in > check_out:
+                raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
             booked_room = self.session.scalar(
                 select(Booking)
                 .where(Booking.r_id == booking.r_id ,
                        Booking.id != booking.id,
-                       Booking.check_in < edit["check_in"],
-                       Booking.check_out > edit["check_out"],
+                       Booking.check_in < check_in,
+                       Booking.check_out > check_out,
                        Booking.status.in_(["confirmed", "pending"])
                        )
             )
             if booked_room:
-                raise ValueError("Room is already booked for the selected dates")
-            booking.check_in = edit["check_in"]
-            booking.check_out = edit["check_out"]
+                raise HTTPException(status_code=400, detail="Room is already booked")
+            booking.check_in = check_in
+            booking.check_out = check_out
 
-        if "status" in edit and edit["status"] is not None:
-            if edit["status"] not in ALLOWED_STATUSES:
-                raise ValueError("Invalid status")
-            self.update_booking_status(booking.id, edit["status"])
+        if status:
+            if status not in ALLOWED_STATUSES:
+                raise HTTPException(status_code=400, detail="Invalid status")
+            self.update_booking_status(booking.id, status)
 
-        if "user_id" in edit and edit["user_id"] is not None:
-            user = self.session.scalar(select(User).where(User.id == edit["user_id"]))
+        if user_id:
+            user = self.session.scalar(select(User).where(User.id == user_id))
             if user is None:
-                raise ValueError("User not found")
-            booking.user_id = edit["user_id"]
+                raise HTTPException(status_code=404, detail="User not found")
+            booking.user_id = user_id
 
         self.session.commit()
         self.session.refresh(booking)
