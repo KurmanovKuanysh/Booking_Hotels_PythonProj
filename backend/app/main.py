@@ -1,16 +1,26 @@
-from backend.app.db.session import SessionLocal
-
-from backend.app.services.room import RoomService
-from backend.app.services.booking import BookingService
-from backend.app.services.user import UserService
-from backend.app.services.hotel import HotelService
-from backend.app.services.room_type import RoomTypeService
-from backend.app.utils.views.printers import Printer
-from backend.app.services.additional.input_service import Inputs
-from backend.app.utils.views.menus import Menu
-from backend.app.services.admin import Admin
-
 from backend.app.app import App
+from backend.app.db.session import SessionLocal
+from backend.app.services.additional.input_service import Inputs
+from backend.app.services.admin import Admin
+from backend.app.services.booking import BookingService
+from backend.app.services.hotel import HotelService
+from backend.app.services.room import RoomService
+from backend.app.services.room_type import RoomTypeService
+from backend.app.services.user import UserService
+from backend.app.utils.views.menus import Menu
+from backend.app.utils.views.printers import Printer
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Welcome to Hotel Booking API"}
+
+@app.get("/user/{name}")
+def user(name: str):
+    return {"message": f"Hello {name}"}
 
 session = SessionLocal()
 try:

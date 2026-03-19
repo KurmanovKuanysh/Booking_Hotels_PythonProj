@@ -112,7 +112,12 @@ def test_edit_booking_return_booking(session: Session, booking_one):
         "status": "cancelled"
     }
 
-    edited_booking = service.edit_booking(edit)
+    edited_booking = service.edit_booking(
+        booking_id=edit["id"],
+        check_in=edit["check_in"],
+        check_out=edit["check_out"],
+        status=edit["status"]
+    )
 
     assert edited_booking.check_in == date.today() + timedelta(days=4)
     assert edited_booking.check_out == date.today() + timedelta(days=5)
