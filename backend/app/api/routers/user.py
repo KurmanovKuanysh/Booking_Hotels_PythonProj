@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from backend.app.api.deps import get_db
-from backend.app.schemas.user import  UserRegister, UserCreate, UserRead, UserLogin
+from backend.app.schemas.user import  UserBase, UserRead, UserLogin, UserRegister
 from backend.app.services.user import UserService
 from sqlalchemy.orm import Session
 router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/", response_model=UserRead)
 def create_user(
-        user: UserCreate,
+        user: UserBase,
         db: Session = Depends(get_db)
 ):
     service = UserService(db)
@@ -31,17 +31,19 @@ def get_all_users(db: Session = Depends(get_db) ):
     return service.get_users()
 @router.post("/register", response_model=UserRead)
 def register_user(
-        user = UserRegister,
+        user: UserRegister,
         db: Session = Depends(get_db)
 ):
     service = UserService(db)
     return service.register_user(
-        user.name,
-        user.email,
-        user.password
+        name=user.name,
+        email=user.email,
+        password=user.password
     )
 @router.post("/login", response_model=UserRead)
-def login_user(user: UserLogin, db: Session = Depends(get_db)):
+def login_user(
+        user: UserLogin,
+        db: Session = Depends(get_db)):
     service = UserService(db)
     return service.login_user(
         email=user.email,
