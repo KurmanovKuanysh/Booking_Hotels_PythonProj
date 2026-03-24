@@ -6,20 +6,6 @@ from backend.app.schemas.room import RoomBase, RoomRead, RoomEdit
 from datetime import date
 
 router = APIRouter(prefix="/hotels", tags=["Rooms"])
-
-@router.get("/rooms/by_price", response_model=list[RoomRead])
-def get_rooms_by_price_range(min_price: float, max_price: float, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    return service.list_rooms_by_price(min_price, max_price)
-@router.get("/rooms/by_type", response_model=list[RoomRead])
-def get_rooms_by_type(room_type:str, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    return service.list_rooms_by_type(room_type)
-
-@router.get("/rooms/by_capacity", response_model=list[RoomRead])
-def get_rooms_by_capacity(capacity:int, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    return service.list_rooms_by_capacity(capacity)
 @router.get("/rooms", response_model=list[RoomRead])
 def get_rooms(db: Session = Depends(get_db)):
     service = RoomService(db)
@@ -61,7 +47,7 @@ def get_rooms_by_hotel_id(
         max_price=max_price,
         room_type=room_type
     )
-@router.patch("{hotel_id}/rooms/{room_id}/edit", response_model=RoomRead)
+@router.patch("/{hotel_id}/rooms/{room_id}/edit", response_model=RoomRead)
 def edit_room(
         hotel_id:int,
         room_id:int,
@@ -94,8 +80,3 @@ def get_available_rooms_by_hotel_dates(
         check_in=check_in,
         check_out=check_out
     )
-@router.get("/{hotel_id}/rooms/price_range")
-def get_rooms_price_range(hotel_id: int, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    rooms = service.list_rooms_by_hotel_id(hotel_id)
-    return service.get_rooms_price_range(rooms)

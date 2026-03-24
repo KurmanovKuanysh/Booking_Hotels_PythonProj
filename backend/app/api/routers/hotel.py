@@ -23,25 +23,17 @@ def get_hotels(db: Session = Depends(get_db)):
     service = HotelService(db)
     return service.get_hotels()
 
-@router.get("/by_city", response_model=list[HotelRead])
-def get_hotels_by_city(city: str, db: Session = Depends(get_db)):
-    service = HotelService(db)
-    return service.list_hotels_by_city(city)
-@router.get("/by_address", response_model=list[HotelRead])
+@router.get("/search/address", response_model=list[HotelRead])
 def get_hotels_by_address(address: str, db: Session = Depends(get_db)):
     service = HotelService(db)
     return service.get_hotels_by_address(address)
 
-@router.get("/by_name", response_model=list[HotelRead])
+@router.get("/search/name", response_model=list[HotelRead])
 def get_hotels_by_name(name: str, db: Session = Depends(get_db)):
     service = HotelService(db)
     return service.get_hotels_by_name(name)
-@router.get("/by_stars", response_model=list[HotelRead])
-def get_hotels_by_stars(stars_from: float, stars_to: float, db: Session = Depends(get_db)):
-    service = HotelService(db)
-    return service.list_hotels_by_stars(stars_from, stars_to)
 
-@router.get("/by_filter", response_model=list[HotelRead])
+@router.get("/filter", response_model=list[HotelRead])
 def get_hotels_by_filter(
         stars_from: float = 1,
         stars_to: float = 5,

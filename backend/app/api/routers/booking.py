@@ -20,33 +20,25 @@ def create_booking(
         status=booking.status,
         user_id=booking.user_id
     )
-@router.patch("/{booking_id}/admin/status", response_model=bool)
-def update_booking_status(
-        booking_id: int,
-        status: str,
-        db: Session = Depends(get_db)
-):
-    service = BookingService(db)
-    return service.update_booking_status(
-        booking_id=booking_id,
-        status=status
-    )
-@router.patch("/admin/status_update", response_model=list[BookingRead])
-def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
-    service = BookingService(db)
-    return service.check_update_completed_bookings()
+# @router.patch("/admin/{booking_id}/status", response_model=bool)
+# def update_booking_status(
+#         booking_id: int,
+#         status: str,
+#         db: Session = Depends(get_db)
+# ):
+#     service = BookingService(db)
+#     return service.update_booking_status(
+#         booking_id=booking_id,
+#         status=status
+#     )
+# @router.patch("/admin/update-all-status", response_model=list[BookingRead])
+# def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
+#     service = BookingService(db)
+#     return service.check_update_completed_bookings()
 @router.get("/", response_model=list[BookingRead])
 def get_bookings(db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.get_all_bookings()
-@router.get("/user/user_id", response_model=list[BookingRead])
-def get_user_bookings(user_id: int, db: Session = Depends(get_db)):
-    service = BookingService(db)
-    return service.get_bookings_by_user_id(user_id)
-@router.get("/users/email", response_model=list[BookingRead])
-def get_bookings_by_email(email: str, db: Session = Depends(get_db)):
-    service = BookingService(db)
-    return service.get_bookings_by_user_email(email)
 @router.patch("/{booking_id}/edit", response_model=BookingRead)
 def edit_booking(
         booking_id: int,
@@ -76,4 +68,8 @@ def get_booking_status(booking_id: int, db: Session = Depends(get_db)):
 def delete_booking(booking_id: int, db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.delete_booking(booking_id)
+@router.get("/user/{user_id}", response_model=list[BookingRead])
+def get_user_bookings(user_id: int, db: Session = Depends(get_db)):
+    service = BookingService(db)
+    return service.get_bookings_by_user_id(user_id)
 
