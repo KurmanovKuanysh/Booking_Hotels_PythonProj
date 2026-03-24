@@ -79,34 +79,6 @@ class RoomService:
             raise HTTPException(status_code=400, detail="Not Valid ID requested")
         return room
 
-    def list_rooms_by_price(self, min_price: float, max_price: float) -> list[Room]:
-        if min_price < 0 or max_price < 0:
-            raise HTTPException(status_code=400, detail="Price must be greater than 0")
-        if min_price > max_price:
-            min_price, max_price = max_price, min_price
-        return list(
-            self.session.scalars(
-            select(Room).where(
-                Room.price_per_day >= min_price,
-                Room.price_per_day <= max_price )
-            ).all()
-        )
-
-
-    def list_rooms_by_type(self, room_type:str) -> list[Room]:
-        return list(self.session.scalars(
-            select(Room)
-            .join(RoomType, RoomType.id == Room.r_t_id)
-            .where(RoomType.type_name == room_type)
-            ).all()
-        )
-
-    def list_rooms_by_capacity(self, person:int) -> list[Room]:
-        return list(self.session.scalars(
-            select(Room).where(Room.capacity >= person)
-            ).all()
-        )
-
     def is_room_available(self, r_id:int, check_in: date, check_out: date) -> bool:
         booking = self.session.scalars(
             select(Booking)
@@ -122,6 +94,8 @@ class RoomService:
     def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
         if check_in > check_out:
             raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
+        if check_in < date.today():
+            raise HTTPException(status_code=400, detail="Check-in date must be today or later")
         available_rooms = []
         for room in rooms:
             if self.is_room_available(room.id, check_in, check_out):

@@ -9,6 +9,12 @@ from fastapi import HTTPException
 from backend.app.schemas.booking import BookingRead
 
 ALLOWED_STATUSES = {"pending", "confirmed", "cancelled", "completed"}
+ALLOWED_TRANSITIONS = {
+    "pending": ["confirmed", "cancelled"],
+    "confirmed": ["cancelled", "completed"],
+    "cancelled": [],
+    "completed": []
+}
 
 class BookingService:
     def __init__(self, session: Session):
@@ -17,6 +23,7 @@ class BookingService:
     def create_new_booking(
             self,
             r_id:int,
+            guest_count: int,
             check_in: date,
             check_out: date,
             status: str,
@@ -35,6 +42,11 @@ class BookingService:
             raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
         if status not in ALLOWED_STATUSES:
             raise HTTPException(status_code=400, detail="Invalid status")
+        if guest_count < 1:
+            raise HTTPException(status_code=400, detail="Guest count must be at least 1")
+        room = self.session.scalar(select(Room).where(Room.id == r_id))
+        if guest_count > room.capacity:
+            raise HTTPException(status_code=400, detail="Guest count cannot exceed room capacity")
         new_booking = Booking(
             r_id=r_id,
             check_in=check_in,
@@ -96,7 +108,7 @@ class BookingService:
     def has_confirmed_booking(self, user_id: int) -> bool:
         user = self.session.scalar(select(User).where(User.id == user_id))
         if user is None:
-            raise ValueError("User not found")
+            raise HTTPException(status_code=404, detail="User not found")
         confirmed_bookings = self.session.scalars(
             select(Booking)
             .where(Booking.user_id == user_id,
@@ -105,13 +117,15 @@ class BookingService:
 
         return confirmed_bookings is not None
 
-    def update_booking_status(self, booking_id: int, status: str) -> bool:
-        if status.strip().lower() not in ALLOWED_STATUSES:
+    def update_booking_status(self, booking_id: int, new_status: str) -> bool:
+        if new_status.strip().lower() not in ALLOWED_STATUSES:
             raise HTTPException(status_code=400, detail="Invalid status")
         booking = self.get_booking_by_id(booking_id)
         if not booking:
             raise HTTPException(status_code=404, detail="Booking not found")
-        booking.status = status.strip().lower()
+        if new_status.strip().lower() not in ALLOWED_TRANSITIONS[booking.status]:
+            raise HTTPException(status_code=400, detail="Invalid status transition")
+        booking.status = new_status.strip().lower()
         self.session.commit()
         return True
 
@@ -143,13 +157,8 @@ class BookingService:
                     select(Booking)
                     .where(Booking.user_id == user_id)
                     .order_by(Booking.id.desc())
-                    # .limit(1)
         ).first()
-        # if booking:
-        #     booking.status = "confirmed"
-        #
-        #     self.session.commit()
-        #     self.session.refresh(booking)
+
         return booking
 
     def edit_booking(

@@ -116,20 +116,6 @@ class HotelService:
         )
         return bool(self.session.scalars(hotel_active).first())
 
-    def list_hotels_with_active_booking(self) -> list[Hotel]:
-        hotels_active = (
-            select(Hotel)
-            .join(Room, Room.h_id == Hotel.id)
-            .join(Booking, Booking.r_id == Room.id)
-            .where(
-                Booking.status.in_(["confirmed", "pending"]),
-                Booking.check_out >= date.today()
-            ).distinct()
-        )
-        return list(self.session.scalars(hotels_active).all())
-
-    from fastapi import HTTPException
-    from sqlalchemy import select
 
     def edit_hotel(
             self,
