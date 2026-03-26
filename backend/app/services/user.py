@@ -1,22 +1,23 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from backend.app.core.exceptions import InvalidLoginOrPasswordError
+
 from backend.app.models import Booking
 from backend.app.models.user import User
 from fastapi import HTTPException
 
 from backend.app.schemas.user import UserRead
 
-from backend.app.security.auth import hash_password, verify_password
-
+from backend.app.core.security import hash_password, verify_password
 
 class UserService:
     def __init__(self, session: Session):
         self.session = session
 
     def add_user(self, name: str, email: str, password: str, role: str):
-        if self.find_user_by_email(email):
-            raise HTTPException(status_code=400, detail="Email already registered")
+        # if self.find_user_by_email(email):
+        #     raise HTTPException(status_code=400, detail="Email already registered")
         user = User(name=name, email=email, password=password, role=role)
         self.session.add(user)
         self.session.commit()
@@ -26,26 +27,26 @@ class UserService:
     def delete_user(self, user_id: int) -> bool:
         user = self.get_user_by_id(user_id)
         if user:
-            active_bookings = self.session.scalars(
+            active_booking = self.session.scalar(
                 select(Booking)
                 .where(Booking.user_id == user_id, Booking.status.in_(["confirmed", "pending"]))
             )
-            if active_bookings:
+            if active_booking is not None:
                 raise HTTPException(status_code=400, detail="User has active bookings!")
             self.session.delete(user)
             self.session.commit()
             return True
-        return False
+        raise HTTPException(status_code=404, detail="User not found")
 
     def find_user_by_email(self, email: str) -> User | None:
         return self.session.scalars(
             select(User).where(User.email == email)
         ).one_or_none()
 
-    def get_user_by_email(self, email: str) -> User:
+    def get_user_by_email(self, email: str) -> User | None:
         user = self.find_user_by_email(email)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        # if not user:
+        #     raise HTTPException(status_code=404, detail="User not found")
         return user
 
     def exists_user_email(self, email: str) -> bool:
@@ -75,14 +76,9 @@ class UserService:
 
     def login_user(self, email: str, password: str) -> User:
         user = self.get_user_by_email(email)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        if self.check_password(user.id, password):
-            return user
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect email or password",
-        )
+        if not user or not self.check_password(user.id, password):
+            raise InvalidLoginOrPasswordError("Invalid email or password")
+        return user
 
     def check_password(self,user_id: int, password: str) -> bool:
         user = self.get_user_by_id(user_id)
@@ -90,7 +86,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
         return verify_password(password, user.password)
 
-    def edit_user(self, edit: dict) -> User:
+    def edit_user(self, edit: dict) -> UserRead:
         if "id" not in edit:
             raise ValueError("User id is required")
         user = self.get_user_by_id(edit["id"])

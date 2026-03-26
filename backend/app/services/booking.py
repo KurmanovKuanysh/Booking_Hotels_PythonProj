@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from backend.app.models.booking import Booking
 from backend.app.models.user import User
 from backend.app.models.room import Room
-from datetime import date
+from datetime import date, datetime
 from fastapi import HTTPException
 
 from backend.app.schemas.booking import BookingRead
@@ -27,7 +27,9 @@ class BookingService:
             check_in: date,
             check_out: date,
             status: str,
-            user_id: int) -> Booking:
+            user_id: int,
+            total_price: float
+                ) -> Booking:
         booked_room = self.session.scalar(
             select(Booking)
             .where(Booking.r_id == r_id,
@@ -44,6 +46,8 @@ class BookingService:
             raise HTTPException(status_code=400, detail="Invalid status")
         if guest_count < 1:
             raise HTTPException(status_code=400, detail="Guest count must be at least 1")
+        if total_price < 0:
+            raise HTTPException(status_code=400, detail="Total price must be at least 0")
         room = self.session.scalar(select(Room).where(Room.id == r_id))
         if guest_count > room.capacity:
             raise HTTPException(status_code=400, detail="Guest count cannot exceed room capacity")
@@ -52,7 +56,8 @@ class BookingService:
             check_in=check_in,
             check_out=check_out,
             status=status,
-            user_id=user_id
+            user_id=user_id,
+            total_price=total_price
         )
         self.session.add(new_booking)
         self.session.commit()
