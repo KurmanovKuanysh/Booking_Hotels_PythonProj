@@ -4,6 +4,9 @@ class AppError(Exception):
 class UserNotFoundError(AppError):
     pass
 
+class InvalidLoginOrPasswordError(AppError):
+    pass
+
 class DuplicateEmailError(AppError):
     pass
 
