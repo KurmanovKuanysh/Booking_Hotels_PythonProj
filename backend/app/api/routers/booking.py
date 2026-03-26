@@ -9,32 +9,20 @@ router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
 @router.post("/", response_model=BookingBase)
 def create_booking(
+    guest_count: int,
     booking: BookingBase,
     db: Session = Depends(get_db)
 ):
     service = BookingService(db)
     return service.create_new_booking(
         r_id=booking.r_id,
+        guest_count=guest_count,
         check_in=booking.check_in,
         check_out=booking.check_out,
         status=booking.status,
-        user_id=booking.user_id
+        user_id=booking.user_id,
+        total_price=booking.total_price
     )
-# @router.patch("/admin/{booking_id}/status", response_model=bool)
-# def update_booking_status(
-#         booking_id: int,
-#         status: str,
-#         db: Session = Depends(get_db)
-# ):
-#     service = BookingService(db)
-#     return service.update_booking_status(
-#         booking_id=booking_id,
-#         status=status
-#     )
-# @router.patch("/admin/update-all-status", response_model=list[BookingRead])
-# def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
-#     service = BookingService(db)
-#     return service.check_update_completed_bookings()
 @router.get("/", response_model=list[BookingRead])
 def get_bookings(db: Session = Depends(get_db)):
     service = BookingService(db)
@@ -63,7 +51,6 @@ def get_booking_by_id(booking_id: int, db: Session = Depends(get_db)):
 def get_booking_status(booking_id: int, db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.get_booking_status(booking_id)
-
 @router.delete("/{booking_id}", response_model=bool)
 def delete_booking(booking_id: int, db: Session = Depends(get_db)):
     service = BookingService(db)
