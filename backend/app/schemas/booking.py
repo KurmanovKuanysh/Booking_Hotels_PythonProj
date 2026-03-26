@@ -6,6 +6,7 @@ class BookingBase(BaseModel):
     check_in: date
     check_out: date
     status: str = Field(min_length=3, max_length=100)
+    total_price: float = Field(gt=0)
     user_id: int = Field(gt=0)
 
 class BookingRead(BaseModel):
