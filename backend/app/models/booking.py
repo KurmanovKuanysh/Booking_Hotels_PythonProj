@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, CheckConstraint
+from sqlalchemy import ForeignKey, CheckConstraint, Integer
 from backend.app.db.base import Base
-from backend.app.utils.utils import int_big, text, date_
+from backend.app.utils.utils import int_big, text, date_, date_t, numeric_10_2
+from datetime import datetime
 
 
 class Booking(Base):
@@ -13,6 +14,8 @@ class Booking(Base):
     check_out: Mapped[date_] = mapped_column(nullable=False)
     status: Mapped[text] = mapped_column(nullable=False)
     user_id: Mapped[int_big] = mapped_column(ForeignKey("users.id"), nullable=False)
+    total_price: Mapped[numeric_10_2] = mapped_column(nullable=False)
+    created_at: Mapped[date_t] = mapped_column(nullable=False, default=datetime.utcnow)
 
     #relationship
     user = relationship("User", back_populates="booking")

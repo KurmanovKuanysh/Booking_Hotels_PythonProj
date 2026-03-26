@@ -11,6 +11,7 @@ class User(Base):
     email: Mapped[str_100] = mapped_column(nullable=False, unique=True)
     password: Mapped[str_100] = mapped_column(nullable=False)
     role: Mapped[str_100] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
     #relationship
     booking = relationship("Booking", back_populates="user")
