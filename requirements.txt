@@ -5,3 +5,6 @@ psycopg2-binary==2.9.11
 pytest
 fastapi
 pydantic
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
