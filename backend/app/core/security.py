@@ -4,10 +4,10 @@ import os
 from jose import JWTError,jwt
 from passlib.context import CryptContext
 
+from backend.app.core.config import get_auth_data
+
 load_dotenv()
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'secret_key')
-ALGORITHM = os.getenv('ALGORITHM', 'HS256')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', 30))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,15 +18,16 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None, refresh: bool = False) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
 
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-def decode_access_token(token: str) -> dict | None:
-    try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        return None
+    auth_data = get_auth_data()
+    return jwt.encode(to_encode, auth_data['secret_key'], algorithm=auth_data['algorithm'])
+
+def decode_access_token(token: str) -> dict:
+    auth_data = get_auth_data()
+    return jwt.decode(token, auth_data['secret_key'], algorithms=auth_data['algorithm'])
+
 
