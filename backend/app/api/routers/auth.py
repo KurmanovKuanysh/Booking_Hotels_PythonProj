@@ -8,9 +8,10 @@ from backend.app.core.security import create_access_token
 from datetime import timedelta
 
 REFRESH_TOKEN_EXPIRE_DAYS = 2
-router = APIRouter(tags=["Users"])
+router = APIRouter(tags=["Authorization"])
 
-@router.post("/register/", response_model=UserRead, status_code=201)
+
+@router.post("/auth/register", response_model=UserRead, status_code=201)
 def create_user_account(
         user_data: UserRegister,
         db: Session = Depends(get_db)
@@ -26,7 +27,7 @@ def create_user_account(
         user_data.password
     )
     return new_user
-@router.post("/login/", response_model=Token)
+@router.post("/auth/login", response_model=Token)
 def login_user(
         user = Depends(validate_auth_user),
 ):
@@ -47,14 +48,5 @@ def login_user(
     return Token(
         access_token=access_token,
         refresh_token=refresh_token,
-        token_type="Bearer",
+        token_type="bearer",
     )
-
-@router.get("/users/me/")
-def auth_user_check_self_info(
-        user: UserRead = Depends(get_current_user),
-):
-    return {
-        "email": user.email,
-        "name": user.name,
-    }
