@@ -3,6 +3,7 @@ from sqlalchemy import select
 
 from backend.app.models import Hotel
 from backend.app.models.booking import Booking
+from backend.app.models.filter import FRoom
 from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
 from datetime import date
@@ -113,21 +114,18 @@ class RoomService:
 
     def get_rooms_by_filter(
             self,
-            hotel_id: int,
-            capacity: int | None = None,
-            min_price: float | None = None,
-            max_price: float | None = None,
-            room_type: str | None = None
+            hotel_id:int,
+            filters: FRoom
     ) -> list[Room]:
         rooms = select(Room).where(Room.h_id == hotel_id)
-        if capacity is not None:
-            rooms = rooms.where(Room.capacity >= capacity)
-        if min_price is not None:
-            rooms = rooms.where(Room.price_per_day >= min_price)
-        if max_price is not None:
-            rooms = rooms.where(Room.price_per_day <= max_price)
-        if room_type is not None:
-            rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == room_type)
+        if filters.capacity is not None:
+            rooms = rooms.where(Room.capacity >= filters.capacity)
+        if filters.min_price is not None:
+            rooms = rooms.where(Room.price_per_day >= filters.min_price)
+        if filters.max_price is not None:
+            rooms = rooms.where(Room.price_per_day <= filters.max_price)
+        if filters.room_type is not None:
+            rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == filters.room_type)
 
         return list(self.session.scalars(rooms).all())
 

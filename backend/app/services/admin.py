@@ -6,6 +6,7 @@ from backend.app.models.room import Room
 from backend.app.models.user import User
 from backend.app.models.hotel import Hotel
 from backend.app.models.booking import Booking
+from backend.app.schemas.user import UserRead
 from backend.app.services.booking import BookingService
 from backend.app.services.hotel import HotelService
 from backend.app.services.room import RoomService
@@ -30,7 +31,7 @@ class Admin:
     def admin_add_user(self, name: str, email: str, password: str, role: str) -> User | None:
         return  self.user.add_user(name, email, password, role)
 
-    def get_users(self) -> list[User]:
+    def get_users(self) -> list[UserRead]:
         return self.user.get_users()
 
     def delete_user(self, user_id: int) -> bool:

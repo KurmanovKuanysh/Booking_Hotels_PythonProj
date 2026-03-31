@@ -39,9 +39,9 @@ class UserService:
         raise HTTPException(status_code=404, detail="User not found")
 
     def find_user_by_email(self, email: str) -> User | None:
-        return self.session.scalars(
+        return self.session.scalar(
             select(User).where(User.email == email)
-        ).one_or_none()
+        )
 
     def get_user_by_email(self, email: str) -> User | None:
         user = self.find_user_by_email(email)
@@ -107,7 +107,7 @@ class UserService:
         if "password" in edit and edit["password"] is not None:
             if len(edit["password"]) < 6:
                 raise ValueError("Password must be at least 6 characters")
-            user.password = edit["password"]
+            user.password = hash_password(edit["password"])
         if "role" in edit and edit["role"] is not None:
             if edit["role"] not in ["ADMIN", "USER"]:
                 raise ValueError("Role must be ADMIN or USER")

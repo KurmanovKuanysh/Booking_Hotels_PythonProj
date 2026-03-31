@@ -1,5 +1,7 @@
 from sqlalchemy import select, update, func
 from sqlalchemy.orm import Session
+
+from backend.app.models.filter import FHotel
 from backend.app.models.hotel import Hotel
 from backend.app.models.booking import Booking
 from backend.app.models.room import Room
@@ -94,13 +96,11 @@ class HotelService:
 
     def list_hotels_by_filter(
             self,
-            stars_from: float | float = 1,
-            stars_to: float | float = 5,
-            city: str | None = None,
+            filters = FHotel()
     ) -> list[Hotel]:
-        hotels = select(Hotel).where(Hotel.stars >= stars_from, Hotel.stars <= stars_to)
-        if city is not None:
-            hotels = hotels.where(Hotel.city.ilike(f"%{city}%"))
+        hotels = select(Hotel).where(Hotel.stars >= filters.stars_from, Hotel.stars <= filters.stars_to)
+        if filters.city is not None:
+            hotels = hotels.where(Hotel.city.ilike(f"%{filters.city}%"))
 
         return list(self.session.scalars(hotels).all())
 
