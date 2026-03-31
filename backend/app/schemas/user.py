@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr
 
 class UserCreate(BaseModel):
     name: str = Field(min_length=3, max_length=100)
@@ -22,5 +22,27 @@ class UserLogin(BaseModel):
 
 class UserRegister(BaseModel):
     name: str = Field(min_length=3, max_length=100, description="Name of the user")
-    email: str = Field(min_length=6, max_length=100, description="Email of the user")
+    email: EmailStr
     password: str = Field(min_length=6, max_length=100, description="Password of the user")
+
+class UserEdit(BaseModel):
+    name: str | None = Field(default=None, min_length=3, max_length=100)
+    email: str | None = Field(default=None, min_length=6, max_length=100)
+    password: str | None = Field(default=None, min_length=6, max_length=100)
+
+class UserEditAdmin(UserEdit):
+    is_active: bool | None = Field(default=None)
+    role: str | None = Field(default=None, min_length=3, max_length=100)
+
+class UserChangePassword(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=100)
+    confirm_password: str = Field(min_length=8, max_length=100)
+
+    @model_validator(mode='after')
+    def check_passwords_match(self):
+        if self.new_password != self.confirm_password:
+            raise ValueError(
+                "The passwords do not match",
+            )
+        return self

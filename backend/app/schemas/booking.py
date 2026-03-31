@@ -9,6 +9,13 @@ class BookingBase(BaseModel):
     total_price: float = Field(gt=0)
     user_id: int = Field(gt=0)
 
+class BookingNew(BaseModel):
+    r_id: int = Field(gt=0)
+    check_in: date
+    check_out: date
+    status: str = Field(min_length=3, max_length=100)
+    total_price: float = Field(gt=0)
+
 class BookingRead(BaseModel):
     id: int = Field(gt=0)
     r_id: int
@@ -16,6 +23,7 @@ class BookingRead(BaseModel):
     check_out: date
     status: str
     user_id: int
+    total_price: float
 
     model_config = ConfigDict(from_attributes=True)
 
