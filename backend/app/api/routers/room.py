@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
+from backend.app.models.filter import FRoom
 from backend.app.services.room import RoomService
 from backend.app.api.deps import get_db
-from backend.app.schemas.room import RoomBase, RoomRead, RoomEdit
+from backend.app.schemas.room import RoomRead, RoomEdit
 from datetime import date
 
-router = APIRouter(prefix="/hotels", tags=["Rooms"])
+router = APIRouter(tags=["Rooms"])
 @router.get("/rooms", response_model=list[RoomRead])
 def get_rooms(db: Session = Depends(get_db)):
     service = RoomService(db)
@@ -14,59 +16,18 @@ def get_rooms(db: Session = Depends(get_db)):
 def get_room_by_id(room_id:int, db: Session = Depends(get_db)):
     service = RoomService(db)
     return service.get_room_by_id(room_id)
-@router.delete("/rooms/{room_id}", status_code=204)
-def delete_room(room_id:int, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    return service.delete_room(room_id)
-@router.post("/{hotel_id}/rooms", response_model=RoomRead)
-def create_room(hotel_id: int, room: RoomBase, db: Session = Depends(get_db)):
-    service = RoomService(db)
-    return service.add_room(
-        h_id=hotel_id,
-        room_number=room.room_number,
-        r_t_id=room.r_t_id,
-        capacity=room.capacity,
-        price_per_day=room.price_per_day,
-        floor=room.floor,
-        description=room.description
-    )
-@router.get("/{hotel_id}/rooms", response_model=list[RoomRead])
-def get_rooms_by_hotel_id(
-        hotel_id:int,
-        capacity: int | None = None,
-        min_price: float | None = None,
-        max_price: float | None = None,
-        room_type: str | None = None,
+@router.get("/hotels/{hotel_id}/rooms", response_model=list[RoomRead])
+def get_rooms_by_filter(
+        hotel_id: int,
+        filters: FRoom = Depends(),
         db: Session = Depends(get_db)
 ):
     service = RoomService(db)
     return service.get_rooms_by_filter(
-        hotel_id=hotel_id,
-        capacity=capacity,
-        min_price=min_price,
-        max_price=max_price,
-        room_type=room_type
+        hotel_id = hotel_id,
+        filters=filters
     )
-@router.patch("/{hotel_id}/rooms/{room_id}/edit", response_model=RoomRead)
-def edit_room(
-        hotel_id:int,
-        room_id:int,
-        room : RoomEdit,
-        db: Session = Depends(get_db)
-):
-    service = RoomService(db)
-    return service.edit_room(
-        hotel_id=hotel_id,
-        room_id=room_id,
-        room_number=room.room_number,
-        r_t_id=room.r_t_id,
-        capacity=room.capacity,
-        price_per_day=room.price_per_day,
-        floor=room.floor,
-        description=room.description
-    )
-
-@router.get("/{hotel_id}/rooms/available", response_model=list[RoomRead])
+@router.get("/hotels/{hotel_id}/rooms/available", response_model=list[RoomRead])
 def get_available_rooms_by_hotel_dates(
         hotel_id: int,
         check_in: date,
