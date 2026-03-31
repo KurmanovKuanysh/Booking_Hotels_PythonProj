@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.app.schemas.booking import BookingRead
 from backend.app.schemas.hotel import HotelRead, HotelBase, HotelEdit
-from backend.app.schemas.room import RoomRead, RoomEdit
-from backend.app.schemas.user import UserRead, UserCreate
-from backend.app.api.deps import get_db
+from backend.app.schemas.room import RoomRead, RoomEdit, RoomCreate
+from backend.app.schemas.user import UserRead, UserCreate, UserEditAdmin
+from backend.app.api.deps import get_db, get_current_user_admin, get_current_user
 from backend.app.services.booking import BookingService
 from backend.app.services.hotel import HotelService
 from backend.app.services.room import RoomService
 from backend.app.services.user import UserService
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin", tags=["Admin"], dependencies=[Depends(get_current_user_admin)])
 
 #USER=================================================
 @router.post("/users", response_model=UserRead)
@@ -46,12 +46,24 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 def get_user_by_id(user_id:int , db: Session = Depends(get_db)):
     service = UserService(db)
     return service.get_user_by_id(user_id)
+@router.patch("/users/{user_id}/edit/force", response_model=UserRead)
+def edit_user_force_admin(
+        user_id: int,
+        data: UserEditAdmin,
+        db: Session = Depends(get_db)
+):
+    service = UserService(db)
+    return service.edit_user_admin(user_id, data)
 #USEREND=================================================
 
 
 #ROOMS=================================================
 @router.post("/hotels/{hotel_id}/rooms", response_model=RoomRead)
-def create_new_room(hotel_id: int, room: RoomRead, db: Session = Depends(get_db)):
+def create_new_room(
+        hotel_id: int,
+        room: RoomCreate,
+        db: Session = Depends(get_db)
+):
     service = RoomService(db)
     return service.add_room(
         h_id=hotel_id,
@@ -89,7 +101,13 @@ def delete_room(room_id:int, db: Session = Depends(get_db)):
 
 
 #BOOKING=================================================
-@router.patch("/admin/{booking_id}/status", response_model=bool)
+@router.get("/bookings", response_model=list[BookingRead])
+def get_bookings(
+    db: Session = Depends(get_db)
+):
+    service = BookingService(db)
+    return service.get_all_bookings()
+@router.patch("/bookings/{booking_id}/status", response_model=bool)
 def update_booking_status(
         booking_id: int,
         status: str,
@@ -100,16 +118,33 @@ def update_booking_status(
         booking_id=booking_id,
         new_status=status
     )
-@router.patch("/admin/update-all-status", response_model=list[BookingRead])
+@router.patch("/bookings/update-all-status", response_model=list[BookingRead])
 def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
     service = BookingService(db)
     return service.check_update_completed_bookings()
+@router.delete("/bookings/{booking_id}", response_model=bool)
+def delete_booking(
+        booking_id: int,
+        db: Session = Depends(get_db)
+) -> bool:
+    service = BookingService(db)
+
+    booking = service.get_booking_by_id(booking_id)
+    can_delete = booking.status in ["cancelled", "completed"]
+
+    if not can_delete:
+        raise HTTPException(status_code=403, detail="Not Allowed")
+    return service.delete_booking(booking_id)
+
 #BOOKINGEND=================================================
 
 
 #HOTEL=================================================
 @router.post("/hotels", response_model=HotelRead)
-def create_hotel(hotel: HotelBase, db: Session = Depends(get_db)):
+def create_hotel(
+        hotel: HotelBase,
+        db: Session = Depends(get_db)
+):
     service = HotelService(db)
     return service.add_hotel(
         name=hotel.name,
