@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, func
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from backend.app.models.filter import FHotel
