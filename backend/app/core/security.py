@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import os
-from jose import JWTError,jwt
+from jose import jwt
 from passlib.context import CryptContext
 
 from backend.app.core.config import get_auth_data
+from backend.app.core.exceptions import PasswordVerifyError
 
 load_dotenv()
 
@@ -16,8 +17,10 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception:
+        raise PasswordVerifyError
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
 
