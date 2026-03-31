@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from backend.app.services.hotel import HotelService
 from backend.app.api.deps import get_db
-from backend.app.schemas.hotel import HotelRead, HotelBase, HotelEdit
+from backend.app.schemas.hotel import HotelRead
 from backend.app.models.filter import FHotel
 
 router = APIRouter(tags=["Hotels"])

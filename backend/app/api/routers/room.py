@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from backend.app.models.filter import FRoom
 from backend.app.services.room import RoomService
 from backend.app.api.deps import get_db
-from backend.app.schemas.room import RoomRead, RoomEdit
+from backend.app.schemas.room import RoomRead
 from datetime import date
 
 router = APIRouter(tags=["Rooms"])
