@@ -8,14 +8,20 @@ from backend.app.api.routers.auth import router as auth_router
 
 from backend.app.core.exceptions_handler import (
     register_errors_handlers,login_errors_handlers,
-    user_errors_handlers, booking_errors_handlers
+    user_errors_handlers, booking_errors_handlers,
+    hotel_errors_handlers
 )
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
 register_errors_handlers(app)
 login_errors_handlers(app)
 user_errors_handlers(app)
 booking_errors_handlers(app)
+hotel_errors_handlers(app)
 @app.get("/")
 def home():
     return {"message": "Welcome to Hotel Booking API"}
