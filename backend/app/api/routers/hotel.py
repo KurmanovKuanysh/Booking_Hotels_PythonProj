@@ -32,7 +32,3 @@ def get_hotels_by_filter(
     return service.list_hotels_by_filter(
         filters
     )
-@router.get("/hotels/{hotel_id}", response_model=HotelRead)
-def get_hotel_by_id(hotel_id: int, db: Session = Depends(get_db)):
-    service = HotelService(db)
-    return service.get_hotel_by_id(hotel_id)

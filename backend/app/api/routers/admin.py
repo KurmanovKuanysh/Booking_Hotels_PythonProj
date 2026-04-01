@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.app.schemas.booking import BookingRead
+from backend.app.schemas.booking import BookingRead, BookingEditAdmin
 from backend.app.schemas.hotel import HotelRead, HotelBase, HotelEdit
 from backend.app.schemas.room import RoomRead, RoomEdit, RoomCreate
-from backend.app.schemas.user import UserRead, UserCreate, UserEditAdmin
-from backend.app.api.deps import get_db, get_current_user_admin, get_current_user
+from backend.app.schemas.user import UserRead, UserCreate, UserEditAdmin, UserRegister
+
+from backend.app.api.deps import get_db, get_current_user_admin
+from backend.app.core.exceptions import NoPermissionRole, DuplicateEmailError
+
 from backend.app.services.booking import BookingService
 from backend.app.services.hotel import HotelService
 from backend.app.services.room import RoomService
@@ -13,6 +16,25 @@ from backend.app.services.user import UserService
 
 router = APIRouter(prefix="/admin", tags=["Admin"], dependencies=[Depends(get_current_user_admin)])
 
+@router.post("/auth/register-admin", status_code=201)
+def create_user_account(
+        user_data: UserRegister,
+        db: Session = Depends(get_db),
+        admin: UserRead = Depends(get_current_user_admin)
+):
+    service = UserService(db)
+    if admin.role != "S-ADMIN":
+        raise NoPermissionRole
+    if service.find_user_by_email(str(user_data.email)) is not None:
+        raise DuplicateEmailError  # BAD REQUEST
+
+    new_user = service.register_user(
+        name=user_data.name,
+        email=str(user_data.email),
+        password=user_data.password,
+        role="ADMIN"
+    )
+    return new_user
 #USER=================================================
 @router.post("/users", response_model=UserRead)
 def create_user(
@@ -54,10 +76,37 @@ def edit_user_force_admin(
 ):
     service = UserService(db)
     return service.edit_user_admin(user_id, data)
+@router.delete("/users/{user_id}/delete-cascade", status_code=204)
+def delete_user_cascade_force_admin(
+        user_id: int,
+        db: Session = Depends(get_db),
+        admin: UserRead = Depends(get_current_user_admin)
+):
+    if admin.role != "S-ADMIN":
+        raise NoPermissionRole
+    service_user = UserService(db)
+    service_booking = BookingService(db)
+    try:
+        service_user.get_user_by_id(user_id)
+        have_bookings = service_booking.get_bookings_by_user_id(user_id)
+        if have_bookings:
+            for booking in have_bookings:
+                service_booking.delete_booking_cascade_admin(booking.id)
+        service_user.delete_user(user_id)
+    except Exception as e:
+        raise e
 #USEREND=================================================
 
 
 #ROOMS=================================================
+@router.get("/rooms", response_model=list[RoomRead])
+def get_rooms(db: Session = Depends(get_db)):
+    service = RoomService(db)
+    return service.get_all_rooms()
+@router.get("/rooms/{room_id}", response_model=RoomRead)
+def get_room_by_id(room_id:int, db: Session = Depends(get_db)):
+    service = RoomService(db)
+    return service.get_room_by_id(room_id)
 @router.post("/hotels/{hotel_id}/rooms", response_model=RoomRead)
 def create_new_room(
         hotel_id: int,
@@ -107,6 +156,22 @@ def get_bookings(
 ):
     service = BookingService(db)
     return service.get_all_bookings()
+@router.patch("/bookings/update-all-status", response_model=list[BookingRead])
+def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
+    service = BookingService(db)
+    return service.check_update_completed_bookings()
+@router.patch("/bookings/{booking_id}/edit", response_model=BookingRead)
+def edit_booking_admin_side(
+        booking_id: int,
+        edit: BookingEditAdmin,
+        db: Session = Depends(get_db),
+        user: UserRead = Depends(get_current_user_admin)
+):
+    service = BookingService(db)
+    return service.edit_booking_admin_side(
+        booking_id=booking_id,
+        edit=edit
+    )
 @router.patch("/bookings/{booking_id}/status", response_model=bool)
 def update_booking_status(
         booking_id: int,
@@ -118,10 +183,25 @@ def update_booking_status(
         booking_id=booking_id,
         new_status=status
     )
-@router.patch("/bookings/update-all-status", response_model=list[BookingRead])
-def update_booking_statuses_to_completed_admin(db: Session = Depends(get_db)):
+@router.get("/bookings/{booking_id}", response_model=BookingRead)
+def get_booking_by_id(
+    booking_id: int,
+    db: Session = Depends(get_db)
+):
     service = BookingService(db)
-    return service.check_update_completed_bookings()
+    return service.get_booking_by_id(booking_id)
+@router.get("/bookings/{booking_id}/status", response_model=str)
+def get_booking_status(
+        booking_id: int,
+        db: Session = Depends(get_db)
+):
+    service = BookingService(db)
+    return service.get_booking_status(booking_id)
+@router.get("/bookings/user/{user_id}", response_model=list[BookingRead])
+def get_user_bookings(user_id: int, db: Session = Depends(get_db)):
+    service = BookingService(db)
+    return service.get_bookings_by_user_id(user_id)
+
 @router.delete("/bookings/{booking_id}", response_model=bool)
 def delete_booking(
         booking_id: int,
@@ -168,6 +248,10 @@ def edit_hotel(
         stars=data.stars,
         description=data.description
     )
+@router.get("/hotels/{hotel_id}", response_model=HotelRead)
+def get_hotel_by_id(hotel_id: int, db: Session = Depends(get_db)):
+    service = HotelService(db)
+    return service.get_hotel_by_id(hotel_id)
 @router.delete("/hotels/{hotel_id}", status_code=204)
 def delete_hotel(hotel_id: int, db: Session = Depends(get_db)):
     service = HotelService(db)
