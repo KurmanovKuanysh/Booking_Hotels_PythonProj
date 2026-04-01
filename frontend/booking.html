@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM — Hotel Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0b0a;
+  --surface: #141210;
+  --card: #1c1916;
+  --border: #2a2520;
+  --gold: #c9a96e;
+  --gold-light: #e0c48a;
+  --gold-dim: rgba(201,169,110,0.15);
+  --text: #f0ebe3;
+  --text-muted: #7a7068;
+  --text-dim: #4a4540;
+  --red: #c96e6e;
+  --green: #6ec98a;
+  --radius: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+h1,h2,h3,h4 { font-family: 'Cormorant Garamond', serif; font-weight: 300; letter-spacing: 0.04em; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── TOAST ── */
+#toast-container {
+  position: fixed; top: 20px; right: 20px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  padding: 12px 20px; border-radius: var(--radius);
+  font-size: 13px; max-width: 320px; font-family: 'Outfit', sans-serif;
+  animation: slideIn .25s ease; border: 1px solid;
+}
+.toast.success { background: #0f1f14; border-color: var(--green); color: var(--green); }
+.toast.error   { background: #1f0f0f; border-color: var(--red);   color: var(--red);   }
+.toast.info    { background: #1a1710; border-color: var(--gold);  color: var(--gold);  }
+@keyframes slideIn { from { opacity:0; transform:translateX(20px) } to { opacity:1; transform:translateX(0) } }
+
+/* ── CONFIG BAR ── */
+#config-bar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 8px 24px; display: flex; align-items: center; gap: 12px; font-size: 12px;
+}
+#config-bar label { color: var(--text-muted); }
+#api-url-input {
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--text); padding: 4px 10px; border-radius: 4px;
+  font-family: 'Outfit', sans-serif; font-size: 12px; width: 260px;
+}
+#api-url-input:focus { outline: none; border-color: var(--gold); }
+
+/* ── NAVBAR ── */
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 0 32px; display: flex; align-items: center; gap: 0;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  letter-spacing: 0.18em; color: var(--gold); padding: 16px 32px 16px 0;
+  border-right: 1px solid var(--border); margin-right: 16px;
+  font-weight: 600; text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 2px; flex: 1; }
+.nav-link {
+  padding: 18px 16px; color: var(--text-muted); cursor: pointer;
+  font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;
+  border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap;
+}
+.nav-link:hover { color: var(--text); }
+.nav-link.active { color: var(--gold); border-bottom-color: var(--gold); }
+.nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.user-badge {
+  font-size: 12px; color: var(--text-muted); background: var(--card);
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+}
+.user-badge span { color: var(--gold); }
+.btn-logout {
+  padding: 6px 14px; background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 12px;
+  font-family: 'Outfit', sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: all .2s;
+}
+.btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+/* ── PAGES ── */
+.page { display: none; padding: 40px 32px; max-width: 1280px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── AUTH ── */
+.auth-wrap {
+  min-height: calc(100vh - 100px); display: flex;
+  align-items: center; justify-content: center;
+}
+.auth-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 48px; width: 400px;
+  box-shadow: var(--shadow);
+}
+.auth-logo { text-align: center; margin-bottom: 32px; }
+.auth-logo h1 { font-size: 36px; color: var(--gold); letter-spacing: 0.22em; text-transform: uppercase; }
+.auth-logo p { color: var(--text-muted); font-size: 12px; letter-spacing: 0.12em; margin-top: 4px; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 32px; border-bottom: 1px solid var(--border); }
+.auth-tab {
+  flex: 1; padding: 10px; text-align: center; cursor: pointer;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted); border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: all .2s;
+}
+.auth-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block; font-size: 11px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 10px 14px; border-radius: var(--radius);
+  font-family: 'Outfit', sans-serif; font-size: 14px; transition: border-color .2s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+select option { background: var(--card); }
+textarea { resize: vertical; min-height: 80px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 22px; border-radius: var(--radius); cursor: pointer;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid;
+  transition: all .2s; white-space: nowrap;
+}
+.btn-primary { background: var(--gold); border-color: var(--gold); color: #0c0b0a; }
+.btn-primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
+.btn-outline { background: transparent; border-color: var(--border); color: var(--text-muted); }
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-danger { background: transparent; border-color: var(--border); color: var(--text-muted); }
+.btn-danger:hover { border-color: var(--red); color: var(--red); }
+.btn-sm { padding: 6px 14px; font-size: 11px; }
+.btn-full { width: 100%; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 32px; }
+.page-header h2 { font-size: 32px; color: var(--text); margin-bottom: 4px; }
+.page-header p { color: var(--text-muted); font-size: 13px; }
+.page-title-line { display: flex; align-items: center; gap: 20px; margin-bottom: 6px; }
+.gold-line { width: 32px; height: 1px; background: var(--gold); display: inline-block; }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px;
+  display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;
+}
+.filter-bar .form-group { margin-bottom: 0; min-width: 140px; flex: 1; }
+.filter-bar .form-group label { font-size: 10px; }
+.filter-bar input, .filter-bar select { padding: 8px 12px; font-size: 13px; }
+
+/* ── GRID ── */
+.grid-hotels { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.grid-rooms  { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+/* ── HOTEL CARD ── */
+.hotel-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; cursor: pointer; transition: all .25s; position: relative;
+}
+.hotel-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.hotel-card-img {
+  height: 140px; background: linear-gradient(135deg, #1a1510 0%, #221d15 100%);
+  display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+}
+.hotel-card-img::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 40%, rgba(201,169,110,0.12) 0%, transparent 60%);
+}
+.hotel-card-icon { font-size: 40px; opacity: .5; position: relative; z-index: 1; }
+.hotel-card-body { padding: 18px 20px; }
+.hotel-card-name { font-size: 18px; color: var(--text); margin-bottom: 6px; }
+.hotel-card-city { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.hotel-stars { display: flex; gap: 2px; margin: 10px 0; }
+.star { color: var(--gold); font-size: 12px; }
+.star.empty { color: var(--border); }
+.hotel-card-address { font-size: 12px; color: var(--text-dim); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hotel-card-footer {
+  padding: 12px 20px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* ── ROOM CARD ── */
+.room-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; transition: all .2s; cursor: pointer;
+}
+.room-card:hover { border-color: var(--gold); }
+.room-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.room-number { font-size: 18px; color: var(--text); }
+.room-type-badge {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 3px 10px; border-radius: 20px; border: 1px solid;
+}
+.badge-deluxe    { border-color: #c9a96e; color: #c9a96e; }
+.badge-suite     { border-color: #a96ec9; color: #a96ec9; }
+.badge-president { border-color: #6e9ac9; color: #6e9ac9; }
+.badge-family    { border-color: #6ec9a9; color: #6ec9a9; }
+.badge-general   { border-color: var(--text-dim); color: var(--text-dim); }
+.room-price { font-size: 22px; font-family: 'Cormorant Garamond', serif; color: var(--gold); margin: 10px 0 4px; }
+.room-price span { font-size: 13px; color: var(--text-muted); font-family: 'Outfit', sans-serif; }
+.room-meta { display: flex; gap: 16px; margin-top: 12px; }
+.room-meta-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text-muted); font-size: 12px; cursor: pointer;
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px;
+  transition: color .2s;
+}
+.back-btn:hover { color: var(--gold); }
+
+/* ── BOOKING PANEL ── */
+.booking-panel {
+  background: var(--card); border: 1px solid var(--gold); border-radius: 10px;
+  padding: 28px; max-width: 480px; margin: 0 auto;
+}
+.booking-panel h3 { font-size: 24px; color: var(--gold); margin-bottom: 6px; }
+.booking-panel .room-info { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.price-calc { background: var(--surface); border-radius: var(--radius); padding: 16px; margin: 20px 0; }
+.price-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.price-row:last-child { margin-bottom: 0; padding-top: 8px; border-top: 1px solid var(--border); font-size: 15px; color: var(--gold); }
+.price-row .label { color: var(--text-muted); }
+
+/* ── BOOKINGS LIST ── */
+.booking-item {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px 24px; margin-bottom: 14px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+}
+.booking-item:hover { border-color: var(--gold-dim); }
+.status-badge {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 4px 12px; border-radius: 20px; border: 1px solid; display: inline-block;
+}
+.status-pending   { border-color: #c9a96e; color: #c9a96e; background: rgba(201,169,110,0.08); }
+.status-confirmed { border-color: #6ec98a; color: #6ec98a; background: rgba(110,201,138,0.08); }
+.status-cancelled { border-color: #c96e6e; color: #c96e6e; background: rgba(201,110,110,0.08); }
+.status-completed { border-color: #6e9ac9; color: #6e9ac9; background: rgba(110,154,201,0.08); }
+.booking-dates { flex: 1; }
+.booking-dates .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.booking-dates .value { font-size: 15px; font-family: 'Cormorant Garamond', serif; color: var(--text); }
+
+/* ── PROFILE ── */
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.profile-section {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 28px;
+}
+.profile-section h3 { font-size: 18px; color: var(--gold); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.info-row:last-child { border-bottom: none; }
+.info-row .key { color: var(--text-muted); }
+.info-row .val { color: var(--text); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 36px; width: 480px; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.6); animation: modalIn .2s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:scale(.96) } to { opacity:1; transform:scale(1) } }
+.modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.modal-header h3 { font-size: 22px; color: var(--gold); }
+.modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; line-height: 1; padding: 0; transition: color .2s; }
+.modal-close:hover { color: var(--text); }
+
+/* ── EMPTY / LOADING ── */
+.empty-state { text-align: center; padding: 64px 20px; }
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: .3; }
+.empty-state h3 { font-size: 22px; color: var(--text-muted); margin-bottom: 8px; }
+.empty-state p { font-size: 13px; color: var(--text-dim); }
+.loading { display: flex; align-items: center; justify-content: center; padding: 64px; gap: 8px; color: var(--text-muted); }
+.spinner {
+  width: 20px; height: 20px; border: 2px solid var(--border);
+  border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.section-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-dim); margin-bottom: 14px;
+}
+
+/* ── SEARCH ROW ── */
+.search-row { display: flex; gap: 10px; margin-bottom: 24px; }
+.search-row input { flex: 1; }
+
+/* ── DATE RANGE ── */
+.date-range { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- CONFIG BAR -->
+<div id="config-bar">
+  <label>API Base URL:</label>
+  <input type="text" id="api-url-input" value="http://localhost:8000" placeholder="http://localhost:8000">
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar" style="display:none">
+  <div class="nav-brand">Aurum</div>
+  <div class="nav-links">
+    <div class="nav-link active" data-page="hotels">Hotels</div>
+    <div class="nav-link" data-page="my-bookings">My Bookings</div>
+    <div class="nav-link" data-page="profile">Profile</div>
+    <div class="nav-link admin-only" data-page="admin" style="display:none">Admin Panel</div>
+  </div>
+  <div class="nav-right">
+    <div class="user-badge" id="user-badge">Guest</div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- ════════════════ AUTH PAGE ════════════════ -->
+<div id="page-auth" class="page active">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <h1>Aurum</h1>
+        <p>Luxury Hotel Reservations</p>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="switchAuthTab('login')">Sign In</div>
+        <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+      </div>
+      <!-- LOGIN -->
+      <div id="form-login">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="login()">Enter</button>
+      </div>
+      <!-- REGISTER -->
+      <div id="form-register" style="display:none">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="register()">Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ HOTELS PAGE ════════════════ -->
+<div id="page-hotels" class="page">
+  <div id="view-hotels-list">
+    <div class="page-header">
+      <div class="page-title-line"><span class="gold-line"></span><h2>Discover Hotels</h2></div>
+      <p>Find your perfect stay</p>
+    </div>
+    <!-- Search -->
+    <div class="search-row">
+      <input type="text" id="hotel-search-input" placeholder="Search by name or city…">
+      <button class="btn btn-outline" onclick="searchHotels()">Search</button>
+      <button class="btn btn-outline" onclick="loadHotels()">All Hotels</button>
+    </div>
+    <!-- Filters -->
+    <div class="filter-bar">
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" id="filter-city" placeholder="Any city">
+      </div>
+      <div class="form-group">
+        <label>Stars from</label>
+        <select id="filter-stars-from">
+          <option value="1">1 ★</option><option value="2">2 ★</option>
+          <option value="3">3 ★</option><option value="4">4 ★</option>
+          <option value="5">5 ★</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Stars to</label>
+        <select id="filter-stars-to">
+          <option value="1">1 ★</option><option value="2">2 ★</option>
+          <option value="3">3 ★</option><option value="4">4 ★</option>
+          <option value="5" selected>5 ★</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="filterHotels()">Apply Filter</button>
+    </div>
+    <div id="hotels-grid" class="grid-hotels"></div>
+  </div>
+
+  <!-- HOTEL DETAIL + ROOMS -->
+  <div id="view-hotel-detail" style="display:none">
+    <div class="back-btn" onclick="showHotelsList()">← Back to Hotels</div>
+    <div id="hotel-detail-content"></div>
+    <!-- Date availability filter -->
+    <div class="filter-bar" style="margin-top:28px">
+      <div class="form-group">
+        <label>Check-in</label>
+        <input type="date" id="avail-checkin">
+      </div>
+      <div class="form-group">
+        <label>Check-out</label>
+        <input type="date" id="avail-checkout">
+      </div>
+      <div class="form-group">
+        <label>Capacity</label>
+        <input type="number" id="filter-capacity" placeholder="Any" min="1">
+      </div>
+      <div class="form-group">
+        <label>Min Price</label>
+        <input type="number" id="filter-min-price" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Max Price</label>
+        <input type="number" id="filter-max-price" placeholder="Any">
+      </div>
+      <div class="form-group">
+        <label>Room Type</label>
+        <select id="filter-room-type">
+          <option value="">Any</option>
+          <option value="general">General</option>
+          <option value="deluxe">Deluxe</option>
+          <option value="suite">Suite</option>
+          <option value="family">Family</option>
+          <option value="president">President</option>
+        </select>
+      </div>
+      <button class="btn btn-outline" onclick="filterRooms()">Filter Rooms</button>
+      <button class="btn btn-primary" onclick="filterAvailableRooms()">Check Available</button>
+    </div>
+    <div class="section-title">Available Rooms</div>
+    <div id="rooms-grid" class="grid-rooms"></div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div id="view-booking-form" style="display:none">
+    <div class="back-btn" onclick="showHotelDetail()">← Back to Rooms</div>
+    <div class="booking-panel">
+      <h3 id="booking-room-title">Room Booking</h3>
+      <div class="room-info" id="booking-room-info"></div>
+      <div class="form-group">
+        <label>Guests</label>
+        <input type="number" id="book-guests" placeholder="1" min="1">
+      </div>
+      <div class="date-range">
+        <div class="form-group">
+          <label>Check-in</label>
+          <input type="date" id="book-checkin">
+        </div>
+        <div class="form-group">
+          <label>Check-out</label>
+          <input type="date" id="book-checkout">
+        </div>
+      </div>
+      <div class="price-calc" id="price-calc" style="display:none">
+        <div class="price-row"><span class="label">Price per night</span><span id="pc-ppn">—</span></div>
+        <div class="price-row"><span class="label">Nights</span><span id="pc-nights">—</span></div>
+        <div class="price-row"><span class="label">Total</span><span id="pc-total">—</span></div>
+      </div>
+      <button class="btn btn-outline btn-full" style="margin-bottom:10px" onclick="calcPrice()">Calculate Price</button>
+      <button class="btn btn-primary btn-full" onclick="submitBooking()">Confirm Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ MY BOOKINGS PAGE ════════════════ -->
+<div id="page-my-bookings" class="page">
+  <div class="page-header">
+    <div class="page-title-line"><span class="gold-line"></span><h2>My Bookings</h2></div>
+    <p>Your reservation history</p>
+  </div>
+  <div id="my-bookings-list"></div>
+</div>
+
+<!-- ════════════════ PROFILE PAGE ════════════════ -->
+<div id="page-profile" class="page">
+  <div class="page-header">
+    <div class="page-title-line"><span class="gold-line"></span><h2>My Profile</h2></div>
+  </div>
+  <div class="profile-grid">
+    <div class="profile-section">
+      <h3>Account Info</h3>
+      <div id="profile-info"></div>
+      <div class="divider"></div>
+      <button class="btn btn-outline btn-sm" onclick="openEditModal()">Edit Profile</button>
+    </div>
+    <div class="profile-section">
+      <h3>Change Password</h3>
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="cur-pass" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="new-pass" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="new-pass-confirm" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="changePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ ADMIN PAGE ════════════════ -->
+<div id="page-admin" class="page">
+  <div class="page-header">
+    <div class="page-title-line"><span class="gold-line"></span><h2>Admin Panel</h2></div>
+    <p>System management</p>
+  </div>
+
+  <!-- Admin Tabs -->
+  <div class="auth-tabs" style="max-width:600px;margin-bottom:28px">
+    <div class="auth-tab active" onclick="switchAdminTab('users')">Users</div>
+    <div class="auth-tab" onclick="switchAdminTab('bookings')">Bookings</div>
+    <div class="auth-tab" onclick="switchAdminTab('hotels')">Hotels</div>
+    <div class="auth-tab" onclick="switchAdminTab('rooms')">Rooms</div>
+  </div>
+
+  <div id="admin-users">
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button class="btn btn-primary btn-sm" onclick="adminLoadUsers()">Load All Users</button>
+      <button class="btn btn-outline btn-sm" onclick="openCreateUserModal()">+ Create Admin</button>
+    </div>
+    <div id="admin-users-list"></div>
+  </div>
+
+  <div id="admin-bookings" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button class="btn btn-primary btn-sm" onclick="adminLoadBookings()">Load All Bookings</button>
+      <button class="btn btn-outline btn-sm" onclick="adminUpdateStatuses()">Update Statuses</button>
+    </div>
+    <div id="admin-bookings-list"></div>
+  </div>
+
+  <div id="admin-hotels" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button class="btn btn-primary btn-sm" onclick="adminLoadHotels()">Load Hotels</button>
+      <button class="btn btn-outline btn-sm" onclick="openAddHotelModal()">+ Add Hotel</button>
+    </div>
+    <div id="admin-hotels-list"></div>
+  </div>
+
+  <div id="admin-rooms" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <input type="number" id="admin-rooms-hotel-id" placeholder="Hotel ID" style="width:120px">
+      <button class="btn btn-primary btn-sm" onclick="adminLoadRooms()">Load Rooms</button>
+    </div>
+    <div id="admin-rooms-list"></div>
+  </div>
+</div>
+
+<!-- ════════════════ MODALS ════════════════ -->
+<!-- Edit Profile -->
+<div class="modal-overlay" id="modal-edit-profile">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-profile')">✕</button>
+    </div>
+    <div class="form-group"><label>Name</label><input type="text" id="edit-name" placeholder="Full name"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="edit-email" placeholder="Email"></div>
+    <button class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<!-- Add Hotel -->
+<div class="modal-overlay" id="modal-add-hotel">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Hotel</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-hotel')">✕</button>
+    </div>
+    <div class="form-group"><label>Name</label><input type="text" id="ah-name"></div>
+    <div class="form-group"><label>City</label><input type="text" id="ah-city"></div>
+    <div class="form-group"><label>Address</label><input type="text" id="ah-address"></div>
+    <div class="form-group"><label>Stars (0-5)</label><input type="number" id="ah-stars" min="0" max="5" value="3"></div>
+    <div class="form-group"><label>Description</label><textarea id="ah-description"></textarea></div>
+    <button class="btn btn-primary btn-full" onclick="adminCreateHotel()">Create Hotel</button>
+  </div>
+</div>
+
+<!-- Create Admin User -->
+<div class="modal-overlay" id="modal-create-admin">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create Admin User</h3>
+      <button class="modal-close" onclick="closeModal('modal-create-admin')">✕</button>
+    </div>
+    <div class="form-group"><label>Name</label><input type="text" id="ca-name"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="ca-email"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="ca-password"></div>
+    <button class="btn btn-primary btn-full" onclick="adminCreateAdmin()">Create</button>
+  </div>
+</div>
+
+<!-- Booking Detail -->
+<div class="modal-overlay" id="modal-booking-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Booking Details</h3>
+      <button class="modal-close" onclick="closeModal('modal-booking-detail')">✕</button>
+    </div>
+    <div id="booking-detail-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let token = localStorage.getItem('aurum_token') || null;
+let currentUser = null;
+let currentHotelId = null;
+let selectedRoom = null;
+let currentPage = 'hotels';
+
+const getBase = () => document.getElementById('api-url-input').value.replace(/\/$/, '');
+
+// ═══════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════
+async function api(method, path, body = null, isForm = false) {
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  
+  let options = { method, headers };
+  if (body && !isForm) {
+    headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(body);
+  } else if (body && isForm) {
+    options.body = body;
+  }
+  
+  const res = await fetch(getBase() + path, options);
+  if (res.status === 204) return true;
+  const data = await res.json().catch(() => ({ detail: res.statusText }));
+  if (!res.ok) throw new Error(data.detail || `Error ${res.status}`);
+  return data;
+}
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+function toast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ═══════════════════════════════════════════════
+//  NAV + PAGES
+// ═══════════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.page === name);
+  });
+  document.getElementById('page-' + name).classList.add('active');
+  currentPage = name;
+  if (name === 'hotels') { showHotelsList(); loadHotels(); }
+  if (name === 'my-bookings') loadMyBookings();
+  if (name === 'profile') loadProfile();
+}
+
+document.querySelectorAll('.nav-link').forEach(l => {
+  l.addEventListener('click', () => showPage(l.dataset.page));
+});
+
+// ═══════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) =>
+    t.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register'))
+  );
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+}
+
+async function login() {
+  const email = document.getElementById('login-email').value;
+  const pass  = document.getElementById('login-password').value;
+  if (!email || !pass) return toast('Fill in all fields', 'error');
+  try {
+    const form = new URLSearchParams();
+    form.append('username', email);
+    form.append('password', pass);
+    const data = await api('POST', '/auth/login', form, true);
+    token = data.access_token;
+    localStorage.setItem('aurum_token', token);
+    await afterLogin();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function register() {
+  const name  = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const pass  = document.getElementById('reg-password').value;
+  if (!name || !email || !pass) return toast('Fill in all fields', 'error');
+  try {
+    await api('POST', '/auth/register', { name, email, password: pass });
+    toast('Account created! Please log in.', 'success');
+    switchAuthTab('login');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function afterLogin() {
+  try {
+    currentUser = await api('GET', '/users/me');
+    document.getElementById('page-auth').classList.remove('active');
+    document.getElementById('navbar').style.display = 'flex';
+    const badge = document.getElementById('user-badge');
+    badge.innerHTML = `<span>${currentUser.name || currentUser.email}</span>`;
+    
+    // show admin tab if needed
+    if (currentUser.role && ['ADMIN','S-ADMIN'].includes(currentUser.role)) {
+      document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+    }
+    showPage('hotels');
+    // set default dates
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+    ['avail-checkin','book-checkin'].forEach(id => { const el = document.getElementById(id); if(el) el.value = today; });
+    ['avail-checkout','book-checkout'].forEach(id => { const el = document.getElementById(id); if(el) el.value = tomorrow; });
+  } catch(e) { toast('Login error: ' + e.message, 'error'); }
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('aurum_token');
+  document.getElementById('navbar').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-auth').classList.add('active');
+  toast('Signed out', 'info');
+}
+
+// ═══════════════════════════════════════════════
+//  HOTELS
+// ═══════════════════════════════════════════════
+function showHotelsList() {
+  document.getElementById('view-hotels-list').style.display = '';
+  document.getElementById('view-hotel-detail').style.display = 'none';
+  document.getElementById('view-booking-form').style.display = 'none';
+}
+function showHotelDetail() {
+  document.getElementById('view-hotels-list').style.display = 'none';
+  document.getElementById('view-hotel-detail').style.display = '';
+  document.getElementById('view-booking-form').style.display = 'none';
+}
+
+async function loadHotels() {
+  document.getElementById('hotels-grid').innerHTML = '<div class="loading"><div class="spinner"></div> Loading…</div>';
+  try {
+    const hotels = await api('GET', '/hotels');
+    renderHotels(hotels);
+  } catch(e) { toast(e.message, 'error'); document.getElementById('hotels-grid').innerHTML = ''; }
+}
+
+async function searchHotels() {
+  const q = document.getElementById('hotel-search-input').value.trim();
+  if (!q) return loadHotels();
+  try {
+    const [byName, byAddr] = await Promise.allSettled([
+      api('GET', `/hotels/search/name?name=${encodeURIComponent(q)}`),
+      api('GET', `/hotels/search/address?address=${encodeURIComponent(q)}`)
+    ]);
+    const results = [
+      ...(byName.status === 'fulfilled' ? byName.value : []),
+      ...(byAddr.status === 'fulfilled' ? byAddr.value : [])
+    ];
+    const unique = [...new Map(results.map(h => [h.id, h])).values()];
+    renderHotels(unique);
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function filterHotels() {
+  const city = document.getElementById('filter-city').value;
+  const sf = document.getElementById('filter-stars-from').value;
+  const st = document.getElementById('filter-stars-to').value;
+  let qs = `?stars_from=${sf}&stars_to=${st}`;
+  if (city) qs += `&city=${encodeURIComponent(city)}`;
+  try {
+    const hotels = await api('GET', `/hotels/filter${qs}`);
+    renderHotels(hotels);
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderHotels(hotels) {
+  const grid = document.getElementById('hotels-grid');
+  if (!hotels.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">🏨</div><h3>No hotels found</h3><p>Try adjusting your filters</p></div>';
+    return;
+  }
+  grid.innerHTML = hotels.map(h => `
+    <div class="hotel-card" onclick="openHotel(${h.id})">
+      <div class="hotel-card-img">
+        <div class="hotel-card-icon">🏨</div>
+      </div>
+      <div class="hotel-card-body">
+        <div class="hotel-card-name">${h.name}</div>
+        <div class="hotel-card-city">📍 ${h.city}</div>
+        <div class="hotel-stars">${renderStars(h.stars)}</div>
+        <div class="hotel-card-address">${h.address}</div>
+      </div>
+      <div class="hotel-card-footer">
+        <span style="font-size:11px;color:var(--text-muted)">ID: ${h.id}</span>
+        <button class="btn btn-outline btn-sm">View Rooms →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderStars(n) {
+  const full = Math.floor(n);
+  return Array.from({length:5}, (_,i) =>
+    `<span class="star ${i < full ? '' : 'empty'}">★</span>`
+  ).join('');
+}
+
+async function openHotel(id) {
+  currentHotelId = id;
+  try {
+    const hotel = await api('GET', `/admin/hotels/${id}`).catch(() =>
+      api('GET', `/hotels`).then(hs => hs.find(h => h.id === id))
+    );
+    document.getElementById('hotel-detail-content').innerHTML = `
+      <div class="page-header" style="margin-bottom:8px">
+        <div class="page-title-line"><span class="gold-line"></span><h2>${hotel?.name || 'Hotel #'+id}</h2></div>
+        <p>${hotel?.city || ''} · ${hotel?.address || ''}</p>
+        <div class="hotel-stars" style="margin-top:8px">${renderStars(hotel?.stars || 0)}</div>
+        ${hotel?.description ? `<p style="margin-top:8px;font-size:13px;color:var(--text-muted)">${hotel.description}</p>` : ''}
+      </div>
+    `;
+    showHotelDetail();
+    await loadRooms(id);
+  } catch(e) {
+    currentHotelId = id;
+    document.getElementById('hotel-detail-content').innerHTML = `<div class="page-header"><h2>Hotel #${id}</h2></div>`;
+    showHotelDetail();
+    await loadRooms(id);
+  }
+}
+
+async function loadRooms(hotelId) {
+  document.getElementById('rooms-grid').innerHTML = '<div class="loading"><div class="spinner"></div> Loading rooms…</div>';
+  try {
+    const rooms = await api('GET', `/hotels/${hotelId}/rooms`);
+    renderRooms(rooms);
+  } catch(e) { document.getElementById('rooms-grid').innerHTML = ''; toast(e.message, 'error'); }
+}
+
+async function filterRooms() {
+  const cap = document.getElementById('filter-capacity').value;
+  const minP = document.getElementById('filter-min-price').value;
+  const maxP = document.getElementById('filter-max-price').value;
+  const rt = document.getElementById('filter-room-type').value;
+  let qs = '?';
+  if (cap) qs += `capacity=${cap}&`;
+  if (minP) qs += `min_price=${minP}&`;
+  if (maxP) qs += `max_price=${maxP}&`;
+  if (rt) qs += `room_type=${rt}&`;
+  try {
+    const rooms = await api('GET', `/hotels/${currentHotelId}/rooms${qs}`);
+    renderRooms(rooms);
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function filterAvailableRooms() {
+  const ci = document.getElementById('avail-checkin').value;
+  const co = document.getElementById('avail-checkout').value;
+  if (!ci || !co) return toast('Select check-in and check-out dates', 'error');
+  try {
+    const rooms = await api('GET', `/hotels/${currentHotelId}/rooms/available?check_in=${ci}&check_out=${co}`);
+    renderRooms(rooms);
+    toast(`${rooms.length} rooms available`, 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderRooms(rooms) {
+  const grid = document.getElementById('rooms-grid');
+  if (!rooms.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">🚪</div><h3>No rooms</h3><p>Try different filters or dates</p></div>';
+    return;
+  }
+  grid.innerHTML = rooms.map(r => `
+    <div class="room-card" onclick="openBookingForm(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+      <div class="room-card-header">
+        <div class="room-number">Room ${r.room_number}</div>
+        <div class="room-type-badge badge-${r.room_type?.type_name || 'general'}">${r.room_type?.type_name || 'general'}</div>
+      </div>
+      <div class="room-price">${parseFloat(r.price_per_day).toFixed(0)} <span>USD / night</span></div>
+      <div class="room-meta">
+        <div class="room-meta-item">👥 ${r.capacity} guests</div>
+        <div class="room-meta-item">🏢 Floor ${r.floor}</div>
+        <div class="room-meta-item">🆔 #${r.id}</div>
+      </div>
+      ${r.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:10px">${r.description}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  BOOKING
+// ═══════════════════════════════════════════════
+function openBookingForm(room) {
+  selectedRoom = room;
+  document.getElementById('booking-room-title').textContent = `Room ${room.room_number}`;
+  document.getElementById('booking-room-info').innerHTML = `
+    <strong style="color:var(--text)">${room.room_type?.type_name || 'Room'}</strong> · 
+    ${room.capacity} guests · Floor ${room.floor}<br>
+    <span style="color:var(--gold);font-size:16px;font-family:'Cormorant Garamond',serif">
+      ${parseFloat(room.price_per_day).toFixed(2)} USD</span> per night
+  `;
+  document.getElementById('price-calc').style.display = 'none';
+  document.getElementById('view-hotels-list').style.display = 'none';
+  document.getElementById('view-hotel-detail').style.display = 'none';
+  document.getElementById('view-booking-form').style.display = '';
+}
+
+function calcPrice() {
+  if (!selectedRoom) return;
+  const ci = document.getElementById('book-checkin').value;
+  const co = document.getElementById('book-checkout').value;
+  if (!ci || !co) return toast('Select dates first', 'error');
+  const nights = Math.max(1, Math.round((new Date(co) - new Date(ci)) / 86400000));
+  const total = nights * parseFloat(selectedRoom.price_per_day);
+  document.getElementById('pc-ppn').textContent = `$${parseFloat(selectedRoom.price_per_day).toFixed(2)}`;
+  document.getElementById('pc-nights').textContent = nights;
+  document.getElementById('pc-total').textContent = `$${total.toFixed(2)}`;
+  document.getElementById('price-calc').style.display = '';
+}
+
+async function submitBooking() {
+  if (!selectedRoom) return;
+  const ci = document.getElementById('book-checkin').value;
+  const co = document.getElementById('book-checkout').value;
+  const guests = parseInt(document.getElementById('book-guests').value) || 1;
+  if (!ci || !co) return toast('Select check-in and check-out dates', 'error');
+  const nights = Math.max(1, Math.round((new Date(co) - new Date(ci)) / 86400000));
+  const total = nights * parseFloat(selectedRoom.price_per_day);
+  try {
+    await api('POST', `/new_booking?guest_count=${guests}`, {
+      r_id: selectedRoom.id,
+      check_in: ci,
+      check_out: co,
+      status: 'pending',
+      total_price: total
+    });
+    toast('Booking confirmed!', 'success');
+    showHotelsList();
+    loadHotels();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+//  MY BOOKINGS
+// ═══════════════════════════════════════════════
+async function loadMyBookings() {
+  const list = document.getElementById('my-bookings-list');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div> Loading…</div>';
+  try {
+    const bookings = await api('GET', '/bookings/my');
+    if (!bookings.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">📋</div><h3>No bookings yet</h3><p>Book your first stay</p></div>';
+      return;
+    }
+    list.innerHTML = bookings.map(b => `
+      <div class="booking-item">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">Booking #${b.id}</div>
+          <div style="font-size:18px;font-family:'Cormorant Garamond',serif">Room ID: ${b.r_id}</div>
+        </div>
+        <div class="booking-dates">
+          <div class="label">Check-in</div>
+          <div class="value">${b.check_in}</div>
+        </div>
+        <div class="booking-dates">
+          <div class="label">Check-out</div>
+          <div class="value">${b.check_out}</div>
+        </div>
+        <div>
+          <div class="label">Total</div>
+          <div style="color:var(--gold);font-size:18px;font-family:'Cormorant Garamond',serif">$${parseFloat(b.total_price).toFixed(2)}</div>
+        </div>
+        <div><span class="status-badge status-${b.status}">${b.status}</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="viewBookingDetail(${b.id})">Details</button>
+          ${b.status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="editBookingDates(${b.id},'${b.check_in}','${b.check_out}')">Edit Dates</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { toast(e.message, 'error'); list.innerHTML = ''; }
+}
+
+async function viewBookingDetail(id) {
+  try {
+    const b = await api('GET', `/bookings/${id}`);
+    document.getElementById('booking-detail-content').innerHTML = `
+      <div class="info-row"><span class="key">Booking ID</span><span class="val">${b.id}</span></div>
+      <div class="info-row"><span class="key">Room ID</span><span class="val">${b.r_id}</span></div>
+      <div class="info-row"><span class="key">Check-in</span><span class="val">${b.check_in}</span></div>
+      <div class="info-row"><span class="key">Check-out</span><span class="val">${b.check_out}</span></div>
+      <div class="info-row"><span class="key">Guests</span><span class="val">${b.guest_count || '—'}</span></div>
+      <div class="info-row"><span class="key">Total Price</span><span class="val" style="color:var(--gold)">$${parseFloat(b.total_price).toFixed(2)}</span></div>
+      <div class="info-row"><span class="key">Status</span><span class="val"><span class="status-badge status-${b.status}">${b.status}</span></span></div>
+      <div class="info-row"><span class="key">Created</span><span class="val">${b.created_at?.split('T')[0] || '—'}</span></div>
+    `;
+    openModal('modal-booking-detail');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function editBookingDates(id, ci, co) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay open';
+  modal.id = 'modal-edit-booking';
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Booking #${id}</h3>
+        <button class="modal-close" onclick="document.getElementById('modal-edit-booking').remove()">✕</button>
+      </div>
+      <div class="date-range">
+        <div class="form-group"><label>Check-in</label><input type="date" id="eb-ci" value="${ci}"></div>
+        <div class="form-group"><label>Check-out</label><input type="date" id="eb-co" value="${co}"></div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveBookingEdit(${id})">Save</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+async function saveBookingEdit(id) {
+  const ci = document.getElementById('eb-ci').value;
+  const co = document.getElementById('eb-co').value;
+  try {
+    await api('PATCH', `/bookings/${id}/edit`, { check_in: ci, check_out: co });
+    toast('Booking updated', 'success');
+    document.getElementById('modal-edit-booking').remove();
+    loadMyBookings();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+//  PROFILE
+// ═══════════════════════════════════════════════
+async function loadProfile() {
+  try {
+    const u = await api('GET', '/users/me');
+    currentUser = { ...currentUser, ...u };
+    document.getElementById('profile-info').innerHTML = `
+      <div class="info-row"><span class="key">Name</span><span class="val">${u.name || '—'}</span></div>
+      <div class="info-row"><span class="key">Email</span><span class="val">${u.email || '—'}</span></div>
+    `;
+    document.getElementById('edit-name').value = u.name || '';
+    document.getElementById('edit-email').value = u.email || '';
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function openEditModal() { openModal('modal-edit-profile'); }
+
+async function saveProfile() {
+  const name  = document.getElementById('edit-name').value;
+  const email = document.getElementById('edit-email').value;
+  const body = {};
+  if (name)  body.name = name;
+  if (email) body.email = email;
+  try {
+    await api('PATCH', '/users/me/edit', body);
+    toast('Profile updated', 'success');
+    closeModal('modal-edit-profile');
+    loadProfile();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function changePassword() {
+  const cur = document.getElementById('cur-pass').value;
+  const nw  = document.getElementById('new-pass').value;
+  const cnf = document.getElementById('new-pass-confirm').value;
+  if (!cur || !nw || !cnf) return toast('Fill all fields', 'error');
+  try {
+    await api('PATCH', '/users/me/password', { current_password: cur, new_password: nw, new_password_confirm: cnf });
+    toast('Password changed', 'success');
+    document.getElementById('cur-pass').value = '';
+    document.getElementById('new-pass').value = '';
+    document.getElementById('new-pass-confirm').value = '';
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+//  ADMIN
+// ═══════════════════════════════════════════════
+function switchAdminTab(tab) {
+  ['users','bookings','hotels','rooms'].forEach(t => {
+    document.getElementById('admin-' + t).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('#page-admin .auth-tab').forEach((el, i) => {
+    const tabs = ['users','bookings','hotels','rooms'];
+    el.classList.toggle('active', tabs[i] === tab);
+  });
+}
+
+async function adminLoadUsers() {
+  try {
+    const users = await api('GET', '/admin/users');
+    document.getElementById('admin-users-list').innerHTML = users.map(u => `
+      <div class="booking-item">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">ID: ${u.id}</div>
+          <div style="font-size:16px;font-family:'Cormorant Garamond',serif">${u.name}</div>
+          <div style="font-size:12px;color:var(--text-muted)">${u.email}</div>
+        </div>
+        <div><span class="status-badge ${u.role==='S-ADMIN'?'status-confirmed':u.role==='ADMIN'?'status-pending':'status-completed'}">${u.role}</span></div>
+        <div><span class="status-badge ${u.is_active?'status-confirmed':'status-cancelled'}">${u.is_active?'Active':'Inactive'}</span></div>
+        <button class="btn btn-danger btn-sm" onclick="adminDeleteUser(${u.id})">Delete</button>
+      </div>
+    `).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminDeleteUser(id) {
+  if (!confirm('Delete user #' + id + '?')) return;
+  try {
+    await api('DELETE', `/admin/users/${id}`);
+    toast('User deleted', 'success');
+    adminLoadUsers();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminLoadBookings() {
+  try {
+    const bookings = await api('GET', '/admin/bookings');
+    document.getElementById('admin-bookings-list').innerHTML = bookings.map(b => `
+      <div class="booking-item">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">Booking #${b.id}</div>
+          <div style="font-size:13px;color:var(--text-muted)">User: ${b.user_id} · Room: ${b.r_id}</div>
+        </div>
+        <div class="booking-dates"><div class="label">Dates</div><div class="value">${b.check_in} → ${b.check_out}</div></div>
+        <div style="color:var(--gold)">$${parseFloat(b.total_price).toFixed(2)}</div>
+        <div><span class="status-badge status-${b.status}">${b.status}</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <select id="bs-${b.id}" style="padding:4px 8px;font-size:12px;width:130px">
+            <option value="pending" ${b.status==='pending'?'selected':''}>pending</option>
+            <option value="confirmed" ${b.status==='confirmed'?'selected':''}>confirmed</option>
+            <option value="cancelled" ${b.status==='cancelled'?'selected':''}>cancelled</option>
+            <option value="completed" ${b.status==='completed'?'selected':''}>completed</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="adminSetStatus(${b.id})">Set</button>
+          ${['cancelled','completed'].includes(b.status) ? `<button class="btn btn-danger btn-sm" onclick="adminDeleteBooking(${b.id})">Del</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminSetStatus(id) {
+  const status = document.getElementById(`bs-${id}`).value;
+  try {
+    await api('PATCH', `/admin/bookings/${id}/status?status=${status}`);
+    toast('Status updated', 'success');
+    adminLoadBookings();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminDeleteBooking(id) {
+  try {
+    await api('DELETE', `/admin/bookings/${id}`);
+    toast('Booking deleted', 'success');
+    adminLoadBookings();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminUpdateStatuses() {
+  try {
+    const res = await api('PATCH', '/admin/bookings/update-all-status');
+    toast(`Updated ${res.length} bookings`, 'success');
+    adminLoadBookings();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function openAddHotelModal() { openModal('modal-add-hotel'); }
+
+async function adminCreateHotel() {
+  try {
+    await api('POST', '/admin/hotels', {
+      name: document.getElementById('ah-name').value,
+      city: document.getElementById('ah-city').value,
+      address: document.getElementById('ah-address').value,
+      stars: parseFloat(document.getElementById('ah-stars').value),
+      description: document.getElementById('ah-description').value || null
+    });
+    toast('Hotel created', 'success');
+    closeModal('modal-add-hotel');
+    adminLoadHotels();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminLoadHotels() {
+  try {
+    const hotels = await api('GET', '/hotels');
+    document.getElementById('admin-hotels-list').innerHTML = hotels.map(h => `
+      <div class="booking-item">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">ID: ${h.id}</div>
+          <div style="font-size:16px;font-family:'Cormorant Garamond',serif">${h.name}</div>
+          <div style="font-size:12px;color:var(--text-muted)">${h.city} · ${h.address}</div>
+        </div>
+        <div class="hotel-stars">${renderStars(h.stars)}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-outline btn-sm" onclick="openHotel(${h.id});showPage('hotels')">View</button>
+          <button class="btn btn-danger btn-sm" onclick="adminDeleteHotel(${h.id})">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminDeleteHotel(id) {
+  if (!confirm('Delete hotel #' + id + '?')) return;
+  try {
+    await api('DELETE', `/admin/hotels/${id}`);
+    toast('Hotel deleted', 'success');
+    adminLoadHotels();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminLoadRooms() {
+  const hid = document.getElementById('admin-rooms-hotel-id').value;
+  if (!hid) return toast('Enter Hotel ID', 'error');
+  try {
+    const rooms = await api('GET', `/hotels/${hid}/rooms`);
+    document.getElementById('admin-rooms-list').innerHTML = rooms.map(r => `
+      <div class="booking-item">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">Room ${r.room_number} · ID: ${r.id}</div>
+          <div><span class="room-type-badge badge-${r.room_type?.type_name || 'general'}">${r.room_type?.type_name || '—'}</span></div>
+        </div>
+        <div style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:18px">$${parseFloat(r.price_per_day).toFixed(2)}<span style="font-size:12px;font-family:'Outfit',sans-serif;color:var(--text-muted)">/night</span></div>
+        <div style="font-size:12px;color:var(--text-muted)">👥 ${r.capacity} · 🏢 Floor ${r.floor}</div>
+        <button class="btn btn-danger btn-sm" onclick="adminDeleteRoom(${r.id})">Delete</button>
+      </div>
+    `).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function adminDeleteRoom(id) {
+  if (!confirm('Delete room #' + id + '?')) return;
+  try {
+    await api('DELETE', `/admin/rooms/${id}`);
+    toast('Room deleted', 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function openCreateUserModal() { openModal('modal-create-admin'); }
+
+async function adminCreateAdmin() {
+  try {
+    await api('POST', '/admin/auth/register-admin', {
+      name: document.getElementById('ca-name').value,
+      email: document.getElementById('ca-email').value,
+      password: document.getElementById('ca-password').value
+    });
+    toast('Admin user created', 'success');
+    closeModal('modal-create-admin');
+    adminLoadUsers();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL HELPERS
+// ═══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  if (token) {
+    afterLogin();
+  }
+  // set default dates
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  ['book-checkin','avail-checkin'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = today;
+  });
+  ['book-checkout','avail-checkout'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = tomorrow;
+  });
+});
+</script>
+</body>
+</html>
