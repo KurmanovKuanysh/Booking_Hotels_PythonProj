@@ -41,3 +41,15 @@ def user_change_password(
     except AppError as e:
         raise e
 
+@router.patch("/users/me/edit")
+def user_edit_self(
+        data: UserEdit,
+        user: UserRead = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    service = UserService(db)
+    return service.edit_user(
+        uid=user.id,
+        edit=data
+    )
+

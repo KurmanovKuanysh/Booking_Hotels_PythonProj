@@ -1,14 +1,18 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from backend.app.core.exceptions import InvalidLoginOrPasswordError, UserNotFoundError, InvalidStrLengthError, \
-    DuplicateEmailError, InvalidPasswordError, InvalidNameLengthError
+from backend.app.core.exceptions import (
+    InvalidLoginOrPasswordError,
+    UserNotFoundError,
+    DuplicateEmailError,
+    InvalidPasswordError,
+)
 
 from backend.app.models import Booking
 from backend.app.models.user import User
 from fastapi import HTTPException
 
-from backend.app.schemas.user import UserRead, UserEdit, UserEditAdmin
+from backend.app.schemas.user import UserRead
 
 from backend.app.core.security import hash_password, verify_password
 
@@ -43,23 +47,30 @@ class UserService:
         raise HTTPException(status_code=404, detail="User not found")
 
     def find_user_by_email(self, email: str) -> User | None:
-        return self.session.scalar(
-            select(User).where(User.email == email)
-        )
+        return self.session.scalars(
+            select(User).where(User.email == email.strip().lower())
+        ).one_or_none()
 
     def get_user_by_email(self, email: str) -> User | None:
         user = self.find_user_by_email(email)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
         return user
 
-    def exists_user_email(self, email: str) -> bool:
-        return self.find_user_by_email(email) is not None
+    def exists_user_email(self, email: str, exclude_uid: int | None = None) -> bool:
+        user = self.find_user_by_email(email)
+        if user is None:
+            return False
+        if exclude_uid is not None and user.id == exclude_uid:
+            return False
+        return True
 
-    def get_user_by_id(self, user_id: int) -> UserRead:
+    def get_user_by_id(self, user_id: int):
         user = self.session.scalars(
             select(User)
             .where(User.id == user_id)).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise UserNotFoundError
         return user
 
     def get_users_by_name(self, name: str) -> list[User]:
@@ -97,43 +108,45 @@ class UserService:
     def edit_user(
             self,
             uid: int,
-            edit: UserEdit
-    ) -> UserRead:
+            edit,
+            commit: bool = True
+    ) -> User:
         user = self.get_user_by_id(uid)
-        if user is None:
-            raise UserNotFoundError
         if edit.name is not None:
-            if len(edit.name) < 2:
-                raise InvalidNameLengthError(name=edit.name)
-            if len(edit.name) > 100:
-                raise InvalidNameLengthError(name=edit.name)
             user.name = edit.name.strip().title()
+
         if edit.email is not None:
-            if len(edit.email) < 3:
-                raise InvalidStrLengthError
-            if len(edit.email) > 255:
-                raise InvalidStrLengthError
-            if self.exists_user_email(edit.email):
-                raise DuplicateEmailError
-            user.email = edit.email.strip()
+            new_email = edit.email.strip().lower()
+            if self.exists_user_email(edit.email, exclude_uid=uid):
+                raise DuplicateEmailError(email=edit.email)
+            user.email = new_email
+
         if edit.password is not None:
-            if len(edit.password) < 6:
-                raise InvalidStrLengthError
             if " " in edit.password:
                 raise InvalidPasswordError
             user.password = hash_password(edit.password)
-        self.session.commit()
-        self.session.refresh(user)
+
+        if commit:
+            self.session.commit()
+            self.session.refresh(user)
         return user
 
     def edit_user_admin(
             self,
             uid: int,
-            edit: UserEditAdmin
-    ) -> UserRead:
-        user = self.edit_user(uid, edit)
+            edit
+    ) -> User:
+        user = self.edit_user(
+            uid=uid,
+            edit=edit,
+            commit=False
+        )
         if edit.is_active is not None:
-            user.is_active = edit.is_active
-        if edit.role is not None and edit.role in ["USER", "ADMIN"]:
+            if edit.is_active in [True, False]:
+                user.is_active = edit.is_active
+        if edit.role is not None and edit.role in ["USER", "ADMIN", "S-ADMIN"]:
             user.role = edit.role
+
+        self.session.commit()
+        self.session.refresh(user)
         return user
