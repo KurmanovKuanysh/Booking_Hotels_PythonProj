@@ -7,7 +7,10 @@ from backend.app.core.exceptions import (
     InvalidLoginOrPasswordError,
     InvalidPasswordError,
     UserNotFoundError,
-    InvalidNameLengthError,
+    NotMatchedPasswords,
+    NotFoundBookedRoomsError,
+    NoPermissionRole, InvalidCityError, DatesConflictError, BookingNotFoundError, RoomNotAvailableError,
+    InvalidStatusError, InvalidPriceError, RoomNotFoundError
 )
 
 def register_errors_handlers(app: FastAPI):
@@ -17,7 +20,7 @@ def register_errors_handlers(app: FastAPI):
             exc: DuplicateEmailError
     ):
         return JSONResponse(
-            status_code=409,
+            status_code=400,
             content={
                 "message": f"Email {exc.email} already registered"
             }
@@ -72,15 +75,123 @@ def user_errors_handlers(app: FastAPI) -> None:
                 "message": "User not found"
             }
         )
-    @app.exception_handler(InvalidNameLengthError)
-    def handle_invalid_name_length_error(
+
+    @app.exception_handler(NotMatchedPasswords)
+    def handle_not_matched_passwords_error(
             request: Request,
-            exc: InvalidNameLengthError
+            exc: NotMatchedPasswords
     ):
         return JSONResponse(
             status_code=400,
             content={
-                "message": "Invalid name length"
-                "Name must be between 2 and 100 characters long"
+                "message": "New Passwords do not match"
+            }
+        )
+    @app.exception_handler(NoPermissionRole)
+    def handle_user_permission_error(
+            request: Request,
+            exc: NoPermissionRole
+    ):
+        return JSONResponse(
+            status_code=403,
+            content={
+                "message":"No permission granted"
+            }
+        )
+
+def booking_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(BookingNotFoundError)
+    def handle_booking_not_found_error(
+            request: Request,
+            exc: BookingNotFoundError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "Booking not found"
+            }
+        )
+
+    @app.exception_handler(NotFoundBookedRoomsError)
+    def handle_not_found_booked_rooms_error(
+            request: Request,
+            exc: NotFoundBookedRoomsError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "No Booked rooms found"
+            }
+        )
+
+    @app.exception_handler(DatesConflictError)
+    def handle_dates_conflict_error(
+            request: Request,
+            exc: DatesConflictError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Dates conflict"
+            }
+        )
+    @app.exception_handler(InvalidStatusError)
+    def handle_user_permission_error(
+            request: Request,
+            exc: InvalidStatusError
+    ):
+        return JSONResponse(
+            status_code=403,
+            content={
+                "message":"Invalid status"
+            }
+        )
+
+    @app.exception_handler(InvalidPriceError)
+    def handle_invalid_price_error(
+            request: Request,
+            exc: InvalidPriceError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Invalid price"
+            }
+        )
+
+def hotel_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(InvalidCityError)
+    def handle_invalid_city_error(
+            request: Request,
+            exc: InvalidCityError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Invalid city"
+            }
+        )
+
+def room_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(RoomNotAvailableError)
+    def handle_room_not_available_error(
+            request: Request,
+            exc: RoomNotAvailableError
+    ):
+        return JSONResponse(
+            status_code=409,
+            content={
+                "message": "Room not available"
+            }
+        )
+    @app.exception_handler(RoomNotFoundError)
+    def handle_room_not_found_error(
+            request: Request,
+            exc: RoomNotFoundError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "Room not found"
             }
         )

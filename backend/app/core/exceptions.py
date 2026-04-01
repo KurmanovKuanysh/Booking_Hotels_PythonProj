@@ -16,6 +16,8 @@ class InvalidLoginOrPasswordError(AppError):
 #LOGIN END
 
 #USER
+class NoPermissionRole(AppError):
+    pass
 class InvalidPasswordError(AppError):
     pass
 class UserNotFoundError(AppError):
@@ -23,20 +25,42 @@ class UserNotFoundError(AppError):
 class InvalidNameLengthError(AppError):
     def __init__(self, name: str):
         self.name = name
+class InvalidEmailLength(AppError):
+    def __init__(self ,email: str):
+        self.email = email
+class NotMatchedPasswords(AppError):
+    pass
 #USER END
 
-class InvalidStrLengthError(AppError):
+#ROOM
+class NotFoundBookedRoomsError(AppError):
+    pass
+class RoomNotFoundError(AppError):
+    pass
+#ROOM END
+#HOTEL
+class InvalidCityError(AppError):
+    def __init__(self, city: str):
+        self.city = city
+#HOTEL END
+
+#BOOKING
+class BookingNotFoundError(AppError):
     pass
 
-class UserValidationError(AppError):
+class DatesConflictError(AppError):
     pass
-
-class InvalidUserRoleError(UserValidationError):
-    pass
-#====================USERS END====================
 
 class RoomNotAvailableError(AppError):
     pass
+class InvalidStatusError(AppError):
+    pass
 
-class InvalidRoomTypeError(AppError):
+class InvalidPriceError(AppError):
+    pass
+
+#BOOKING END
+
+
+class UserValidationError(AppError):
     pass
