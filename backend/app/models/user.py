@@ -18,5 +18,5 @@ class User(Base):
 
 
     __table_args__ = (
-        CheckConstraint("role IN ('ADMIN', 'USER')", name="role_check"),
+        CheckConstraint("role IN ('ADMIN','S-ADMIN','USER')", name="role_check"),
     )
