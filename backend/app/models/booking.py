@@ -23,4 +23,5 @@ class Booking(Base):
 
     __table_args__ = (
         CheckConstraint("status in ('pending', 'confirmed', 'cancelled', 'completed')", name="status_check"),
+        CheckConstraint("check_in <= check_out", name="check_in_check"),
     )
