@@ -1,14 +1,16 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
+from backend.app.core.exceptions import InvalidCityError
 from backend.app.models import Hotel
 from backend.app.models.booking import Booking
-from backend.app.models.filter import FRoom
 from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
 from datetime import date
 
 from fastapi import HTTPException
+
+from backend.app.schemas.room import RoomRead, RoomDate
 
 
 class RoomService:
@@ -80,14 +82,14 @@ class RoomService:
             raise HTTPException(status_code=400, detail="Not Valid ID requested")
         return room
 
-    def is_room_available(self, r_id:int, check_in: date, check_out: date) -> bool:
+    def is_room_available(self,room_id: int, data) -> bool:
         booking = self.session.scalars(
             select(Booking)
             .where(
-                Booking.r_id == r_id,
+                Booking.r_id == room_id,
                 Booking.status.in_(["confirmed", "pending"]),
-                Booking.check_out >= check_in,
-                Booking.check_in <= check_out
+                Booking.check_out >= data.check_in,
+                Booking.check_in <= data.check_out
             )
         ).first()
         return booking is None
@@ -99,7 +101,11 @@ class RoomService:
             raise HTTPException(status_code=400, detail="Check-in date must be today or later")
         available_rooms = []
         for room in rooms:
-            if self.is_room_available(room.id, check_in, check_out):
+            data = RoomDate(
+                check_in=check_in,
+                check_out=check_out,
+            )
+            if self.is_room_available(room.id, data=data):
                 available_rooms.append(room)
         return available_rooms
 
@@ -115,7 +121,7 @@ class RoomService:
     def get_rooms_by_filter(
             self,
             hotel_id:int,
-            filters: FRoom
+            filters
     ) -> list[Room]:
         rooms = select(Room).where(Room.h_id == hotel_id)
         if filters.capacity is not None:
@@ -181,3 +187,68 @@ class RoomService:
         self.session.commit()
         self.session.refresh(room)
         return room
+
+    def get_past_booked_rooms(
+            self,
+            user_id: int
+    ) -> list[RoomRead]:
+        past_booked_rooms = list(self.session.scalars(
+            select(Room)
+            .join(Booking, Booking.r_id == Room.id)
+            .where(Booking.user_id == user_id,
+                   Booking.status.in_(["completed"])
+                   )
+        ).all())
+        return past_booked_rooms
+
+    def get_current_booked_rooms(
+            self,
+            user_id: int
+    ) -> list[RoomRead]:
+        current_booked_rooms = list(
+            self.session.scalars(
+                select(Room)
+                .join(Booking, Booking.r_id == Room.id)
+                .where(Booking.user_id == user_id,
+                       Booking.status.in_(["confirmed", "pending"])
+                       )
+            ).all()
+        )
+        return current_booked_rooms
+
+    def get_all_booked_rooms_of_user(self, user_id: int) -> list[RoomRead]:
+        current_booked_rooms = self.get_current_booked_rooms(user_id)
+        paste_booked_rooms = self.get_past_booked_rooms(user_id)
+        for i in paste_booked_rooms:
+            current_booked_rooms.append(i)
+        return current_booked_rooms
+
+    @staticmethod
+    def get_active_cities(self) -> list[str]:
+        return list(self.session.scalars(select(Hotel.city).distinct()).all())
+
+    def get_all_available_rooms(self, data) -> list[RoomRead]:
+        query = select(Room).join(Hotel, Room.h_id == Hotel.id)
+
+        if data.city is not None:
+            if data.city.strip() == "" or data.city.strip().title() not in self.get_active_cities(self):
+                raise InvalidCityError(city=data.city.strip().title())
+            query = query.where(
+                Hotel.city == data.city.strip().title()
+            )
+
+        if data.guests is not None:
+            query = query.where(Room.capacity >= data.guests)
+
+        if data.check_in is not None and data.check_out is not None:
+            conflicting_rooms = (
+                select(Booking.r_id)
+                .where(
+                    Booking.status.in_(["confirmed", "pending"]),
+                    Booking.check_in < data.check_out,  # строго
+                    Booking.check_out > data.check_in  # строго >
+                )
+            )
+            query = query.where(Room.id.not_in(conflicting_rooms))
+
+        return list(self.session.scalars(query).all())
