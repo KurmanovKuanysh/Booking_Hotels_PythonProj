@@ -1,20 +1,27 @@
-from backend.app.core.exceptions import InvalidLoginOrPasswordError
 from backend.app.db.session import SessionLocal
-from fastapi import Form, HTTPException, Depends
+from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
-from backend.app.core.security import verify_password
 from backend.app.schemas.user import UserRead
 
 from backend.app.services.user import UserService
 from fastapi.security import (
     HTTPBearer,
-    OAuth2PasswordBearer
+    OAuth2PasswordBearer, OAuth2PasswordRequestForm
 )
 from backend.app.core.security import decode_access_token
 from jose import JWTError
+from dotenv import load_dotenv
+import jwt
+import os
+
+load_dotenv()
+
+ALGORITHM = os.getenv('ALGORITHM', 'HS256')
+SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
+
 
 http_bearer = HTTPBearer()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_db():
     db = SessionLocal()
@@ -24,22 +31,21 @@ def get_db():
         db.close()
 
 def validate_auth_user(
-        username: str = Form(),
-        password: str = Form(),
+        form_data: OAuth2PasswordRequestForm = Depends(),
         db: Session = Depends(get_db)
 ):
     service = UserService(db)
 
-    user = service.get_user_by_email(username)
-    if user is None:
-        raise InvalidLoginOrPasswordError
-    if verify_password(
-            plain_password=password,
-            hashed_password=user.password
-    ):
-        return user
+    user = service.login_user(
+        email=form_data.username,
+        password=form_data.password
+    )
 
-    raise InvalidLoginOrPasswordError
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Inactive user")
+
+    return user
+
 def get_current_token_payload(
         token: str = Depends(oauth2_scheme),
 ):
@@ -69,9 +75,32 @@ def get_current_user(
 def get_current_user_admin(
         user: UserRead = Depends(get_current_user),
 ) -> UserRead:
-    if user.role == "ADMIN":
+    if user.role in ["ADMIN","S-ADMIN"]:
         return user
     raise HTTPException(status_code=403, detail="Not an admin")
+
+def get_current_auth_user(
+        token: str = Depends(oauth2_scheme),
+        db: Session = Depends(get_db)
+):
+    credential_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials"
+    )
+    try:
+        payload = jwt.decode(token,SECRET_KEY, algorithms=[ALGORITHM])
+        uid = payload.get("sub")
+        if uid is None:
+            raise credential_exception
+    except JWTError:
+        raise credential_exception
+
+    service = UserService(db)
+    user = service.get_user_by_id(int(uid))
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Inactive user")
+    return user
+
 
 def get_current_active_user(
         user: UserRead = Depends(get_current_user),

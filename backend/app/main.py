@@ -7,12 +7,15 @@ from backend.app.api.routers.user import router as user_router
 from backend.app.api.routers.auth import router as auth_router
 
 from backend.app.core.exceptions_handler import (
-    register_errors_handlers,login_errors_handlers
+    register_errors_handlers,login_errors_handlers,
+    user_errors_handlers, booking_errors_handlers
 )
 
 app = FastAPI()
 register_errors_handlers(app)
 login_errors_handlers(app)
+user_errors_handlers(app)
+booking_errors_handlers(app)
 @app.get("/")
 def home():
     return {"message": "Welcome to Hotel Booking API"}
