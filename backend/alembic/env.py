@@ -7,7 +7,7 @@ from alembic import context
 
 import os
 from dotenv import load_dotenv
-from backend.app.models import Booking, Hotel, Room, RoomType, User
+from backend.app.models import Booking, Hotel, Room, RoomType, User, RefreshToken
 
 load_dotenv()
 
