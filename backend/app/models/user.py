@@ -15,7 +15,7 @@ class User(Base):
 
     #relationship
     booking = relationship("Booking", back_populates="user")
-
+    refresh_tokens = relationship("RefreshToken", back_populates="users")
 
     __table_args__ = (
         CheckConstraint("role IN ('ADMIN','S-ADMIN','USER')", name="role_check"),
