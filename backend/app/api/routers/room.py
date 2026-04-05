@@ -49,13 +49,21 @@ def get_available_rooms_by_hotel_dates(
     )
 @router.get("/rooms/search/available", response_model=list[RoomRead])
 def get_all_available_rooms(
-        data: RoomAvailable,
+        city: str | None = None,
+        check_in: date = date.today(),
+        check_out: date | None = None,
+        guests: int = 1,
         db: Session = Depends(get_db),
 ):
     service = RoomService(db)
-    return service.get_all_available_rooms(data)
+    return service.get_all_available_rooms(
+        city=city,
+        check_in=check_in,
+        check_out=check_out,
+        guests=guests
+    )
 
-@router.get("/rooms/{room_id}/check-availability", response_model=bool)
+@router.post("/rooms/{room_id}/check-availability", response_model=bool)
 def check_availability_single_room(
         room_id: int,
         data: RoomDate,

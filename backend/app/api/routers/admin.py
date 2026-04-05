@@ -12,6 +12,7 @@ from backend.app.core.exceptions import NoPermissionRole, DuplicateEmailError
 from backend.app.services.booking import BookingService
 from backend.app.services.hotel import HotelService
 from backend.app.services.room import RoomService
+from backend.app.services.token import TokenService
 from backend.app.services.user import UserService
 
 router = APIRouter(prefix="/admin", tags=["Admin"], dependencies=[Depends(get_current_user_admin)])
@@ -259,3 +260,9 @@ def delete_hotel(hotel_id: int, db: Session = Depends(get_db)):
 #HOTELEND=================================================
 
 
+#TOKEN
+@router.post("/token/clean-up", response_model=int)
+def token_clean_up(db: Session = Depends(get_db)):
+    token_service = TokenService(db)
+    return token_service.clean_up_expired_tokens()
+#TOKENEND

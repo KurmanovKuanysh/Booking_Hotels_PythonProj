@@ -79,29 +79,6 @@ def get_current_user_admin(
         return user
     raise HTTPException(status_code=403, detail="Not an admin")
 
-def get_current_auth_user(
-        token: str = Depends(oauth2_scheme),
-        db: Session = Depends(get_db)
-):
-    credential_exception = HTTPException(
-        status_code=401,
-        detail="Could not validate credentials"
-    )
-    try:
-        payload = jwt.decode(token,SECRET_KEY, algorithms=[ALGORITHM])
-        uid = payload.get("sub")
-        if uid is None:
-            raise credential_exception
-    except JWTError:
-        raise credential_exception
-
-    service = UserService(db)
-    user = service.get_user_by_id(int(uid))
-    if not user.is_active:
-        raise HTTPException(status_code=403, detail="Inactive user")
-    return user
-
-
 def get_current_active_user(
         user: UserRead = Depends(get_current_user),
 ) -> UserRead:
