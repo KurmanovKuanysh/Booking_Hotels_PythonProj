@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, exists
 
 from backend.app.core.exceptions import InvalidCityError
 from backend.app.models import Hotel
@@ -83,16 +83,16 @@ class RoomService:
         return room
 
     def is_room_available(self,room_id: int, data) -> bool:
-        booking = self.session.scalars(
+        booking = self.session.scalar(
             select(Booking)
             .where(
                 Booking.r_id == room_id,
                 Booking.status.in_(["confirmed", "pending"]),
-                Booking.check_out >= data.check_in,
-                Booking.check_in <= data.check_out
+                Booking.check_in < data.check_out,
+                Booking.check_out > data.check_in
             )
-        ).first()
-        return booking is None
+        )
+        return not booking
 
     def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
         if check_in > check_out:
@@ -227,26 +227,34 @@ class RoomService:
     def get_active_cities(self) -> list[str]:
         return list(self.session.scalars(select(Hotel.city).distinct()).all())
 
-    def get_all_available_rooms(self, data) -> list[RoomRead]:
+    def get_all_available_rooms(
+            self,
+            city: str,
+            check_in: date,
+            check_out: date,
+            guests: int
+    ) -> list[RoomRead]:
         query = select(Room).join(Hotel, Room.h_id == Hotel.id)
 
-        if data.city is not None:
-            if data.city.strip() == "" or data.city.strip().title() not in self.get_active_cities(self):
-                raise InvalidCityError(city=data.city.strip().title())
+        if city is not None:
+            if city.strip() == "" or city.strip().title() not in self.get_active_cities(self):
+                raise InvalidCityError(city=city.strip().title())
             query = query.where(
-                Hotel.city == data.city.strip().title()
+                Hotel.city == city.strip().title()
             )
 
-        if data.guests is not None:
-            query = query.where(Room.capacity >= data.guests)
+        if guests is not None:
+            if guests < 1:
+                raise HTTPException(status_code=400, detail="Guests must be at least 1")
+            query = query.where(Room.capacity >= guests)
 
-        if data.check_in is not None and data.check_out is not None:
+        if check_in is not None and check_out is not None:
             conflicting_rooms = (
                 select(Booking.r_id)
                 .where(
                     Booking.status.in_(["confirmed", "pending"]),
-                    Booking.check_in < data.check_out,  # строго
-                    Booking.check_out > data.check_in  # строго >
+                    Booking.check_in < check_out,  # строго
+                    Booking.check_out > check_in  # строго >
                 )
             )
             query = query.where(Room.id.not_in(conflicting_rooms))
