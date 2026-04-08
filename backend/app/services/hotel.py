@@ -56,14 +56,30 @@ class HotelService:
             self.session.rollback()
             raise HTTPException(status_code=500, detail=f"Error deleting hotel: {e}")
 
-    def get_hotels(self) -> list[Hotel]:
-        return list(self.session.scalars(select(Hotel)).all())
+    def get_hotels(self, limit: int, offset: int) -> list[Hotel]:
+        return list(self.session.scalars(
+            select(Hotel)
+            .limit(limit)
+            .offset(offset)
+        ).all())
 
     def get_hotel_by_id(self, hotel_id: int) -> Hotel | None:
         hotel = self.session.scalars(select(Hotel).where(Hotel.id == hotel_id)).first()
         if not hotel:
             raise HTTPException(status_code=404, detail="Hotel not found")
         return hotel
+
+    def get_popular_hotels(self, limit: int) -> list[Hotel]:
+        popular_hotels = list(self.session.scalars(
+            select(Hotel)
+            .join(Room, Room.h_id == Hotel.id)
+            .join(Booking, Booking.r_id == Room.id)
+            .where(Booking.status.in_(["confirmed", "completed"]))
+            .group_by(Hotel.id)
+            .order_by(func.count(Booking.id).desc())
+            .limit(limit)
+        ))
+        return popular_hotels
 
     def list_hotels_by_city(self, city: str) -> list[Hotel]:
         hotels = self.session.scalars(

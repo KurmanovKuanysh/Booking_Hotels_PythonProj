@@ -100,6 +100,17 @@ def user_errors_handlers(app: FastAPI) -> None:
         )
 
 def booking_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(RoomNotAvailableError)
+    def handle_room_not_available_error(
+            request: Request,
+            exc: RoomNotAvailableError
+    ):
+        return JSONResponse(
+            status_code=409,
+            content={
+                "message": "Room not available"
+            }
+        )
     @app.exception_handler(BookingNotFoundError)
     def handle_booking_not_found_error(
             request: Request,
