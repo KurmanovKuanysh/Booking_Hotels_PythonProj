@@ -11,7 +11,6 @@ from fastapi.security import (
 from backend.app.core.security import decode_access_token
 from jose import JWTError
 from dotenv import load_dotenv
-import jwt
 import os
 
 load_dotenv()
@@ -40,7 +39,6 @@ def validate_auth_user(
         email=form_data.username,
         password=form_data.password
     )
-
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Inactive user")
 
@@ -79,9 +77,3 @@ def get_current_user_admin(
         return user
     raise HTTPException(status_code=403, detail="Not an admin")
 
-def get_current_active_user(
-        user: UserRead = Depends(get_current_user),
-) -> UserRead:
-    if user.is_active:
-        return user
-    raise HTTPException(status_code=403, detail="Inactive user")

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.app.api.deps import get_db, validate_auth_user
-from backend.app.core.exceptions import DuplicateEmailError
+from backend.app.api.deps import get_db, validate_auth_user, get_current_user
+from backend.app.core.exceptions import DuplicateEmailError, InvalidPasswordError, AppError
 from backend.app.schemas.auth import TokenPair, RefreshRequest, LogOutRequest
-from backend.app.schemas.user import  UserRead,UserRegister
+from backend.app.schemas.user import UserRead, UserRegister, UserChangePassword, UserEdit
 from backend.app.services.token import TokenService
 from backend.app.services.user import UserService
 from sqlalchemy.orm import Session
-from backend.app.core.security import create_access_token, decode_refresh_token, create_refresh_token
+from backend.app.core.security import create_access_token, decode_refresh_token, create_refresh_token, verify_password
 from backend.app.schemas.auth import RefreshTokenData, TokenData
 REFRESH_TOKEN_EXPIRE_DAYS = 2
 router = APIRouter(tags=["Authorization"])
@@ -110,3 +110,26 @@ def logout_user(
     token_service = TokenService(db)
     token_service.revoke_refresh_token(body.refresh_token)
     return {"message": "Logged out"}
+
+@router.patch("/auth/change-password", status_code=204)
+def user_change_password(
+        pass_data: UserChangePassword,
+        user: UserRead = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    service = UserService(db)
+
+    if not verify_password(
+            pass_data.current_password,
+            service.get_user_by_id(user.id).password
+    ):
+        raise InvalidPasswordError
+    try:
+        service.edit_user(
+            uid=user.id,
+            edit=UserEdit(
+                password=pass_data.new_password
+            )
+        )
+    except AppError as e:
+        raise e
