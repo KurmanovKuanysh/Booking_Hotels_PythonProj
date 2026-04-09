@@ -1,5 +1,5 @@
 from backend.app.db.session import SessionLocal
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Request
 from sqlalchemy.orm import Session
 from backend.app.schemas.user import UserRead
 
@@ -44,18 +44,8 @@ def validate_auth_user(
 
     return user
 
-def get_current_token_payload(
-        token: str = Depends(oauth2_scheme),
-):
-    try:
-        payload = decode_access_token(
-            token=token
-        )
-    except JWTError as e:
-        raise HTTPException(status_code=401, detail=f"token invalid {e}")
-    if payload is None:
-        raise HTTPException(status_code=401, detail="token invalid")
-    return payload
+def get_current_token_payload(request: Request):
+    return request.state.user_payload
 
 def get_current_user(
         payload: dict = Depends(get_current_token_payload),
