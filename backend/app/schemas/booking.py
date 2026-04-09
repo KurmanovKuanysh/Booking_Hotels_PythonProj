@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 from datetime import date
 
 class BookingBase(BaseModel):
@@ -30,6 +30,16 @@ class BookingEdit(BaseModel):
     r_id: int | None = Field(default=None, gt=0)
     check_in: date | None = Field(default=None)
     check_out: date | None = Field(default=None)
+
+class EditBookingStatus(BaseModel):
+    id: int = Field(gt=0)
+    status: str = Field(min_length=3, max_length=10)
+
+    @model_validator(mode='after')
+    def check_status_valid(self):
+        if self.status not in ['pending', 'confirmed', 'cancelled', 'completed']:
+            raise ValueError('Invalid status')
+        return self
 
 class BookingEditAdmin(BookingEdit):
     status: str | None = Field(default=None, min_length=3, max_length=100)

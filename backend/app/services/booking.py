@@ -93,10 +93,16 @@ class BookingService:
             raise HTTPException(status_code=404, detail="Booking not found")
         return booking.status
 
-    def cancel_booking(self, booking_id: int) -> bool:
-        if self.update_booking_status(booking_id, "cancelled"):
+    def cancel_booking(self, booking_id: int, user) -> bool:
+        have_booking = self.session.scalar(
+            select(Booking)
+            .where(Booking.id == booking_id,
+                   Booking.user_id == user.id
+                   )
+        )
+        if self.update_booking_status(booking_id, "cancelled") and have_booking:
             return True
-        return False
+        raise HTTPException(status_code=404, detail="Booking not found")
 
     def confirm_booking(self, booking_id: int) -> bool:
         if self.update_booking_status(booking_id, "confirmed"):
