@@ -22,32 +22,7 @@ def get_user_rooms(
 
     return booked_rooms
 
-@router.get("/hotels/{hotel_id}/rooms", response_model=list[RoomRead])
-def get_rooms_by_filter(
-        hotel_id: int,
-        filters: FRoom = Depends(),
-        db: Session = Depends(get_db)
-):
-    service = RoomService(db)
-    return service.get_rooms_by_filter(
-        hotel_id = hotel_id,
-        filters=filters
-    )
-@router.get("/hotels/{hotel_id}/rooms/available", response_model=list[RoomRead])
-def get_available_rooms_by_hotel_dates(
-        hotel_id: int,
-        check_in: date,
-        check_out: date,
-        db: Session = Depends(get_db)
-):
-    service = RoomService(db)
-    rooms = service.list_rooms_by_hotel_id(hotel_id)
-    return service.get_available_rooms_hotel_dates(
-        rooms=rooms,
-        check_in=check_in,
-        check_out=check_out
-    )
-@router.get("/rooms/search/available", response_model=list[RoomRead])
+@router.get("/rooms/available", response_model=list[RoomRead])
 def get_all_available_rooms(
         city: str | None = None,
         check_in: date = date.today(),
