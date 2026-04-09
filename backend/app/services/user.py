@@ -48,7 +48,7 @@ class UserService:
 
     def find_user_by_email(self, email: str) -> User | None:
         return self.session.scalars(
-            select(User).where(User.email == email.strip().lower())
+            select(User).where(User.email == str(email).strip().lower())
         ).one_or_none()
 
     def get_user_by_email(self, email: str) -> User | None:
@@ -95,15 +95,9 @@ class UserService:
 
     def login_user(self, email: str, password: str) -> User:
         user = self.get_user_by_email(email)
-        if not user or not self.check_password(user.id, password):
-            raise InvalidLoginOrPasswordError("Invalid email or password")
+        if not user or not verify_password(password, user.password):
+            raise InvalidLoginOrPasswordError
         return user
-
-    def check_password(self,user_id: int, password: str) -> bool:
-        user = self.get_user_by_id(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        return verify_password(password, user.password)
 
     def edit_user(
             self,
@@ -150,3 +144,9 @@ class UserService:
         self.session.commit()
         self.session.refresh(user)
         return user
+    def get_user_bookings(self, user) -> list[Booking]:
+        return list(self.session.scalars(
+            select(Booking)
+            .where(Booking.user_id == user.id,
+                   Booking.status.in_(["confirmed"]))
+        ))

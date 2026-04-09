@@ -30,7 +30,7 @@ class UserRegister(BaseModel):
 
 class UserEdit(BaseModel):
     name: str | None = Field(default=None, min_length=3, max_length=100)
-    email: str | None = Field(default=None, min_length=6, max_length=100)
+    email: EmailStr | None = Field(default=None, min_length=6, max_length=100)
     password: str | None = Field(default=None, min_length=8, max_length=100)
 
 class UserEditAdmin(UserEdit):
