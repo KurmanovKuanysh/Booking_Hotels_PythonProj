@@ -2,7 +2,8 @@ from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
 from backend.app.core.exceptions import BookingNotFoundError, DatesConflictError, RoomNotAvailableError, \
-    UserNotFoundError, InvalidStatusError, InvalidPriceError, RoomNotFoundError
+    UserNotFoundError, InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, \
+    NoPermission
 from backend.app.models.booking import Booking
 from backend.app.models.user import User
 from backend.app.models.room import Room
@@ -47,15 +48,15 @@ class BookingService:
         if status not in ALLOWED_STATUSES:
             raise InvalidStatusError
         if guest_count < 1:
-            raise HTTPException(status_code=400, detail="Guest count must be at least 1")
+            raise InvalidNumberError
         room = self.session.scalar(select(Room).where(Room.id == r_id))
         if room is None:
             raise RoomNotFoundError
         total_price = room.price_per_day * (check_out - check_in).days * guest_count
         if total_price < 0:
-            raise InvalidPriceError
+            raise InvalidNumberError
         if guest_count > room.capacity:
-            raise HTTPException(status_code=400, detail="Guest count cannot exceed room capacity")
+            raise RoomCapacityError
         new_booking = Booking(
             r_id=r_id,
             check_in=check_in,
@@ -96,11 +97,12 @@ class BookingService:
     def cancel_booking(self, booking_id: int, user) -> bool:
         have_booking = self.session.scalar(
             select(Booking)
-            .where(Booking.id == booking_id,
-                   Booking.user_id == user.id
-                   )
+            .where(Booking.user_id == user.id,
+                   Booking.id == booking_id,
+                   Booking.status.in_(["confirmed", "pending"])
+            )
         )
-        if self.update_booking_status(booking_id, "cancelled") and have_booking:
+        if have_booking and self.update_booking_status(booking_id, "cancelled"):
             return True
         raise HTTPException(status_code=404, detail="Booking not found")
 
@@ -187,6 +189,7 @@ class BookingService:
 
     def edit_booking_user_side(
             self,
+            user,
             booking_id: int,
             edit,
             commit: bool = True
@@ -197,7 +200,8 @@ class BookingService:
         )
         if booking is None:
             raise BookingNotFoundError
-
+        if booking.user_id != user.id:
+            raise NoPermission
         new_check_in = edit.check_in if edit.check_in is not None else booking.check_in
         new_check_out = edit.check_out if edit.check_out is not None else booking.check_out
         new_r_id = edit.r_id if edit.r_id is not None else booking.r_id
@@ -256,7 +260,7 @@ class BookingService:
         booking.user_id = new_user_id
 
         if new_total_price < 0:
-            raise InvalidPriceError
+            raise InvalidNumberError
         booking.total_price = edit.total_price
 
         self.session.commit()

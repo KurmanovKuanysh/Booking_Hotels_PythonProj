@@ -144,9 +144,3 @@ class UserService:
         self.session.commit()
         self.session.refresh(user)
         return user
-    def get_user_bookings(self, user) -> list[Booking]:
-        return list(self.session.scalars(
-            select(Booking)
-            .where(Booking.user_id == user.id,
-                   Booking.status.in_(["confirmed"]))
-        ))
