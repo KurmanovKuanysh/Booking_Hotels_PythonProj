@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
+from backend.app.models.booking import Status
 from datetime import date
 
 class BookingBase(BaseModel):
     r_id: int = Field(gt=0)
     check_in: date
     check_out: date
-    status: str = Field(min_length=3, max_length=100)
+    status: Status = Field(min_length=3, max_length=100)
     total_price: float = Field(gt=0)
     user_id: int = Field(gt=0)
 
@@ -13,14 +14,14 @@ class BookingNew(BaseModel):
     r_id: int = Field(gt=0)
     check_in: date
     check_out: date
-    status: str = Field(min_length=3, max_length=100)
+    guest_count: int = Field(ge=1)
 
 class BookingRead(BaseModel):
     id: int = Field(gt=0)
     r_id: int
     check_in: date
     check_out: date
-    status: str
+    status: Status
     user_id: int
     total_price: float
 
@@ -33,15 +34,10 @@ class BookingEdit(BaseModel):
 
 class EditBookingStatus(BaseModel):
     id: int = Field(gt=0)
-    status: str = Field(min_length=3, max_length=10)
+    status: Status = Field(min_length=3, max_length=10)
 
-    @model_validator(mode='after')
-    def check_status_valid(self):
-        if self.status not in ['pending', 'confirmed', 'cancelled', 'completed']:
-            raise ValueError('Invalid status')
-        return self
 
 class BookingEditAdmin(BookingEdit):
-    status: str | None = Field(default=None, min_length=3, max_length=100)
+    status: Status | None = Field(default=None, min_length=3, max_length=100)
     total_price: float | None = Field(default=None, gt=0)
     user_id: int | None = Field(default=None, gt=0)
