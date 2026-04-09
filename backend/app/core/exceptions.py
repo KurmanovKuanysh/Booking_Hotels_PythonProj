@@ -18,6 +18,8 @@ class InvalidLoginOrPasswordError(AppError):
 #USER
 class NoPermissionRole(AppError):
     pass
+class NoPermission(AppError):
+    pass
 class InvalidPasswordError(AppError):
     pass
 class UserNotFoundError(AppError):
@@ -30,12 +32,16 @@ class InvalidEmailLength(AppError):
         self.email = email
 class NotMatchedPasswords(AppError):
     pass
+class UserValidationError(AppError):
+    pass
 #USER END
 
 #ROOM
 class NotFoundBookedRoomsError(AppError):
     pass
 class RoomNotFoundError(AppError):
+    pass
+class RoomCapacityError(AppError):
     pass
 #ROOM END
 #HOTEL
@@ -55,12 +61,10 @@ class RoomNotAvailableError(AppError):
     pass
 class InvalidStatusError(AppError):
     pass
-
-class InvalidPriceError(AppError):
-    pass
-
 #BOOKING END
 
-
-class UserValidationError(AppError):
+#INDEPENDENT ERRORS
+class InvalidNumberError(AppError):
     pass
+
+#INDEPENDENT ERRORS END

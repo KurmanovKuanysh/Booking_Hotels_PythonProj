@@ -10,7 +10,7 @@ from backend.app.core.exceptions import (
     NotMatchedPasswords,
     NotFoundBookedRoomsError,
     NoPermissionRole, InvalidCityError, DatesConflictError, BookingNotFoundError, RoomNotAvailableError,
-    InvalidStatusError, InvalidPriceError, RoomNotFoundError
+    InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, NoPermission
 )
 
 def register_errors_handlers(app: FastAPI):
@@ -98,6 +98,15 @@ def user_errors_handlers(app: FastAPI) -> None:
                 "message":"No permission granted"
             }
         )
+    @app.exception_handler(NoPermission)
+    def handle_user_permission_error(
+            request: Request,
+            exc: NoPermission
+    ):
+        return JSONResponse(
+            status_code=403,
+            content={}
+        )
 
 def booking_errors_handlers(app: FastAPI) -> None:
     @app.exception_handler(RoomNotAvailableError)
@@ -158,17 +167,6 @@ def booking_errors_handlers(app: FastAPI) -> None:
             }
         )
 
-    @app.exception_handler(InvalidPriceError)
-    def handle_invalid_price_error(
-            request: Request,
-            exc: InvalidPriceError
-    ):
-        return JSONResponse(
-            status_code=400,
-            content={
-                "message": "Invalid price"
-            }
-        )
 
 def hotel_errors_handlers(app: FastAPI) -> None:
     @app.exception_handler(InvalidCityError)
@@ -204,5 +202,30 @@ def room_errors_handlers(app: FastAPI) -> None:
             status_code=404,
             content={
                 "message": "Room not found"
+            }
+        )
+    @app.exception_handler(RoomCapacityError)
+    def handle_room_capacity_error(
+            request: Request,
+            exc: RoomCapacityError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Room capacity exceeded"
+            }
+        )
+
+
+def independent_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(InvalidNumberError)
+    def handle_invalid_number_error(
+            request: Request,
+            exc: InvalidNumberError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Invalid number"
             }
         )
