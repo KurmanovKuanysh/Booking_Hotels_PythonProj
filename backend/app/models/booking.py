@@ -16,7 +16,7 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
-    r_id: Mapped[int_big] = mapped_column(ForeignKey("room.id"), nullable=False, index=True)
+    r_id: Mapped[int_big] = mapped_column(ForeignKey("rooms.id"), nullable=False, index=True)
     check_in: Mapped[date_] = mapped_column(nullable=False)
     check_out: Mapped[date_] = mapped_column(nullable=False)
     status = mapped_column(Enum(Status), nullable=False)
@@ -31,6 +31,5 @@ class Booking(Base):
     rooms = relationship("Room", back_populates="bookings")
 
     __table_args__ = (
-        CheckConstraint("status in ('pending', 'confirmed', 'cancelled', 'completed')", name="status_check"),
         CheckConstraint("check_in <= check_out", name="check_in_check"),
     )

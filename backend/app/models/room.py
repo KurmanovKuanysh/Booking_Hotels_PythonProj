@@ -7,9 +7,9 @@ class Room(Base):
     __tablename__ = "rooms"
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
-    h_id: Mapped[int_big] = mapped_column(ForeignKey("hotel.id"), nullable=False )
+    h_id: Mapped[int_big] = mapped_column(ForeignKey("hotels.id"), nullable=False )
     room_number: Mapped[text] = mapped_column(nullable=False)
-    r_t_id: Mapped[int_big] = mapped_column(ForeignKey("room_type.id"), nullable=False)
+    r_t_id: Mapped[int_big] = mapped_column(ForeignKey("room_types.id"), nullable=False)
     capacity: Mapped[int] = mapped_column(nullable=False)
     price_per_day: Mapped[numeric_10_2] = mapped_column(nullable=False)
     floor: Mapped[int] = mapped_column(nullable=False)
