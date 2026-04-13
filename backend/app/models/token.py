@@ -13,4 +13,4 @@ class RefreshToken(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     #relationship
-    user = relationship("User", back_populates="refresh_tokens")
+    users = relationship("User", back_populates="refresh_tokens")

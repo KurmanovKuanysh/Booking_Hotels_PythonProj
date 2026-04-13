@@ -4,7 +4,7 @@ from backend.app.db.base import Base
 from backend.app.utils.utils import int_big, numeric_10_2, text
 
 class Room(Base):
-    __tablename__ = "room"
+    __tablename__ = "rooms"
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
     h_id: Mapped[int_big] = mapped_column(ForeignKey("hotel.id"), nullable=False )
@@ -16,9 +16,9 @@ class Room(Base):
     description: Mapped[text] = mapped_column(nullable=True)
 
     #relationship
-    room_type = relationship("RoomType", back_populates="room")
-    hotel = relationship("Hotel", back_populates="room")
-    booking = relationship("Booking", back_populates="room")
+    room_types = relationship("RoomType", back_populates="rooms")
+    hotels = relationship("Hotel", back_populates="rooms")
+    bookings = relationship("Booking", back_populates="rooms")
 
 
     __table_args__ = (

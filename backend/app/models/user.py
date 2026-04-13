@@ -14,8 +14,9 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True)
 
     #relationship
-    booking = relationship("Booking", back_populates="user")
-    refresh_tokens = relationship("RefreshToken", back_populates="user")
+    bookings = relationship("Booking", back_populates="user", cascade="all, delete-orphan")
+    reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
 
     __table_args__ = (
         CheckConstraint("role IN ('ADMIN','S-ADMIN','USER')", name="role_check"),
