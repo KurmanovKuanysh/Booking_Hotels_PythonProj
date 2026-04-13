@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select, exists
+from sqlalchemy import select
 
-from backend.app.core.exceptions import InvalidCityError
+from backend.app.core.exceptions import ( InvalidCityError, DuplicateRoomError, RoomNotAvailableError, RoomNotFoundError, \
+    DatesConflictError, InvalidRoomNumberLength, RoomCapacityError, RoomTypeNotFoundError, InvalidNumberError, \
+    InvalidLengthError )
 from backend.app.models import Hotel
 from backend.app.models.booking import Booking
 from backend.app.models.room import Room
@@ -33,7 +35,7 @@ class RoomService:
             .where(Hotel.id == h_id,
                 Room.room_number == room_number)
         ).all():
-            raise HTTPException(status_code=409, detail="Room number already exists in this hotel")
+            raise DuplicateRoomError
         room = Room(
             h_id=h_id,
             room_number=room_number,
@@ -58,7 +60,7 @@ class RoomService:
                        )
             ).first()
             if room_booked:
-                raise HTTPException(status_code=400, detail="Room has active bookings!")
+                raise RoomNotAvailableError
             self.session.delete(room)
             self.session.commit()
             return True
@@ -79,7 +81,7 @@ class RoomService:
     def get_room_by_id(self, r_id:int) -> Room | None:
         room = self.session.scalars(select(Room).where(Room.id == r_id)).first()
         if not room:
-            raise HTTPException(status_code=400, detail="Not Valid ID requested")
+            raise RoomNotFoundError
         return room
 
     def is_room_available(self,room_id: int, data) -> bool:
@@ -96,9 +98,9 @@ class RoomService:
 
     def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
         if check_in > check_out:
-            raise HTTPException(status_code=400, detail="Check-in date must be before check-out date")
+            raise DatesConflictError
         if check_in < date.today():
-            raise HTTPException(status_code=400, detail="Check-in date must be today or later")
+            raise DatesConflictError
         available_rooms = []
         for room in rooms:
             data = RoomDate(
@@ -148,10 +150,10 @@ class RoomService:
     ):
         room = self.get_room_by_id(room_id)
         if room.h_id != hotel_id:
-            raise HTTPException(status_code=404, detail="Room not found in this hotel")
+            raise RoomNotFoundError
         if room_number is not None:
             if len(room_number) > 10:
-                raise HTTPException(status_code=400, detail="Room number must be at most 10 characters long")
+                raise InvalidRoomNumberLength
             same_room_number = self.session.scalar(
                 select(Room)
                 .where(
@@ -161,28 +163,28 @@ class RoomService:
                 )
             )
             if same_room_number:
-                raise HTTPException(status_code=409, detail="Room number already exists in this hotel")
+                raise DuplicateRoomError
             room.room_number = room_number.strip()
         if r_t_id is not None:
             room_type = self.session.scalars(select(RoomType).where(RoomType.id == r_t_id)).first()
             if room_type is None:
-                raise HTTPException(status_code=404, detail="Room type not found")
+                raise RoomTypeNotFoundError
             room.r_t_id = r_t_id
         if capacity is not None:
             if capacity < 1:
-                raise HTTPException(status_code=400, detail="Capacity must be at least 1")
+                raise RoomCapacityError
             room.capacity = capacity
         if price_per_day is not None:
             if price_per_day < 0:
-                raise HTTPException(status_code=400, detail="Price per day must be at least 0")
+                raise InvalidNumberError
             room.price_per_day = price_per_day
         if floor is not None:
             if floor < 0:
-                raise HTTPException(status_code=400, detail="Floor must be at least 0")
+                raise InvalidNumberError
             room.floor = floor
         if description is not None:
             if len(description) > 255:
-                raise HTTPException(status_code=400, detail="Description must be at most 255 characters long")
+                raise InvalidLengthError
             room.description = description
         self.session.commit()
         self.session.refresh(room)
@@ -245,7 +247,7 @@ class RoomService:
 
         if guests is not None:
             if guests < 1:
-                raise HTTPException(status_code=400, detail="Guests must be at least 1")
+                raise InvalidNumberError
             query = query.where(Room.capacity >= guests)
 
         if check_in is not None and check_out is not None:
