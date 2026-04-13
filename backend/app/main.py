@@ -13,8 +13,17 @@ from backend.app.core.exceptions_handler import (
     independent_errors_handlers
 )
 from backend.app.core.middleware import register_middleware
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 register_errors_handlers(app)
 login_errors_handlers(app)

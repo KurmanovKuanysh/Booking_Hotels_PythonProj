@@ -47,9 +47,9 @@ class UserService:
         raise HTTPException(status_code=404, detail="User not found")
 
     def find_user_by_email(self, email: str) -> User | None:
-        return self.session.scalars(
+        return self.session.scalar(
             select(User).where(User.email == str(email).strip().lower())
-        ).one_or_none()
+        )
 
     def get_user_by_email(self, email: str) -> User | None:
         user = self.find_user_by_email(email)
