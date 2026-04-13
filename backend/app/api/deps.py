@@ -8,16 +8,6 @@ from fastapi.security import (
     HTTPBearer,
     OAuth2PasswordBearer, OAuth2PasswordRequestForm
 )
-from backend.app.core.security import decode_access_token
-from jose import JWTError
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-ALGORITHM = os.getenv('ALGORITHM', 'HS256')
-SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
-
 
 http_bearer = HTTPBearer()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

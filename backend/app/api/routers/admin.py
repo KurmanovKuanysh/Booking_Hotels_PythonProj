@@ -170,6 +170,7 @@ def edit_booking_admin_side(
 ):
     service = BookingService(db)
     return service.edit_booking_admin_side(
+        user=user,
         booking_id=booking_id,
         edit=edit
     )
