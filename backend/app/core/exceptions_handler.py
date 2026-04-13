@@ -10,7 +10,9 @@ from backend.app.core.exceptions import (
     NotMatchedPasswords,
     NotFoundBookedRoomsError,
     NoPermissionRole, InvalidCityError, DatesConflictError, BookingNotFoundError, RoomNotAvailableError,
-    InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, NoPermission
+    InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, NoPermission, InvalidTokenError,
+    HotelNotFoundError, ReviewNotFoundError, DuplicateReviewError, DuplicateRoomError, InvalidRoomNumberLength,
+    RoomTypeNotFoundError, InvalidLengthError, BookingNotCompletedError
 )
 
 def register_errors_handlers(app: FastAPI):
@@ -48,6 +50,18 @@ def login_errors_handlers(app: FastAPI) -> None:
             status_code=401,
             content={
                 "message": "Invalid email or password"
+            }
+        )
+
+    @app.exception_handler(InvalidTokenError)
+    def handle_invalid_token_error(
+            request: Request,
+            exc: InvalidTokenError
+    ):
+        return JSONResponse(
+            status_code=401,
+            content={
+                "message": "Invalid token"
             }
         )
 
@@ -109,17 +123,18 @@ def user_errors_handlers(app: FastAPI) -> None:
         )
 
 def booking_errors_handlers(app: FastAPI) -> None:
-    @app.exception_handler(RoomNotAvailableError)
-    def handle_room_not_available_error(
+    @app.exception_handler(BookingNotCompletedError)
+    def handle_booking_not_completed_error(
             request: Request,
-            exc: RoomNotAvailableError
+            exc: BookingNotCompletedError
     ):
         return JSONResponse(
-            status_code=409,
+            status_code=400,
             content={
-                "message": "Room not available"
+                "message": "Booking not completed"
             }
         )
+
     @app.exception_handler(BookingNotFoundError)
     def handle_booking_not_found_error(
             request: Request,
@@ -182,6 +197,41 @@ def hotel_errors_handlers(app: FastAPI) -> None:
         )
 
 def room_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(RoomTypeNotFoundError)
+    def handle_room_type_not_found_error(
+            request: Request,
+            exc: RoomTypeNotFoundError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "Room type not found"
+            }
+        )
+    @app.exception_handler(InvalidRoomNumberLength)
+    def handle_invalid_room_number_length(
+            request: Request,
+            exc: InvalidRoomNumberLength
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Room number must be max 10 char long"
+            }
+        )
+
+    @app.exception_handler(DuplicateRoomError)
+    def handle_duplicate_room_error(
+            request: Request,
+            exc: DuplicateRoomError
+    ):
+        return JSONResponse(
+            status_code=409,
+            content={
+                "message": "Room already exists"
+            }
+        )
+
     @app.exception_handler(RoomNotAvailableError)
     def handle_room_not_available_error(
             request: Request,
@@ -215,6 +265,18 @@ def room_errors_handlers(app: FastAPI) -> None:
                 "message": "Room capacity exceeded"
             }
         )
+def hotel_room_errors_handlers(app: FastAPI) -> None:
+    @app.exception_handler(HotelNotFoundError)
+    def handle_hotel_not_found_error(
+            request: Request,
+            exc: HotelNotFoundError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "Hotel not found"
+            }
+        )
 
 
 def independent_errors_handlers(app: FastAPI) -> None:
@@ -227,5 +289,40 @@ def independent_errors_handlers(app: FastAPI) -> None:
             status_code=400,
             content={
                 "message": "Invalid number"
+            }
+        )
+    @app.exception_handler(InvalidLengthError)
+    def handle_invalid_length_error(
+            request: Request,
+            exc: InvalidLengthError
+    ):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "message": "Invalid length"
+            }
+        )
+
+def review_errors_handling( app: FastAPI) -> None:
+    @app.exception_handler(ReviewNotFoundError)
+    def handle_review_not_found_error(
+            request: Request,
+            exc: ReviewNotFoundError
+    ):
+        return JSONResponse(
+            status_code=404,
+            content={
+                "message": "Review not found"
+            }
+        )
+    @app.exception_handler(DuplicateReviewError)
+    def handle_duplicate_review_error(
+            request: Request,
+            exc: DuplicateReviewError
+    ):
+        return JSONResponse(
+            status_code=409,
+            content={
+                "message": "Review already exists"
             }
         )
