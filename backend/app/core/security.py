@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from backend.app.core.config import settings
-from backend.app.core.exceptions import PasswordVerifyError
+from backend.app.core.exceptions import PasswordVerifyError, InvalidTokenError
 from backend.app.schemas.auth import RefreshTokenData, TokenData
 
 load_dotenv()
@@ -28,7 +28,7 @@ def decode_access_token(token: str) -> dict:
     try:
         return jwt.decode(token, settings.SECRET_KEY, [settings.ALGORITHM])
     except JWTError:
-        return {}
+        raise InvalidTokenError
 
 def create_refresh_token(data: RefreshTokenData) -> tuple[str, datetime]:
     expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
@@ -42,6 +42,6 @@ def decode_refresh_token(token: str) -> dict:
     try:
         return jwt.decode(token, settings.SECRET_KEY, [settings.ALGORITHM])
     except JWTError:
-        return {}
+        raise InvalidTokenError
 
 
