@@ -15,17 +15,15 @@ def create_booking(
     user: UserRead = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if user.is_active:
-        service = BookingService(db)
-        return service.create_new_booking(
-            r_id=booking.r_id,
-            guest_count=booking.guest_count,
-            check_in=booking.check_in,
-            check_out=booking.check_out,
-            status="pending",
-            user_id=user.id,
-        )
-    raise HTTPException(status_code=401, detail="Unauthorized")
+    service = BookingService(db)
+    return service.create_new_booking(
+        r_id=booking.r_id,
+        guest_count=booking.guest_count,
+        check_in=booking.check_in,
+        check_out=booking.check_out,
+        status="pending",
+        user_id=user.id,
+    )
 
 @router.get("/bookings/me", response_model=list[BookingRead])
 def get_user_bookings(

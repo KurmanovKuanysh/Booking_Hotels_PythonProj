@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 
 from backend.app.core.exceptions import BookingNotFoundError, DatesConflictError, RoomNotAvailableError, \
     UserNotFoundError, InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, \
-    NoPermission
+    NoPermission, BookingNotCompletedError
 from backend.app.models.booking import Booking
 from backend.app.models.user import User
 from backend.app.models.room import Room
 from datetime import date, datetime
 from fastapi import HTTPException
 
-from backend.app.schemas.booking import BookingRead, BookingEditAdmin, BookingEdit
+from backend.app.schemas.booking import BookingRead
 
 ALLOWED_STATUSES = {"pending", "confirmed", "cancelled", "completed"}
 ALLOWED_TRANSITIONS = {
@@ -52,7 +52,7 @@ class BookingService:
         room = self.session.scalar(select(Room).where(Room.id == r_id))
         if room is None:
             raise RoomNotFoundError
-        total_price = room.price_per_day * (check_out - check_in).days * guest_count
+        total_price = room.price_per_day * (check_out - check_in).days
         if total_price < 0:
             raise InvalidNumberError
         if guest_count > room.capacity:
@@ -72,39 +72,36 @@ class BookingService:
 
     def delete_booking(self, booking_id: int) -> bool:
         booking = self.get_booking_by_id(booking_id)
-        if not booking:
-            raise HTTPException(status_code=404, detail="Booking not found")
         if self.get_booking_status(booking_id) in ("confirmed", "pending"):
-            raise HTTPException(status_code=400, detail="Booking cannot be deleted, Booking status is not completed")
+            raise BookingNotCompletedError
         self.session.delete(booking)
         self.session.commit()
         return True
 
     def delete_booking_cascade_admin(self, booking_id: int):
         booking = self.get_booking_by_id(booking_id)
-        if not booking:
-            raise HTTPException(status_code=404, detail="Booking not found")
         self.session.delete(booking)
         self.session.commit()
         return True
 
     def get_booking_status(self, booking_id: int) -> str:
         booking = self.get_booking_by_id(booking_id)
-        if not booking:
-            raise HTTPException(status_code=404, detail="Booking not found")
         return booking.status
 
     def cancel_booking(self, booking_id: int, user) -> bool:
-        have_booking = self.session.scalar(
+        booking = self.session.scalar(
             select(Booking)
             .where(Booking.user_id == user.id,
                    Booking.id == booking_id,
                    Booking.status.in_(["confirmed", "pending"])
             )
         )
-        if have_booking and self.update_booking_status(booking_id, "cancelled"):
-            return True
-        raise HTTPException(status_code=404, detail="Booking not found")
+        if "cancelled" not in ALLOWED_TRANSITIONS[booking.status]:
+            raise InvalidStatusError
+        booking.status = "cancelled"
+        booking.cancelled_at = datetime.now()
+        self.session.commit()
+        return True
 
     def confirm_booking(self, booking_id: int) -> bool:
         if self.update_booking_status(booking_id, "confirmed"):
@@ -131,13 +128,10 @@ class BookingService:
         self.session.commit()
         return changed
 
-    def has_confirmed_booking(self, user_id: int) -> bool:
-        user = self.session.scalar(select(User).where(User.id == user_id))
-        if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
+    def has_confirmed_booking(self, user) -> bool:
         confirmed_bookings = self.session.scalars(
             select(Booking)
-            .where(Booking.user_id == user_id,
+            .where(Booking.user_id == user.id,
                    Booking.status == "confirmed")
         ).all()
 
@@ -145,20 +139,21 @@ class BookingService:
 
     def update_booking_status(self, booking_id: int, new_status: str) -> bool:
         if new_status.strip().lower() not in ALLOWED_STATUSES:
-            raise HTTPException(status_code=400, detail="Invalid status")
+            raise InvalidStatusError
         booking = self.get_booking_by_id(booking_id)
-        if not booking:
-            raise HTTPException(status_code=404, detail="Booking not found")
         if new_status.strip().lower() not in ALLOWED_TRANSITIONS[booking.status]:
-            raise HTTPException(status_code=400, detail="Invalid status transition")
+            raise InvalidStatusError
         booking.status = new_status.strip().lower()
         self.session.commit()
         return True
 
     def get_booking_by_id(self, booking_id: int) -> Booking | None:
-        return self.session.scalars(
+        booking = self.session.scalars(
             select(Booking)
             .where(Booking.id == booking_id)).first()
+        if not booking:
+            raise BookingNotFoundError
+        return booking
 
     def get_bookings_by_user_id(self, user_id: int) -> list[Booking]:
         return list(self.session.scalars(
@@ -240,10 +235,11 @@ class BookingService:
         return booking
     def edit_booking_admin_side(
             self,
+            user,
             booking_id: int,
             edit
     ):
-        booking = self.edit_booking_user_side(booking_id, edit, commit=False)
+        booking = self.edit_booking_user_side(user, booking_id, edit, commit=False)
 
         new_user_id = edit.user_id if edit.user_id is not None else booking.user_id
         new_status = edit.status.strip().lower() if edit.status is not None else booking.status
