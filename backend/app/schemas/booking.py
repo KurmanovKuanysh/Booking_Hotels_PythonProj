@@ -7,21 +7,10 @@ from backend.app.models.booking import Status
 from datetime import datetime
 
 
-class BookingBase(BaseModel):
-    r_id: int = Field(gt=0)
-    check_in: datetime
-    check_out: datetime
-    status: Status
-    total_price: float = Field(gt=0)
-    user_id: int = Field(gt=0)
-
 class BookingCreate(BaseModel):
-    user_id: int = Field(gt=0)
     r_id: int = Field(gt=0)
     check_in: datetime
     check_out: datetime
-    status: Status
-    total_price: Decimal = Field(gt=0.00)
     guest_count: int = Field(default=1, ge=1)
 
     @model_validator(mode='after')
@@ -30,11 +19,6 @@ class BookingCreate(BaseModel):
             raise DatesConflictError
         return self
 
-class BookingNew(BaseModel):
-    r_id: int = Field(gt=0)
-    check_in: datetime
-    check_out: datetime
-    guest_count: int = Field(ge=1)
 
 class BookingRead(BaseModel):
     id: int = Field(gt=0)
@@ -52,10 +36,10 @@ class BookingEdit(BaseModel):
     check_in: datetime | None = Field(default=None)
     check_out: datetime | None = Field(default=None)
 
-class EditBookingStatus(BaseModel):
-    id: int = Field(gt=0)
-    status: Status
-
+class BookingCancelResponse(BaseModel):
+    message: str
+    penalty: Decimal
+    refund: Decimal
 
 class BookingEditAdmin(BookingEdit):
     status: Status | None = None

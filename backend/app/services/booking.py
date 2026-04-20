@@ -29,6 +29,7 @@ class BookingService:
 
     def create_new_booking(
             self,
+            user_id: int,
             data: BookingCreate
                 ) -> Booking:
         booked_room = self.session.scalar(
@@ -47,19 +48,19 @@ class BookingService:
             raise RoomNotFoundError
 
         total_price = room.price_per_day * (data.check_out - data.check_in).days
-        if total_price < 0:
-            raise InvalidNumberError
+        if total_price <= 0:
+            raise DatesConflictError
 
         if data.guest_count > room.capacity:
             raise RoomCapacityError
 
         new_booking = Booking(
+            user_id=user_id,
             r_id=data.r_id,
             check_in=data.check_in,
             check_out=data.check_out,
-            status=data.status,
-            user_id=data.user_id,
-            total_price=total_price
+            total_price=total_price,
+            guest_count=data.guest_count
         )
         self.session.add(new_booking)
         self.session.commit()
@@ -95,42 +96,42 @@ class BookingService:
 
 
     def calculate_cancel_penalty(self, booking: Booking) -> tuple[Decimal, Decimal]:
-        now = datetime.now().hour
-        hours_before = (booking.check_in.hour - now)
+        diff = booking.check_in - datetime.now()
+        hours_before = diff.total_seconds() / 3600
 
         if hours_before > 48:
-            penalty_percent = 0
+            penalty_percent = Decimal("0")
         elif hours_before > 24:
-            penalty_percent = 0.2
+            penalty_percent = Decimal("0.2")
         else:
-            penalty_percent = 0.5
+            penalty_percent = Decimal("0.5")
 
         penalty = booking.total_price * penalty_percent
         refund = booking.total_price - penalty
         if refund < 0:
-            refund = 0
+            refund = Decimal("0")
 
         return penalty, refund
 
-    def cancel_booking(self, booking_id: int, user) -> dict:
+    def cancel_booking(self, booking_id: int, user_id: int) -> dict:
         booking = self.session.scalar(
             select(Booking)
-            .where(Booking.user_id == user.id,
+            .where(Booking.user_id == user_id,
                    Booking.id == booking_id,
                    Booking.status.in_([Status.PENDING, Status.CONFIRMED])
             )
         )
         if booking is None:
             raise BookingNotFoundError
-        if "cancelled" not in ALLOWED_TRANSITIONS[booking.status.value]:
-            raise InvalidStatusError
         penalty, refund = self.calculate_cancel_penalty(booking)
 
         booking.status = Status.CANCELLED
-        booking.cancelled_at = datetime.now()
+        booking.cancelled_at = datetime.utcnow()
+
         self.session.commit()
         self.session.refresh(booking)
         return {
+            "message": "Booking cancelled successfully",
             "penalty": penalty,
             "refund": refund,
         }
@@ -167,7 +168,7 @@ class BookingService:
                    Booking.status == Status.CONFIRMED)
         ).all()
 
-        return confirmed_bookings is not None
+        return len(confirmed_bookings) > 0
 
     def update_booking_status(self, booking_id: int, new_status: str) -> bool:
         if new_status.strip().lower() not in ALLOWED_STATUSES:
@@ -203,12 +204,11 @@ class BookingService:
                     .where(Booking.user_id == user_id)
                     .order_by(Booking.id.desc())
         ).first()
-
         return booking
 
     def edit_booking_user_side(
             self,
-            user,
+            user_id: int,
             booking_id: int,
             edit,
             commit: bool = True
@@ -219,11 +219,16 @@ class BookingService:
         )
         if booking is None:
             raise BookingNotFoundError
-        if booking.user_id != user.id:
+        if booking.user_id != user_id:
             raise NoPermission
+
         new_check_in = edit.check_in if edit.check_in is not None else booking.check_in
         new_check_out = edit.check_out if edit.check_out is not None else booking.check_out
         new_r_id = edit.r_id if edit.r_id is not None else booking.r_id
+
+        room_exists = self.session.scalar(select(exists().where(Room.id == new_r_id)))
+        if not room_exists:
+            raise RoomNotFoundError
 
         overlapping = self.session.scalars(
             select(Booking)
@@ -247,6 +252,7 @@ class BookingService:
             self.session.refresh(booking)
 
         return booking
+
     def edit_booking_admin_side(
             self,
             user,
@@ -259,9 +265,10 @@ class BookingService:
         new_status = edit.status.strip().lower() if edit.status is not None else booking.status.value
         new_total_price = edit.total_price if edit.total_price is not None else booking.total_price
 
-        user_exists = self.session.scalar(select(exists().where(User.id == edit.user_id)))
-        if not user_exists:
-            raise UserNotFoundError
+        if edit.user_id is not None:
+            user_exists = self.session.scalar(select(exists().where(User.id == edit.user_id)))
+            if not user_exists:
+                raise UserNotFoundError
 
         if new_status not in ALLOWED_STATUSES:
             raise InvalidStatusError

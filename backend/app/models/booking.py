@@ -13,10 +13,14 @@ class Status(enum.Enum):
     CANCELLED = "cancelled"
     COMPLETED = "completed"
 
+def get_enum_values(enum_class):
+    result = []
+    for member in enum_class:
+        result.append(member.value)
+    return result       #берем values из енум
 
 class Booking(Base):
     __tablename__ = "bookings"
-
     id: Mapped[int_big] = mapped_column(primary_key=True)
     user_id: Mapped[int_big] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -26,14 +30,17 @@ class Booking(Base):
         ForeignKey("rooms.id", ondelete="CASCADE"),
         nullable=False, index=True
     )
+
     check_in: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     check_out: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
     status:Mapped[Status] = mapped_column(
-        Enum(Status, name="booking_status", create_constraint=True),
+        Enum(Status, name="booking_status", create_constraint=True, values_callable=get_enum_values),
         nullable=False, default=Status.PENDING
     )
     total_price: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False)
     guest_count: Mapped[int] = mapped_column(Integer, nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=func.now())
     cancelled_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
