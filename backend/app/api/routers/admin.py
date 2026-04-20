@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from backend.app.models.booking import Status
 from backend.app.schemas.booking import BookingRead, BookingEditAdmin
 from backend.app.schemas.hotel import HotelRead, HotelBase, HotelEdit
 from backend.app.schemas.room import RoomRead, RoomEdit, RoomCreate
@@ -92,7 +93,7 @@ def delete_user_cascade_force_admin(
         have_bookings = service_booking.get_bookings_by_user_id(user_id)
         if have_bookings:
             for booking in have_bookings:
-                service_booking.delete_booking_cascade_admin(booking.id)
+                service_booking.admin_delete_booking_cascade(booking.id)
         service_user.delete_user(user_id)
     except Exception as e:
         raise e
@@ -212,7 +213,7 @@ def delete_booking(
     service = BookingService(db)
 
     booking = service.get_booking_by_id(booking_id)
-    can_delete = booking.status in ["cancelled", "completed"]
+    can_delete = booking.status in [Status.CANCELLED, Status.COMPLETED]
 
     if not can_delete:
         raise HTTPException(status_code=403, detail="Not Allowed")

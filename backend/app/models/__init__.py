@@ -5,4 +5,5 @@ from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
 from backend.app.models.token import RefreshToken
 from backend.app.models.review import Review
-
+from backend.app.models.cancellation_policy import CancellationPolicy
+from backend.app.models.transaction import Transaction

@@ -2,6 +2,7 @@ from backend.app.db.session import SessionLocal
 from fastapi import HTTPException, Depends, Request
 from sqlalchemy.orm import Session
 from backend.app.schemas.user import UserRead
+from backend.app.models.user import UserRole
 
 from backend.app.services.user import UserService
 from fastapi.security import (
@@ -53,7 +54,7 @@ def get_current_user(
 def get_current_user_admin(
         user: UserRead = Depends(get_current_user),
 ) -> UserRead:
-    if user.role in ["ADMIN","S-ADMIN"]:
+    if user.role in [UserRole.ADMIN,UserRole.S_ADMIN]:
         return user
     raise HTTPException(status_code=403, detail="Not an admin")
 

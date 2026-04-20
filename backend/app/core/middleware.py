@@ -1,8 +1,9 @@
 import logging
-import time
 
 from fastapi import FastAPI, Request
 from starlette.responses import Response, JSONResponse
+
+from backend.app.core.exceptions import AppError
 from backend.app.core.security import decode_access_token
 
 log = logging.getLogger(__name__)
@@ -13,6 +14,8 @@ PUBLIC_PATHS = {
     "/auth/login",
     "/auth/refresh",
     "/hotels",
+    "/rooms/available",
+    "/rooms",
     "/docs",
     "/openapi.json",
 }
@@ -34,7 +37,7 @@ def register_middleware(app: FastAPI) -> None:
    #      if now - last_request < 1.0:
    #          return JSONResponse(
    #              status_code=429,
-   #              content={"detail": "Too many requests"}
+   #             content={"detail": "Too many requests"}
    #          )
    #      recent_requests[client_ip] = now
    #      return await call_next(request)
@@ -56,9 +59,14 @@ def register_middleware(app: FastAPI) -> None:
     @app.middleware("http")
     async def token_verify(request: Request, call_next) -> Response:
 
-        path = request.url.path.rstrip("/") or "/"
-        if path in PUBLIC_PATHS:
+        if request.method == "OPTIONS":
             return await call_next(request)
+
+        path = request.url.path.rstrip("/") or "/"
+
+        if any(path == p or path.startswith(p + "/") for p in PUBLIC_PATHS):
+            return await call_next(request)
+
         auth_header = request.headers.get("Authorization")
 
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -67,8 +75,10 @@ def register_middleware(app: FastAPI) -> None:
                 content={"detail": "Token missing"}
             )
         token = auth_header.split(" ")[1]
-        payload = decode_access_token(token)
-
+        try:
+            payload = decode_access_token(token)
+        except AppError:
+            return JSONResponse(status_code=401, content={"detail": "Invalid or expired token"})
         if not payload:
             return JSONResponse(
                 status_code=401,

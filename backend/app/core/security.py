@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 
@@ -7,7 +6,6 @@ from backend.app.core.config import settings
 from backend.app.core.exceptions import PasswordVerifyError, InvalidTokenError
 from backend.app.schemas.auth import RefreshTokenData, TokenData
 
-load_dotenv()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

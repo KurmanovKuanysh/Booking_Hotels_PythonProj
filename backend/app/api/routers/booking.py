@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from backend.app.api.deps import get_db, get_current_user
 from sqlalchemy.orm import Session
 
 from backend.app.schemas.booking import BookingBase, BookingRead, BookingEdit, BookingNew
 from backend.app.schemas.user import UserRead
 from backend.app.services.booking import BookingService
-from backend.app.models.booking import Status
 
 router = APIRouter(tags=["Bookings"])
 

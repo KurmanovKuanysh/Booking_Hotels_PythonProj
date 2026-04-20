@@ -1,26 +1,46 @@
+from decimal import Decimal
+
 from pydantic import BaseModel, Field, ConfigDict, model_validator
+
+from backend.app.core.exceptions import DatesConflictError
 from backend.app.models.booking import Status
-from datetime import date
+from datetime import datetime
+
 
 class BookingBase(BaseModel):
     r_id: int = Field(gt=0)
-    check_in: date
-    check_out: date
-    status: Status = Field(min_length=3, max_length=100)
+    check_in: datetime
+    check_out: datetime
+    status: Status
     total_price: float = Field(gt=0)
     user_id: int = Field(gt=0)
 
+class BookingCreate(BaseModel):
+    user_id: int = Field(gt=0)
+    r_id: int = Field(gt=0)
+    check_in: datetime
+    check_out: datetime
+    status: Status
+    total_price: Decimal = Field(gt=0.00)
+    guest_count: int = Field(default=1, ge=1)
+
+    @model_validator(mode='after')
+    def check_dates_conflict(self):
+        if self.check_in and self.check_out and self.check_in > self.check_out:
+            raise DatesConflictError
+        return self
+
 class BookingNew(BaseModel):
     r_id: int = Field(gt=0)
-    check_in: date
-    check_out: date
+    check_in: datetime
+    check_out: datetime
     guest_count: int = Field(ge=1)
 
 class BookingRead(BaseModel):
     id: int = Field(gt=0)
     r_id: int
-    check_in: date
-    check_out: date
+    check_in: datetime
+    check_out: datetime
     status: Status
     user_id: int
     total_price: float
@@ -29,15 +49,15 @@ class BookingRead(BaseModel):
 
 class BookingEdit(BaseModel):
     r_id: int | None = Field(default=None, gt=0)
-    check_in: date | None = Field(default=None)
-    check_out: date | None = Field(default=None)
+    check_in: datetime | None = Field(default=None)
+    check_out: datetime | None = Field(default=None)
 
 class EditBookingStatus(BaseModel):
     id: int = Field(gt=0)
-    status: Status = Field(min_length=3, max_length=10)
+    status: Status
 
 
 class BookingEditAdmin(BookingEdit):
-    status: Status | None = Field(default=None, min_length=3, max_length=100)
+    status: Status | None = None
     total_price: float | None = Field(default=None, gt=0)
     user_id: int | None = Field(default=None, gt=0)

@@ -13,6 +13,7 @@ from datetime import date
 from fastapi import HTTPException
 
 from backend.app.schemas.room import RoomRead, RoomDate
+from backend.app.models.booking import Status
 
 
 class RoomService:
@@ -56,7 +57,7 @@ class RoomService:
             room_booked = self.session.scalars(
                 select(Booking)
                 .where(Booking.r_id == r_id,
-                       Booking.status.in_(["confirmed", "pending"])
+                       Booking.status.in_([Status.CONFIRMED, Status.PENDING])
                        )
             ).first()
             if room_booked:
@@ -89,7 +90,7 @@ class RoomService:
             select(Booking)
             .where(
                 Booking.r_id == room_id,
-                Booking.status.in_(["confirmed", "pending"]),
+                Booking.status.in_([Status.CONFIRMED, Status.PENDING]),
                 Booking.check_in < data.check_out,
                 Booking.check_out > data.check_in
             )
@@ -198,7 +199,7 @@ class RoomService:
             select(Room)
             .join(Booking, Booking.r_id == Room.id)
             .where(Booking.user_id == user_id,
-                   Booking.status.in_(["completed"])
+                   Booking.status.in_([Status.COMPLETED])
                    )
         ).all())
         return past_booked_rooms
@@ -212,7 +213,7 @@ class RoomService:
                 select(Room)
                 .join(Booking, Booking.r_id == Room.id)
                 .where(Booking.user_id == user_id,
-                       Booking.status.in_(["confirmed", "pending"])
+                       Booking.status.in_([Status.CONFIRMED, Status.PENDING])
                        )
             ).all()
         )
@@ -254,7 +255,7 @@ class RoomService:
             conflicting_rooms = (
                 select(Booking.r_id)
                 .where(
-                    Booking.status.in_(["confirmed", "pending"]),
+                    Booking.status.in_([Status.CONFIRMED, Status.PENDING]),
                     Booking.check_in < check_out,  # строго
                     Booking.check_out > check_in  # строго >
                 )

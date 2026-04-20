@@ -1,23 +1,33 @@
+import enum
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, String, Boolean, Enum
 from backend.app.db.base import Base
 from backend.app.utils.utils import int_big, str_100
+
+class UserRole(str, enum.Enum):
+    S_ADMIN = "s_admin"
+    ADMIN = "admin"
+    USER = "user"
 
 class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
-    name: Mapped[str_100] = mapped_column( nullable=False)
-    email: Mapped[str_100] = mapped_column(nullable=False, unique=True)
-    password: Mapped[str_100] = mapped_column(nullable=False)
-    role: Mapped[str_100] = mapped_column(nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=True)
+    email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String(100), nullable=False)
+    role: Mapped[UserRole] = mapped_column(
+        Enum(UserRole, name="user_role", create_constraint=True),
+        server_default=UserRole.USER.value,
+        nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     #relationship
     bookings = relationship("Booking", back_populates="users", cascade="all, delete-orphan")
     reviews = relationship("Review", back_populates="users", cascade="all, delete-orphan")
     refresh_tokens = relationship("RefreshToken", back_populates="users", cascade="all, delete-orphan")
 
-    __table_args__ = (
-        CheckConstraint("role IN ('ADMIN','S-ADMIN','USER')", name="role_check"),
-    )
+    def __repr__(self):
+        return f"User(id={self.id}, name={self.name}, email={self.email}, role={self.role}, is_active={self.is_active})"
