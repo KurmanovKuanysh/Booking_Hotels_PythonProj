@@ -5,10 +5,10 @@ from sqlalchemy import CheckConstraint, String, Boolean, Enum
 from backend.app.db.base import Base
 from backend.app.utils.utils import int_big, str_100
 
-class UserRole(str, enum.Enum):
-    S_ADMIN = "s_admin"
-    ADMIN = "admin"
-    USER = "user"
+class UserRole(enum.Enum):
+    S_ADMIN = "S-ADMIN"
+    ADMIN = "ADMIN"
+    USER = "USER"
 
 class User(Base):
     __tablename__ = "users"
