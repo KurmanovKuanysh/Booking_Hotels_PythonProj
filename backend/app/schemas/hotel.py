@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, Field, ConfigDict, computed_field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class HotelCreate(BaseModel):
@@ -18,6 +18,9 @@ class HotelRead(BaseModel):
     stars: int
     rating_sum: Decimal
     rating_count: int
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class HotelEdit(BaseModel):
     name: str | None = Field(default=None, min_length=3, max_length=120)

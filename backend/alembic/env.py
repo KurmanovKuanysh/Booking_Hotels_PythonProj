@@ -7,7 +7,7 @@ from alembic import context
 
 import os
 from dotenv import load_dotenv
-from backend.app.models import Booking, Hotel, Room, RoomType, User, RefreshToken
+from backend.app.models import *
 
 load_dotenv()
 
@@ -16,11 +16,6 @@ DB_USER = os.getenv('DB_USER', 'postgres')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '5432')
-# from app.models.hotel import Hotel
-# from app.models.room import Room
-# from app.models.room_type import RoomType
-# from app.models.booking import Booking
-# from app.models.user import User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

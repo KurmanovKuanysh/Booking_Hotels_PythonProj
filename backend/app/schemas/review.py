@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
 
 class ReviewCreate(BaseModel):
     booking_id: int = Field(gt=0)
@@ -15,6 +16,9 @@ class ReviewRead(BaseModel):
     rating: int = Field(ge=1, le=5)
     comment: str = Field(min_length=1, max_length=255)
     created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class ReviewEdit(BaseModel):
     rating: int | None = Field(default=None, ge=1, le=5)

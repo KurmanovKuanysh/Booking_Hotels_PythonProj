@@ -45,3 +45,6 @@ class BookingEditAdmin(BookingEdit):
     status: Status | None = None
     total_price: float | None = Field(default=None, gt=0)
     user_id: int | None = Field(default=None, gt=0)
+
+class BookingStatusUpdate(BaseModel):
+    status: Status

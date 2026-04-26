@@ -8,11 +8,11 @@ from backend.app.models import Hotel
 from backend.app.models.booking import Booking
 from backend.app.models.room import Room
 from backend.app.models.room_type import RoomType
-from datetime import date
+from datetime import datetime
 
 from fastapi import HTTPException
 
-from backend.app.schemas.room import RoomRead, RoomDate
+from backend.app.schemas.room import RoomRead
 from backend.app.models.booking import Status
 
 
@@ -85,30 +85,35 @@ class RoomService:
             raise RoomNotFoundError
         return room
 
-    def is_room_available(self,room_id: int, data) -> bool:
+    def is_room_available(
+            self,
+            room_id: int,
+            check_in: datetime,
+            check_out: datetime,
+    ) -> bool:
         booking = self.session.scalar(
             select(Booking)
             .where(
                 Booking.r_id == room_id,
                 Booking.status.in_([Status.CONFIRMED, Status.PENDING]),
-                Booking.check_in < data.check_out,
-                Booking.check_out > data.check_in
+                Booking.check_in < check_out,
+                Booking.check_out > check_in
             )
         )
         return not booking
 
-    def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: date, check_out: date) -> list[Room]:
+    def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: datetime, check_out: datetime) -> list[Room]:
         if check_in > check_out:
             raise DatesConflictError
-        if check_in < date.today():
+        if check_in < datetime.now():
             raise DatesConflictError
         available_rooms = []
         for room in rooms:
-            data = RoomDate(
-                check_in=check_in,
-                check_out=check_out,
-            )
-            if self.is_room_available(room.id, data=data):
+            if self.is_room_available(
+                    room.id,
+                    check_in=check_in,
+                    check_out=check_out
+                    ):
                 available_rooms.append(room)
         return available_rooms
 
@@ -226,22 +231,21 @@ class RoomService:
             current_booked_rooms.append(i)
         return current_booked_rooms
 
-    @staticmethod
     def get_active_cities(self) -> list[str]:
         return list(self.session.scalars(select(Hotel.city).distinct()).all())
 
     def get_all_available_rooms(
             self,
             city: str,
-            check_in: date,
-            check_out: date,
+            check_in: datetime,
+            check_out: datetime,
             guests: int
     ) -> list[RoomRead]:
         query = select(Room).join(Hotel, Room.h_id == Hotel.id)
 
         if city is not None:
-            if city.strip() == "" or city.strip().title() not in self.get_active_cities(self):
-                raise InvalidCityError(city=city.strip().title())
+            if city.strip() == "" or city.strip().title() not in self.get_active_cities():
+                raise InvalidCityError()
             query = query.where(
                 Hotel.city == city.strip().title()
             )
@@ -256,8 +260,8 @@ class RoomService:
                 select(Booking.r_id)
                 .where(
                     Booking.status.in_([Status.CONFIRMED, Status.PENDING]),
-                    Booking.check_in < check_out,  # строго
-                    Booking.check_out > check_in  # строго >
+                    Booking.check_in < check_out,
+                    Booking.check_out > check_in
                 )
             )
             query = query.where(Room.id.not_in(conflicting_rooms))

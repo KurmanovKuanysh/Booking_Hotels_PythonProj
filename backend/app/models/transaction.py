@@ -16,8 +16,14 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id: Mapped[int_big] = mapped_column(primary_key=True)
-    booking_id: Mapped[int_big] = mapped_column(ForeignKey("bookings.id"),nullable=False, index=True)
-    payment_id: Mapped[int_big] = mapped_column(ForeignKey("payments.id"),nullable=True, index=True)
+    booking_id: Mapped[int_big] = mapped_column(
+        ForeignKey("bookings.id"),
+        nullable=False, index=True
+    )
+    payment_id: Mapped[int_big] = mapped_column(
+        ForeignKey("payments.id"),
+        nullable=True, index=True
+    )
     type = mapped_column(Enum(Type), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 

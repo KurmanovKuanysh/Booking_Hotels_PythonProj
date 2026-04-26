@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, CheckConstraint, Text, Integer, Numeric, String
+from sqlalchemy import ForeignKey, Text, Integer, Numeric, String
 from backend.app.db.base import Base
-from backend.app.utils.utils import int_big, numeric_10_2, text
+from backend.app.utils.utils import int_big
 
 class Room(Base):
     __tablename__ = "rooms"
@@ -11,13 +11,13 @@ class Room(Base):
         ForeignKey("hotels.id", ondelete="CASCADE",),
         nullable=False, index=True
     )
-    room_number: Mapped[str] = mapped_column(String(20), nullable=False)
+    room_number: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     r_t_id: Mapped[int_big] = mapped_column(
         ForeignKey("room_types.id", ondelete="SET NULL"),
         nullable=True, index=True
     )
-    capacity: Mapped[int] = mapped_column(Integer, nullable=False)
-    price_per_day: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
+    capacity: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    price_per_day: Mapped[float] = mapped_column(Numeric(10,2), nullable=False, index=True)
     floor: Mapped[int] = mapped_column(Integer, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
 

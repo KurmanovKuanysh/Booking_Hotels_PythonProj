@@ -6,11 +6,37 @@ from backend.app.models.filter import FRoom
 from backend.app.schemas.user import UserRead
 from backend.app.services.room import RoomService
 from backend.app.api.deps import get_db, get_current_user
-from backend.app.schemas.room import RoomRead, RoomAvailable, RoomDate
-from datetime import date
+from backend.app.schemas.room import RoomRead
+from datetime import datetime
 
 router = APIRouter(tags=["Rooms"])
-@router.get("/rooms/my-rooms", response_model=list[RoomRead])
+@router.get("/hotels/{hotel_id}/rooms", response_model=list[RoomRead])
+def get_rooms_by_filter(
+        hotel_id: int,
+        filters: FRoom = Depends(),
+        db: Session = Depends(get_db)
+):
+    service = RoomService(db)
+    return service.get_rooms_by_filter(
+        hotel_id = hotel_id,
+        filters=filters
+    )
+@router.get("/hotels/{hotel_id}/rooms/available", response_model=list[RoomRead])
+def get_available_rooms_by_hotel_dates(
+        hotel_id: int,
+        check_in: datetime,
+        check_out: datetime,
+        db: Session = Depends(get_db)
+):
+    service = RoomService(db)
+    rooms = service.list_rooms_by_hotel_id(hotel_id)
+    return service.get_available_rooms_hotel_dates(
+        rooms=rooms,
+        check_in=check_in,
+        check_out=check_out
+    )
+
+@router.get("/rooms/my-booked-rooms", response_model=list[RoomRead])
 def get_user_rooms(
         user: UserRead = Depends(get_current_user),
         db: Session = Depends(get_db)
@@ -25,12 +51,14 @@ def get_user_rooms(
 @router.get("/rooms/available", response_model=list[RoomRead])
 def get_all_available_rooms(
         city: str | None = None,
-        check_in: date = date.today(),
-        check_out: date | None = None,
+        check_in: datetime | None = None,
+        check_out: datetime | None = None,
         guests: int = 1,
         db: Session = Depends(get_db),
 ):
     service = RoomService(db)
+    if check_in is None:
+        check_in = datetime.now()
     return service.get_all_available_rooms(
         city=city,
         check_in=check_in,
@@ -38,14 +66,16 @@ def get_all_available_rooms(
         guests=guests
     )
 
-@router.post("/rooms/{room_id}/check-availability", response_model=bool)
+@router.get("/rooms/{room_id}/check-availability", response_model=bool)
 def check_availability_single_room(
         room_id: int,
-        data: RoomDate,
+        check_in: datetime,
+        check_out: datetime,
         db: Session = Depends(get_db)
 ):
     service = RoomService(db)
     return service.is_room_available(
         room_id=room_id,
-        data=data
+        check_in=check_in,
+        check_out=check_out
     )

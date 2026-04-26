@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from backend.app.services.hotel import HotelService
 from backend.app.api.deps import get_db
@@ -10,8 +10,8 @@ router = APIRouter(tags=["Hotels"])
 
 @router.get("/hotels", response_model=list[HotelRead])
 def get_hotels(
-        page: int = 1,
-        size: int = 5,
+        page: int = Query(1, ge=1),
+        size: int = Query(5, ge=1, le=100),
         db: Session = Depends(get_db)
 ):
     offset = (page - 1) * size

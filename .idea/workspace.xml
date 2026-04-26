@@ -5,22 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env_example" beforeDir="false" afterPath="$PROJECT_DIR$/.env_example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Booking.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Booking.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/deps.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/deps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/routers/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/routers/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/core/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/core/exceptions_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/exceptions_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/security.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/main_fast.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/payments.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/payments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/hotel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/room_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/transaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/schemas/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/hotel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/review.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/room.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/hotel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/review.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/services/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +41,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="76" />
+    <option name="cachedIndexableFilesCount" value="91" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -73,6 +85,9 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="3AIHvJgN6GJQZTk6gsdDo1d7DJW" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -122,6 +137,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\TUF\Desktop\Booking\frontend" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\TUF\Desktop\Booking\backend\app\core" />
       <recent name="C:\Users\TUF\Desktop\Booking\backend\app\models" />
@@ -130,7 +148,31 @@
       <recent name="C:\Users\TUF\Desktop\Booking" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking">
+  <component name="RunManager" selected="Python.seed">
+    <configuration name="seed" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Booking" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/backend/seed.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Booking" />
       <option name="ENV_FILES" value="" />
@@ -199,30 +241,13 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_true" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="Booking" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="RUN_TOOL" value="" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;backend.tests.unit.test_hotel_service.test_delete_hotel_return_true&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.seed" />
         <item itemvalue="Python tests.Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking" />
         <item itemvalue="Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false" />
         <item itemvalue="Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_raises_when_not_found_or_has_active_booking" />
         <item itemvalue="Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false_error" />
-        <item itemvalue="Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_true" />
       </list>
     </recent_temporary>
   </component>
@@ -295,7 +320,40 @@
       <workItem from="1774965270356" duration="7128000" />
       <workItem from="1774972817205" duration="2085000" />
       <workItem from="1774976367230" duration="2000" />
-      <workItem from="1774984260428" duration="3340000" />
+      <workItem from="1774984260428" duration="3882000" />
+      <workItem from="1775016109247" duration="14605000" />
+      <workItem from="1775044645272" duration="18134000" />
+      <workItem from="1775064798615" duration="1445000" />
+      <workItem from="1775103996530" duration="7304000" />
+      <workItem from="1775153862707" duration="594000" />
+      <workItem from="1775228936901" duration="6362000" />
+      <workItem from="1775244217085" duration="6053000" />
+      <workItem from="1775375674659" duration="10929000" />
+      <workItem from="1775459315572" duration="13938000" />
+      <workItem from="1775502369868" duration="602000" />
+      <workItem from="1775548924475" duration="4087000" />
+      <workItem from="1775592146888" duration="3775000" />
+      <workItem from="1775622748863" duration="10173000" />
+      <workItem from="1775656019086" duration="197000" />
+      <workItem from="1775665535852" duration="2012000" />
+      <workItem from="1775676719980" duration="4310000" />
+      <workItem from="1775727584445" duration="8754000" />
+      <workItem from="1775993611121" duration="7426000" />
+      <workItem from="1776015071947" duration="997000" />
+      <workItem from="1776080842654" duration="6072000" />
+      <workItem from="1776108514046" duration="5310000" />
+      <workItem from="1776178241513" duration="2209000" />
+      <workItem from="1776194817816" duration="2873000" />
+      <workItem from="1776269334157" duration="1452000" />
+      <workItem from="1776272475222" duration="613000" />
+      <workItem from="1776345241451" duration="4158000" />
+      <workItem from="1776360750731" duration="110000" />
+      <workItem from="1776363678922" duration="2963000" />
+      <workItem from="1776485682885" duration="1931000" />
+      <workItem from="1776515940318" duration="6438000" />
+      <workItem from="1776623876591" duration="241000" />
+      <workItem from="1776657629474" duration="21179000" />
+      <workItem from="1776692900751" duration="1067000" />
     </task>
     <servers />
   </component>
@@ -329,6 +387,6 @@
     <SUITE FILE_PATH="coverage/Booking$hotel.coverage" NAME="hotel Coverage Results" MODIFIED="1772559538010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/services" />
     <SUITE FILE_PATH="coverage/Booking$migrate.coverage" NAME="migrate Coverage Results" MODIFIED="1772435736995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
     <SUITE FILE_PATH="coverage/Booking$main.coverage" NAME="main Coverage Results" MODIFIED="1772728262899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1772895887706" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
+    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1776111660534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
   </component>
 </project>

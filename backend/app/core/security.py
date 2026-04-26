@@ -17,6 +17,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
     except Exception:
         raise PasswordVerifyError
+
 def create_access_token(data: TokenData, expires_delta: timedelta | None = None) -> str:
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=int(settings.ACCESS_TOKEN_EXPIRE_MINUTES)))
     to_encode = {"sub": data.sub, "email": data.email, "role": data.role, "type": data.type, "exp": expire,}

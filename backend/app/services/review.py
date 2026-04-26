@@ -1,11 +1,15 @@
+from decimal import Decimal
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models.booking import Status
 from backend.app.core.exceptions import ( InvalidNumberError, HotelNotFoundError, BookingNotFoundError, \
     ReviewNotFoundError, NoPermissionRole, DuplicateReviewError )
-from backend.app.models import Booking,Room, Hotel
+from backend.app.models import Booking, Hotel
 from backend.app.models.filter import FReview
 from backend.app.models.review import Review
+from backend.app.models.user import UserRole
 from backend.app.utils.utils import numeric_10_2
 
 
@@ -18,7 +22,7 @@ class ReviewService:
             select(Booking)
             .where(Booking.user_id == user.id,
                    Booking.id == data.booking_id,
-                   Booking.status.in_(["completed"])
+                   Booking.status.in_([Status.COMPLETED])
                 )
         )
         if booking:
@@ -38,7 +42,7 @@ class ReviewService:
                 new_review = Review(
                     user_id=user.id,
                     hotel_id=hotel.id,
-                    rating=float(data.rating),
+                    rating=Decimal(data.rating),
                     comment=data.comment.strip() if data.comment else None
                 )
                 hotel.rating_sum += new_review.rating
@@ -85,7 +89,7 @@ class ReviewService:
             if data.rating < 1 or data.rating > 5:
                 raise InvalidNumberError
             old_rating = review.rating
-            review.rating = float(data.rating)
+            review.rating = Decimal(data.rating)
             if data.comment:
                 review.comment = data.comment.strip()
             hotel = self.session.scalar(select(Hotel).where(Hotel.id == review.hotel_id))
@@ -98,7 +102,7 @@ class ReviewService:
     def delete_review(self, review_id: int, user) -> bool:
         review = self.session.scalars(select(Review).where(Review.id == review_id)).first()
         if review:
-            if review.user_id != user.id and user.role != "ADMIN":
+            if review.user_id != user.id and user.role != UserRole.ADMIN:
                 raise NoPermissionRole
             hotel = self.session.scalar(select(Hotel).where(Hotel.id == review.hotel_id))
             hotel.rating_sum -= review.rating

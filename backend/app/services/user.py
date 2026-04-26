@@ -1,26 +1,25 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models.booking import Status
 from backend.app.core.exceptions import (
     InvalidLoginOrPasswordError,
     UserNotFoundError,
     DuplicateEmailError,
-    InvalidPasswordError,
+    InvalidPasswordError, BookingNotCompletedError,
 )
 
 from backend.app.models import Booking
-from backend.app.models.user import User
-from fastapi import HTTPException
-
+from backend.app.models.user import User, UserRole
 from backend.app.schemas.user import UserRead
-
 from backend.app.core.security import hash_password, verify_password
+
 
 class UserService:
     def __init__(self, session: Session):
         self.session = session
 
-    def add_user(self, name: str, email: str, password: str, role: str):
+    def add_user(self, name: str, email: str, password: str, role: UserRole):
         user = User(
             name=name,
             email=email,
@@ -34,17 +33,16 @@ class UserService:
 
     def delete_user(self, user_id: int) -> bool:
         user = self.get_user_by_id(user_id)
-        if user:
-            active_booking = self.session.scalar(
-                select(Booking)
-                .where(Booking.user_id == user_id, Booking.status.in_(["confirmed", "pending"]))
-            )
-            if active_booking is not None:
-                raise HTTPException(status_code=400, detail="User has active bookings!")
-            self.session.delete(user)
-            self.session.commit()
-            return True
-        raise HTTPException(status_code=404, detail="User not found")
+        active_booking = self.session.scalar(
+            select(Booking)
+            .where(Booking.user_id == user_id, Booking.status.in_([Status.CONFIRMED, Status.PENDING]))
+        )
+        if active_booking is not None:
+            raise BookingNotCompletedError
+        self.session.delete(user)
+        self.session.commit()
+        return True
+
 
     def find_user_by_email(self, email: str) -> User | None:
         return self.session.scalar(
@@ -54,7 +52,7 @@ class UserService:
     def get_user_by_email(self, email: str) -> User | None:
         user = self.find_user_by_email(email)
         if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise UserNotFoundError
         return user
 
     def exists_user_email(self, email: str, exclude_uid: int | None = None) -> bool:
@@ -76,7 +74,7 @@ class UserService:
     def get_users_by_name(self, name: str) -> list[User]:
         users = self.session.scalars(select(User).where(User.name.ilike(f"%{name.strip()}%"))).all()
         if not users:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise UserNotFoundError
         return list(users)
 
     def get_users(self) -> list[UserRead]:
@@ -88,7 +86,7 @@ class UserService:
             name: str,
             email: str,
             password: str,
-            role = "USER"
+            role = UserRole.USER
     ) -> User:
         new_password = hash_password(password)
         return self.add_user(name, email, new_password ,role)
@@ -112,7 +110,7 @@ class UserService:
         if edit.email is not None:
             new_email = edit.email.strip().lower()
             if self.exists_user_email(edit.email, exclude_uid=uid):
-                raise DuplicateEmailError(email=edit.email)
+                raise DuplicateEmailError
             user.email = new_email
 
         if edit.password is not None:
@@ -138,7 +136,7 @@ class UserService:
         if edit.is_active is not None:
             if edit.is_active in [True, False]:
                 user.is_active = edit.is_active
-        if edit.role is not None and edit.role in ["USER", "ADMIN", "S-ADMIN"]:
+        if edit.role is not None and edit.role in [UserRole.ADMIN, UserRole.USER, UserRole.S_ADMIN]:
             user.role = edit.role
 
         self.session.commit()

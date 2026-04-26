@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from backend.app.api.routers.hotel import router as hotel_router
 from backend.app.api.routers.room import router as room_router
 from backend.app.api.routers.admin import router as admin_router
@@ -6,11 +7,9 @@ from backend.app.api.routers.booking import router as booking_router
 from backend.app.api.routers.user import router as user_router
 from backend.app.api.routers.auth import router as auth_router
 from backend.app.api.routers.review import router as review_router
+
 from backend.app.core.exceptions_handler import (
-    register_errors_handlers,login_errors_handlers,
-    user_errors_handlers, booking_errors_handlers,
-    hotel_errors_handlers, room_errors_handlers,
-    independent_errors_handlers
+    register_exception_handlers as register_errors_handlers,
 )
 from backend.app.core.middleware import register_middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,13 +25,6 @@ app.add_middleware(
 )
 
 register_errors_handlers(app)
-login_errors_handlers(app)
-user_errors_handlers(app)
-booking_errors_handlers(app)
-hotel_errors_handlers(app)
-room_errors_handlers(app)
-independent_errors_handlers(app)
-
 register_middleware(app)
 
 

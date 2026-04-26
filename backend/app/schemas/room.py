@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
-from datetime import date
+from datetime import datetime
 
 from backend.app.core.exceptions import DatesConflictError
 
@@ -33,19 +33,9 @@ class RoomEdit(BaseModel):
 
 class RoomAvailable(BaseModel):
     city: str | None = Field(default=None, min_length=3, max_length=100)
-    check_in: date | None = Field(default=None)
-    check_out: date | None = Field(default=None)
+    check_in: datetime | None = Field(default=None)
+    check_out: datetime | None = Field(default=None)
     guests: int | None = Field(default=None, ge=1)
-
-    @model_validator(mode='after')
-    def check_dates_conflict(self):
-        if self.check_in and self.check_out and self.check_in > self.check_out:
-            raise DatesConflictError
-        return self
-
-class RoomDate(BaseModel):
-    check_in: date
-    check_out: date
 
     @model_validator(mode='after')
     def check_dates_conflict(self):

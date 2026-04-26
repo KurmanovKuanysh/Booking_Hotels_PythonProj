@@ -1,5 +1,8 @@
-from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr
+import re
 
+from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr, field_validator
+
+from app.models.user import UserRole
 from backend.app.core.exceptions import NotMatchedPasswords
 
 
@@ -7,13 +10,13 @@ class UserCreate(BaseModel):
     name: str = Field(min_length=3, max_length=100)
     email: str = Field(min_length=6, max_length=100)
     password: str = Field(min_length=8, max_length=100)
-    role: str = Field(min_length=3, max_length=100)
+    role: UserRole = UserRole.USER
 
 class UserRead(BaseModel):
     id: int = Field(gt=0)
     name: str
     email: str
-    role: str
+    role: UserRole
     is_active: bool = True
 
     #dictionary to JSON
@@ -35,7 +38,7 @@ class UserEdit(BaseModel):
 
 class UserEditAdmin(UserEdit):
     is_active: bool | None = Field(default=None)
-    role: str | None = Field(default=None, min_length=3, max_length=100)
+    role: UserRole
 
 class UserChangePassword(BaseModel):
     current_password: str

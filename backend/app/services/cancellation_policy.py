@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import PolicyHaveActiveHotelError
 from backend.app.models import CancellationPolicy, Hotel
 
 
@@ -25,10 +26,10 @@ class CancellationPolicyService:
         )
         if policy:
             active_hotels = self.session.scalar(
-                select(Hotel).where(Hotel.cancellation_policy_id == policy_id)
+                select(Hotel).where(Hotel.policy_id == policy_id)
             )
             if active_hotels:
-                raise "PolicyHaveActiveHotelError"
+                raise PolicyHaveActiveHotelError
             self.session.delete(policy)
             self.session.commit()
             return True

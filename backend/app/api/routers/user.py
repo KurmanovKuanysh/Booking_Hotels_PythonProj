@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from backend.app.api.deps import get_current_user, get_db
-from backend.app.schemas.booking import BookingRead, EditBookingStatus
 from backend.app.schemas.user import UserRead, UserEdit
 from sqlalchemy.orm import Session
-from backend.app.services.booking import BookingService
 from backend.app.services.user import UserService
 
 router = APIRouter(tags=["Users"])

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint, Text, String
+from sqlalchemy import Text, String
 from backend.app.db.base import Base
-from backend.app.utils.utils import int_big, text
+from backend.app.utils.utils import int_big
 
 class RoomType(Base):
     __tablename__ = "room_types"

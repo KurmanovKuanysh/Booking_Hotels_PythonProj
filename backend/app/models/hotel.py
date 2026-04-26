@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint, ForeignKey, Text, String, Numeric, Integer
+from sqlalchemy import ForeignKey, Text, String, Numeric, Integer
 from backend.app.db.base import Base
 from backend.app.utils.utils import int_big
 
@@ -11,11 +11,17 @@ class Hotel(Base):
     name: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
     city: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     address: Mapped[str] = mapped_column(String(255), nullable=False)
-    stars: Mapped[Decimal] = mapped_column(Numeric(10,2), nullable=False, default=0.00,)
+
+    stars: Mapped[int] = mapped_column(Integer, nullable=False)
+
     description: Mapped[str] = mapped_column(Text, nullable=True)
 
-    rating_sum: Mapped[Decimal] = mapped_column(Numeric(10,2), default=0.00)
-    rating_count: Mapped[int] = mapped_column(Integer, default=0)
+    rating_sum: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), nullable=False, default=Decimal("0")
+    )
+    rating_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
 
     policy_id: Mapped[int_big] = mapped_column(
         ForeignKey("cancellation_policy.id"),

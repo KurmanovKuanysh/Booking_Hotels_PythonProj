@@ -7,3 +7,4 @@ from backend.app.models.token import RefreshToken
 from backend.app.models.review import Review
 from backend.app.models.cancellation_policy import CancellationPolicy
 from backend.app.models.transaction import Transaction
+from backend.app.models.payment import Payment, PaymentMethod
