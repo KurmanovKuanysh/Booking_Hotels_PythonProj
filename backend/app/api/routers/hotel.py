@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session, Query
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
 
 from backend.app.services.hotel import HotelService
 from backend.app.api.deps import get_db

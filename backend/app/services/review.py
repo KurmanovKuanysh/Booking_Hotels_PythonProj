@@ -3,7 +3,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.booking import Status
+from backend.app.models.booking import Status
 from backend.app.core.exceptions import ( InvalidNumberError, HotelNotFoundError, BookingNotFoundError, \
     ReviewNotFoundError, NoPermissionRole, DuplicateReviewError )
 from backend.app.models import Booking, Hotel

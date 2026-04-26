@@ -2,7 +2,7 @@ import re
 
 from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr, field_validator
 
-from app.models.user import UserRole
+from backend.app.models.user import UserRole
 from backend.app.core.exceptions import NotMatchedPasswords
 
 

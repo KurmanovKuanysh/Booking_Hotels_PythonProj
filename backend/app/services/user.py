@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.booking import Status
+from backend.app.models.booking import Status
 from backend.app.core.exceptions import (
     InvalidLoginOrPasswordError,
     UserNotFoundError,

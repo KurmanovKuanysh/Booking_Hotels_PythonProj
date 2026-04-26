@@ -7,33 +7,10 @@
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/Booking.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Booking.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/core/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/exceptions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/core/exceptions_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/exceptions_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/security.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/hotel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/room_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/room_type.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/transaction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/schemas/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/booking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/schemas/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/hotel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/schemas/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/review.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/schemas/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/room.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/booking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/review.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/services/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/seed.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/seed.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +18,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="91" />
+    <option name="cachedIndexableFilesCount" value="90" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -354,6 +331,8 @@
       <workItem from="1776623876591" duration="241000" />
       <workItem from="1776657629474" duration="21179000" />
       <workItem from="1776692900751" duration="1067000" />
+      <workItem from="1777206472852" duration="1557000" />
+      <workItem from="1777208060633" duration="236000" />
     </task>
     <servers />
   </component>
@@ -387,6 +366,6 @@
     <SUITE FILE_PATH="coverage/Booking$hotel.coverage" NAME="hotel Coverage Results" MODIFIED="1772559538010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/services" />
     <SUITE FILE_PATH="coverage/Booking$migrate.coverage" NAME="migrate Coverage Results" MODIFIED="1772435736995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app/db" />
     <SUITE FILE_PATH="coverage/Booking$main.coverage" NAME="main Coverage Results" MODIFIED="1772728262899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1776111660534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/Booking$seed.coverage" NAME="seed Coverage Results" MODIFIED="1777207811048" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
   </component>
 </project>
