@@ -6,12 +6,14 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Users, Hotel, CalendarDays, LayoutDashboard, Shield } from "lucide-react";
+import { BedDouble } from "lucide-react";
 
 const adminLinks = [
   { href: "/admin", label: "Дашборд", icon: LayoutDashboard, exact: true },
   { href: "/admin/users", label: "Пользователи", icon: Users },
   { href: "/admin/hotels", label: "Отели", icon: Hotel },
   { href: "/admin/bookings", label: "Бронирования", icon: CalendarDays },
+    { href: "/admin/rooms", label: "Комнаты", icon: BedDouble },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -6,7 +6,10 @@ pytest
 fastapi
 pydantic
 python-jose[cryptography]
-passlib[bcrypt]
+passlib==1.7.4
 python-multipart
 pyjwt
 starlette
+email-validator
+bcrypt==4.0.1
+

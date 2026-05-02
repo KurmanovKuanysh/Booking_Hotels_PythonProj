@@ -11,7 +11,7 @@ from backend.app.models.review import Review
 
 # Твои параметры
 USER_IDS = [13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25]
-ROOM_TYPE_IDS = [1, 2, 3, 4, 5]
+ROOM_TYPE_IDS = [6,7,8,9,10]
 
 HOTELS_DATA = [
     {"name": "Esentai Royal", "city": "Almaty", "stars": 5, "address": "Аль-Фараби 77/7"},

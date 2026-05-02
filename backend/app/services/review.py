@@ -41,6 +41,7 @@ class ReviewService:
             if hotel:
                 new_review = Review(
                     user_id=user.id,
+                    booking_id=booking.id,
                     hotel_id=hotel.id,
                     rating=Decimal(data.rating),
                     comment=data.comment.strip() if data.comment else None
@@ -71,7 +72,7 @@ class ReviewService:
     def get_user_reviews(self, user) -> list[Review]:
         return list(self.session.scalars(select(Review).where(Review.user_id == user.id)).all())
 
-    def get_reviews_by_filter(self, filter_data: FReview) -> list[Review] | []:
+    def get_reviews_by_filter(self, filter_data: FReview) -> list[Review]:
         query = select(Review)
         if filter_data.hotel_id:
             if filter_data.hotel_id < 1:

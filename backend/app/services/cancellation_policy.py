@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import PolicyHaveActiveHotelError
+from backend.app.core.exceptions import PolicyHaveActiveHotelError
 from backend.app.models import CancellationPolicy, Hotel
 
 
