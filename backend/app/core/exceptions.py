@@ -33,6 +33,9 @@ class ValidationError(AppError):
 class DuplicateEmailError(BadRequestError):
     detail = "User with this email already exists"
 
+class PasswordValidationError(ValidationError):
+    detail = "Password validation failed"
+
 #LOGIN
 class PasswordVerifyError(UnauthorizedError):
     detail = "Invalid credentials"

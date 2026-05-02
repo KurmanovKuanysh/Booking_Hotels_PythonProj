@@ -24,10 +24,13 @@ class Room(Base):
     #relationship
     room_types = relationship("RoomType", back_populates="rooms")
     hotels = relationship("Hotel", back_populates="rooms")
-    bookings = relationship("Booking", back_populates="rooms")
+    bookings = relationship(
+        "Booking",
+        back_populates="rooms",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
 
     def __repr__(self):
         return f"Room(id={self.id}, h_id={self.h_id}, room_number={self.room_number}, r_t_id={self.r_t_id}, capacity={self.capacity}, price_per_day={self.price_per_day}, floor={self.floor}, description={self.description})"
-
-

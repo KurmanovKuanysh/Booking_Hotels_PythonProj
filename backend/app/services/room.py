@@ -54,24 +54,17 @@ class RoomService:
     def delete_room(self, r_id:int) -> bool:
         try:
             room = self.get_room_by_id(r_id)
-            room_booked = self.session.scalars(
-                select(Booking)
-                .where(Booking.r_id == r_id,
-                       Booking.status.in_([Status.CONFIRMED, Status.PENDING])
-                       )
-            ).first()
-            if room_booked:
-                raise RoomNotAvailableError
             self.session.delete(room)
             self.session.commit()
             return True
-
         except HTTPException:
             raise
         except Exception as e:
             self.session.rollback()
-            raise HTTPException(status_code=500, detail=f"Error deleting room: {e}")
-
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error deleting room here ->: {e}"
+            )
 
     def get_all_rooms(self) -> list[Room]:
         return list(self.session.scalars(select(Room)).all())

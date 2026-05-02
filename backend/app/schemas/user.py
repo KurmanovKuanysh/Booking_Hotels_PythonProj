@@ -1,9 +1,9 @@
 import re
 
-from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr, field_validator
+from pydantic import BaseModel, Field, ConfigDict, model_validator, EmailStr, model_validator
 
 from backend.app.models.user import UserRole
-from backend.app.core.exceptions import NotMatchedPasswords
+from backend.app.core.exceptions import NotMatchedPasswords, PasswordValidationError
 
 
 class UserCreate(BaseModel):
@@ -31,6 +31,15 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=100, description="Password of the user")
 
+    @model_validator(mode='after')
+    def password_check(self):
+        spec_symbols = re.search(r'[!@#$%^&*(),.?":{}|<>]', self.password)
+        upper_case = re.search(r'[A-Z]', self.password)
+        if not upper_case and spec_symbols:
+            raise PasswordValidationError("Password must contain at least one uppercase letter and one special symbol.")
+        return self
+
+
 class UserEdit(BaseModel):
     name: str | None = Field(default=None, min_length=3, max_length=100)
     email: EmailStr | None = Field(default=None, min_length=6, max_length=100)
@@ -49,4 +58,12 @@ class UserChangePassword(BaseModel):
     def check_passwords_match(self):
         if self.new_password != self.confirm_password:
             raise NotMatchedPasswords
+        return self
+
+    @model_validator(mode='after')
+    def password_check(self):
+        spec_symbols = re.search(r'[!@#$%^&*(),.?":{}|<>]', self.new_password)
+        upper_case = re.search(r'[A-Z]', self.new_password)
+        if not upper_case and spec_symbols:
+            raise PasswordValidationError("Password must contain at least one uppercase letter and one special symbol.")
         return self

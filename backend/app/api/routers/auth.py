@@ -17,7 +17,6 @@ def create_user_account(
         db: Session = Depends(get_db)
 ):
     service = UserService(db)
-
     if service.find_user_by_email(str(user_data.email)) is not None:
         raise DuplicateEmailError #BAD REQUEST
     new_user = service.register_user(
