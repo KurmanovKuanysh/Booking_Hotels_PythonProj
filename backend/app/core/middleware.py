@@ -15,7 +15,6 @@ PUBLIC_PATHS = {
     "/auth/refresh",
     "/hotels",
     "/rooms/available",
-    "/rooms",
     "/docs",
     "/openapi.json",
 }

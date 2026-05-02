@@ -39,6 +39,7 @@ def get_current_token_payload(request: Request):
     return request.state.user_payload
 
 def get_current_user(
+        token: str = Depends(http_bearer),
         payload: dict = Depends(get_current_token_payload),
         db: Session = Depends(get_db)
 ) -> UserRead:

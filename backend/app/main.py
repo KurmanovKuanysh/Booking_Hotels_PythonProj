@@ -8,6 +8,9 @@ from backend.app.api.routers.user import router as user_router
 from backend.app.api.routers.auth import router as auth_router
 from backend.app.api.routers.review import router as review_router
 
+from backend.app.db.base import Base
+from backend.app.db.session import engine
+
 from backend.app.core.exceptions_handler import (
     register_exception_handlers as register_errors_handlers,
 )
@@ -15,6 +18,7 @@ from backend.app.core.middleware import register_middleware
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
