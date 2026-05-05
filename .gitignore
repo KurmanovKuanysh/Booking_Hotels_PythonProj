@@ -4,42 +4,27 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Virtual Environment
 venv/
 env/
 ENV/
+
+# Pytest
 .pytest_cache/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Environment variables
+# Environment Variables
 .env
 .env.local
 
 # Next.js
-frontend/.next/
-frontend/out/
-frontend/node_modules/
-frontend/tsconfig.tsbuildinfo
+.next/
 
 # Node.js
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# IDEs
+# TypeScript
+tsconfig.tsbuildinfo
+
+# IDE
 .idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Docker
-*.log

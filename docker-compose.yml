@@ -1,11 +1,8 @@
-version: "3.9"
-
 services:
-
   db:
-    image: postgres:16
+    image: postgres:18-alpine
     container_name: booking_db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: booking
       POSTGRES_USER: postgres
@@ -13,25 +10,31 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d booking"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: booking_app
-    restart: always
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
+    container_name: booking_backend
+    restart: unless-stopped
     environment:
       DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: booking
+      DB_USER: postgres
+      DB_PASSWORD: kukatop01
+      SECRET_KEY: 6wqp460a1S-wCv4qKu8wgggz_REWwQ6UpyLJ4HBszqc
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_DAYS: 2
+    ports:
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -40,14 +43,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     container_name: booking_frontend
-    restart: always
-    ports:
-      - "3000:3000"
+    restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
     depends_on:
-      - app
+      - backend
 
 volumes:
   postgres_data:

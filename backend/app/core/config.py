@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=False)
 
 DB_NAME = os.getenv('DB_NAME', 'booking')
 DB_USER = os.getenv('DB_USER', 'postgres')

@@ -5,55 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/.env.local.example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/bookings/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/hotels/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/rooms/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/admin/users/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/auth/login/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/auth/register/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/bookings/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/globals.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/hotels/[id]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/hotels/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/app/profile/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/hotel/HotelCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/layout/Footer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/layout/Navbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/providers.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/ui/Button.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/ui/Input.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/components/ui/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/lib/api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/lib/services.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/lib/utils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/next.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/postcss.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/store/auth.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/tailwind.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/tsconfig.tsbuildinfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/types/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/deps.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/deps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/core/middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/middleware.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/services/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/review.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/seed.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/seed.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/booking.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/frontend.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +21,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="118" />
+    <option name="cachedIndexableFilesCount" value="131" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -113,52 +73,52 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python tests.Python tests for backend.tests.unit.test_booking_service.test_add_booking_return_none.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_booking_service.test_get_booking_by_id_return_none.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_add_hotel_duplicate_address.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_add_hotel_duplicate_name.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_raises_when_not_found_or_has_active_booking.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false_error.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_true.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_edit_hotel_return_edited.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_edit_hotel_return_none.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotel_by_id_return_hotel.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotel_by_id_return_none.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotels_return_hotels.executor": "Run",
-    "Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotels_return_none.executor": "Run",
-    "Python.hotel.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.migrate.executor": "Run",
-    "Python.open_kbtu.executor": "Run",
-    "Python.seed.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/TUF/Desktop/Booking/frontend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "C:\\Users\\TUF\\Desktop\\Booking\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_booking_service.test_add_booking_return_none.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_booking_service.test_get_booking_by_id_return_none.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_add_hotel_duplicate_address.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_add_hotel_duplicate_name.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_raises_when_not_found_or_has_active_booking.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_false_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_delete_hotel_return_true.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_edit_hotel_return_edited.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_edit_hotel_return_none.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotel_by_id_return_hotel.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotel_by_id_return_none.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotels_return_hotels.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for backend.tests.unit.test_hotel_service.test_get_hotels_return_none.executor&quot;: &quot;Run&quot;,
+    &quot;Python.hotel.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.migrate.executor&quot;: &quot;Run&quot;,
+    &quot;Python.open_kbtu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.seed.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/TUF/Desktop/Booking&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\TUF\\Desktop\\Booking\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\TUF\Desktop\Booking\frontend" />
@@ -219,6 +179,12 @@
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration name="Python tests for backend.tests.unit.test_booking_service.test_edit_booking_return_booking" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
@@ -396,6 +362,8 @@
       <workItem from="1777552502754" duration="50000" />
       <workItem from="1777569250146" duration="15000" />
       <workItem from="1777704831841" duration="4289000" />
+      <workItem from="1777720853576" duration="9430000" />
+      <workItem from="1777921901099" duration="2258000" />
     </task>
     <servers />
   </component>

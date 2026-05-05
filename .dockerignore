@@ -1,0 +1,15 @@
+.git
+.idea
+pycache
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.env
+.venv
+venv
+node_modules
+frontend/node_modules
+frontend/.next
+frontend/out
+*.log
+.DS_Store

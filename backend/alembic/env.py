@@ -9,7 +9,7 @@ import os
 from dotenv import load_dotenv
 from backend.app.models import *
 
-load_dotenv()
+load_dotenv(override=False)
 
 DB_NAME = os.getenv('DB_NAME', 'booking')
 DB_USER = os.getenv('DB_USER', 'postgres')
@@ -75,17 +75,10 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
 
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-
-    with connectable.connect() as connection:
+    with engine.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata
         )
-
         with context.begin_transaction():
             context.run_migrations()
 
