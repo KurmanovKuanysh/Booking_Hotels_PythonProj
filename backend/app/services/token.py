@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from datetime import datetime, timezone
 
@@ -7,10 +7,10 @@ from backend.app.models.token import RefreshToken
 
 
 class TokenService:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def save_refresh_token(self, user_id: int, token: str, expires_at: datetime) -> RefreshToken:
+    async def save_refresh_token(self, user_id: int, token: str, expires_at: datetime) -> RefreshToken:
         db_token = RefreshToken(
             user_id=user_id,
             token=token,
@@ -18,12 +18,12 @@ class TokenService:
             is_revoked=False,
         )
         self.session.add(db_token)
-        self.session.commit()
-        self.session.refresh(db_token)
+        await self.session.commit()
+        await self.session.refresh(db_token)
         return db_token
 
-    def get_refresh_token(self, token: str) -> RefreshToken:
-        db_token = self.session.scalar(
+    async def get_refresh_token(self, token: str) -> RefreshToken:
+        db_token = await self.session.scalar(
             select(RefreshToken)
             .where(RefreshToken.token == token)
         )
@@ -36,32 +36,32 @@ class TokenService:
 
         return db_token
 
-    def revoke_refresh_token(self, token: str) -> bool:
-        db_token = self.session.scalar(
+    async def revoke_refresh_token(self, token: str) -> bool:
+        db_token = await self.session.scalar(
             select(RefreshToken)
             .where(RefreshToken.token == token)
         )
         if db_token is None:
             raise HTTPException(status_code=404, detail="Invalid token")
         db_token.is_revoked = True
-        self.session.commit()
+        await self.session.commit()
         return True
 
-    def revoke_all_user_tokens(self, user_id: int) -> None:
-        self.session.execute(
+    async def revoke_all_user_tokens(self, user_id: int) -> None:
+        await self.session.execute(
             update(RefreshToken)
             .where(RefreshToken.user_id == user_id)
             .values(is_revoked=True)
         )
-        self.session.commit()
+        await self.session.commit()
 
-    def clean_up_expired_tokens(self) -> int:
+    async def clean_up_expired_tokens(self) -> int:
         now = datetime.now(timezone.utc)
 
         sql = delete(RefreshToken).where(
             (RefreshToken.expires_at < now) |
             (RefreshToken.is_revoked == True)
         )
-        result = self.session.execute(sql)
-        self.session.commit()
+        result = await self.session.execute(sql)
+        await self.session.commit()
         return result.rowcount

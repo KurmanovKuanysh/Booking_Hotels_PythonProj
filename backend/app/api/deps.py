@@ -1,6 +1,7 @@
-from backend.app.db.session import SessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.app.db.session import AsyncSessionLocal
 from fastapi import HTTPException, Depends, Request
-from sqlalchemy.orm import Session
 from backend.app.schemas.user import UserRead
 from backend.app.models.user import UserRole
 
@@ -13,20 +14,20 @@ from fastapi.security import (
 http_bearer = HTTPBearer()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def get_db():
-    db = SessionLocal()
+async def get_db():
+    db = AsyncSessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-def validate_auth_user(
+async def validate_auth_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session = Depends(get_db)
+        db: AsyncSession = Depends(get_db)
 ):
     service = UserService(db)
 
-    user = service.login_user(
+    user = await service.login_user(
         email=form_data.username,
         password=form_data.password
     )
@@ -38,21 +39,23 @@ def validate_auth_user(
 def get_current_token_payload(request: Request):
     return request.state.user_payload
 
-def get_current_user(
+async def get_current_user(
         token: str = Depends(http_bearer),
         payload: dict = Depends(get_current_token_payload),
-        db: Session = Depends(get_db)
+        db: AsyncSession = Depends(get_db)
 ) -> UserRead:
     uid = payload.get("sub")
     if uid is None:
         raise HTTPException(status_code=401, detail="token invalid (sub missing)")
+
     service = UserService(db)
-    user = service.get_user_by_id(int(uid))
+    user = await service.get_user_by_id(int(uid))
+
     if user is not None:
         return user
     raise HTTPException(status_code=401, detail="token invalid (user not found)")
 
-def get_current_user_admin(
+async def get_current_user_admin(
         user: UserRead = Depends(get_current_user),
 ) -> UserRead:
     if user.role in [UserRole.ADMIN,UserRole.S_ADMIN]:

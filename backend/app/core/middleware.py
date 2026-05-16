@@ -63,11 +63,11 @@ def register_middleware(app: FastAPI) -> None:
 
         path = request.url.path.rstrip("/") or "/"
 
-        if any(path == p or path.startswith(p + "/") for p in PUBLIC_PATHS):
+        is_public = any(path == p or path.startswith(p + "/") for p in PUBLIC_PATHS)
+        if is_public:
             return await call_next(request)
 
         auth_header = request.headers.get("Authorization")
-
         if not auth_header or not auth_header.startswith("Bearer "):
             return JSONResponse(
                 status_code=401,
@@ -76,13 +76,12 @@ def register_middleware(app: FastAPI) -> None:
         token = auth_header.split(" ")[1]
         try:
             payload = decode_access_token(token)
+            if not payload:
+                raise AppError("Empty payload")
         except AppError:
             return JSONResponse(status_code=401, content={"detail": "Invalid or expired token"})
-        if not payload:
-            return JSONResponse(
-                status_code=401,
-                content={"detail": "Invalid or expired token"}
-            )
+        except Exception:
+            return JSONResponse(status_code=401, content={"detail": "Invalid token"})
 
         request.state.user_payload = payload
         return await call_next(request)

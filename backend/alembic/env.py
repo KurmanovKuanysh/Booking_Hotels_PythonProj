@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 from backend.app.db.base import Base
-from sqlalchemy import engine_from_config, create_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import pool
 
 from alembic import context
-
+import asyncio
 import os
 from dotenv import load_dotenv
 from backend.app.models import *
@@ -38,7 +38,8 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 def get_db_url() -> str:
-    return f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    return f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -63,27 +64,31 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
+async def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    engine = create_engine(
+    engine = create_async_engine(
         get_db_url(),
         poolclass=pool.NullPool,
     )
-
-    with engine.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
+    async with engine.connect() as connection:
+        await connection.run_sync(
+            lambda conn: context.configure(
+                connection=conn,
+                target_metadata=target_metadata
+            )
         )
-        with context.begin_transaction():
-            context.run_migrations()
+        async with connection.begin():
+            await connection.run_sync(lambda conn: context.run_migrations())
+
+    await engine.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())

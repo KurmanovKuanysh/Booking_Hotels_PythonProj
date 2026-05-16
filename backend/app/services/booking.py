@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from sqlalchemy import select, exists
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.exceptions import BookingNotFoundError, DatesConflictError, RoomNotAvailableError, \
     UserNotFoundError, InvalidStatusError, RoomNotFoundError, InvalidNumberError, RoomCapacityError, \
@@ -11,7 +11,7 @@ from backend.app.models.booking import Booking
 from backend.app.models.user import User
 from backend.app.models.room import Room
 
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.app.models.booking import Status
 from backend.app.schemas.booking import BookingRead, BookingCreate
 
@@ -23,15 +23,15 @@ ALLOWED_TRANSITIONS = {
 }
 
 class BookingService:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def create_new_booking(
+    async def create_new_booking(
             self,
             user_id: int,
             data: BookingCreate
                 ) -> Booking:
-        booked_room = self.session.scalar(
+        booked_room = await self.session.scalar(
             select(Booking)
             .where(Booking.r_id == data.r_id,
                    Booking.status.in_([Status.CONFIRMED, Status.PENDING]),
@@ -42,7 +42,7 @@ class BookingService:
         if booked_room:
             raise RoomNotAvailableError
 
-        room = self.session.scalar(select(Room).where(Room.id == data.r_id))
+        room = await self.session.scalar(select(Room).where(Room.id == data.r_id))
         if room is None:
             raise RoomNotFoundError
 
@@ -65,50 +65,50 @@ class BookingService:
             guest_count=data.guest_count
         )
         self.session.add(new_booking)
-        self.session.commit()
-        self.session.refresh(new_booking)
+        await self.session.commit()
+        await self.session.refresh(new_booking)
         return new_booking
 
-    def get_booking_by_id(self, booking_id: int) -> Booking | None:
-        booking = self.session.scalar(
+    async def get_booking_by_id(self, booking_id: int) -> Booking | None:
+        booking = await self.session.scalar(
             select(Booking)
             .where(Booking.id == booking_id))
         if booking is None:
             raise BookingNotFoundError
         return booking
 
-    def get_booking_status(self, booking_id: int) -> str:
-        booking = self.get_booking_by_id(booking_id)
+    async def get_booking_status(self, booking_id: int) -> str:
+        booking = await self.get_booking_by_id(booking_id)
         return str(booking.status)
 
-    def get_bookings_by_user_id(self, user_id: int) -> list[Booking]:
-        return list(self.session.scalars(
+    async def get_bookings_by_user_id(self, user_id: int) -> list[Booking]:
+        return list((await self.session.scalars(
             select(Booking)
             .where(Booking.user_id == user_id)
-            ).all()
+            )).all()
         )
 
-    def get_bookings_by_user_email(self, email: str) -> list[Booking]:
+    async def get_bookings_by_user_email(self, email: str) -> list[Booking]:
         email = email.strip().lower()
-        return list(self.session.scalars(
+        return list((await self.session.scalars(
             select(Booking)
             .join(User, User.id == Booking.user_id)
             .where(User.email == email)
-        ))
+        )).all())
 
-    def get_all_bookings(self) -> list[Booking]:
-        return list(self.session.scalars(select(Booking)).all())
+    async def get_all_bookings(self) -> list[Booking]:
+        return list((await self.session.scalars(select(Booking))).all())
 
-    def get_last_booking_of_user(self, user_id: int) -> Booking | None:
-        booking = self.session.scalars(
+    async def get_last_booking_of_user(self, user_id: int) -> Booking | None:
+        booking = await self.session.scalar(
                     select(Booking)
                     .where(Booking.user_id == user_id)
                     .order_by(Booking.id.desc())
-        ).first()
+        )
         return booking
 
-    def has_confirmed_booking(self, user_id) -> bool:
-        booking = self.session.scalar(
+    async def has_confirmed_booking(self, user_id) -> bool:
+        booking = await self.session.scalar(
             select(Booking)
             .where(Booking.user_id == user_id,
                    Booking.status == Status.CONFIRMED)
@@ -116,39 +116,39 @@ class BookingService:
 
         return booking is not None
 
-    def delete_booking(self, booking_id: int) -> bool:
-        booking = self.get_booking_by_id(booking_id)
+    async def delete_booking(self, booking_id: int) -> bool:
+        booking = await self.get_booking_by_id(booking_id)
         if booking.status in (Status.CONFIRMED, Status.PENDING):
             raise BookingNotCompletedError
 
-        self.session.delete(booking)
-        self.session.commit()
+        await self.session.delete(booking)
+        await self.session.commit()
         return True
 
-    def admin_delete_booking_cascade(self, booking_id: int):
-        booking = self.get_booking_by_id(booking_id)
-        self.session.delete(booking)
-        self.session.commit()
+    async def admin_delete_booking_cascade(self, booking_id: int):
+        booking = await self.get_booking_by_id(booking_id)
+        await self.session.delete(booking)
+        await self.session.commit()
         return True
 
-    def update_booking_status(self, booking_id: int, new_status: Status) -> bool:
-        booking = self.get_booking_by_id(booking_id)
+    async def update_booking_status(self, booking_id: int, new_status: Status) -> bool:
+        booking = await self.get_booking_by_id(booking_id)
 
         if new_status not in ALLOWED_TRANSITIONS[booking.status]:
             raise InvalidStatusError
 
         booking.status = new_status
-        self.session.commit()
+        await self.session.commit()
         return True
 
-    def confirm_booking(self, booking_id: int) -> bool:
-        return self.update_booking_status(booking_id, Status.CONFIRMED)
+    async def confirm_booking(self, booking_id: int) -> bool:
+        return await self.update_booking_status(booking_id, Status.CONFIRMED)
 
-    def complete_booking(self, booking_id: int) -> bool:
-        return self.update_booking_status(booking_id, Status.COMPLETED)
+    async def complete_booking(self, booking_id: int) -> bool:
+        return await self.update_booking_status(booking_id, Status.COMPLETED)
 
-    def calculate_cancel_penalty(self, booking: Booking) -> tuple[Decimal, Decimal]:
-        diff = booking.check_in - datetime.now()
+    async def calculate_cancel_penalty(self, booking: Booking) -> tuple[Decimal, Decimal]:
+        diff = booking.check_in - datetime.now(timezone.utc)
         hours_before = diff.total_seconds() / 3600
 
         if hours_before > 48:
@@ -165,8 +165,8 @@ class BookingService:
 
         return penalty, refund
 
-    def cancel_booking(self, booking_id: int, user_id: int) -> dict:
-        booking = self.session.scalar(
+    async def cancel_booking(self, booking_id: int, user_id: int) -> dict:
+        booking = await self.session.scalar(
             select(Booking)
             .where(
                 Booking.id == booking_id,
@@ -176,12 +176,12 @@ class BookingService:
         )
         if booking is None:
             raise BookingNotFoundError
-        penalty, refund = self.calculate_cancel_penalty(booking)
+        penalty, refund = await self.calculate_cancel_penalty(booking)
 
         booking.status = Status.CANCELLED
-        booking.cancelled_at = datetime.now()
-        self.session.commit()
-        self.session.refresh(booking)
+        booking.cancelled_at = datetime.now(timezone.utc)
+        await self.session.commit()
+        await self.session.refresh(booking)
 
         return {
             "message": "Booking cancelled successfully",
@@ -189,29 +189,29 @@ class BookingService:
             "refund": refund,
         }
 
-    def check_update_completed_bookings(self) -> list[BookingRead]:
-        bookings = self.session.scalars(
+    async def check_update_completed_bookings(self) -> list[BookingRead]:
+        bookings = (await self.session.scalars(
             select(Booking)
-            .where(Booking.check_out <= datetime.today(),
+            .where(Booking.check_out <= datetime.now(timezone.utc),
                    Booking.status.in_([Status.CONFIRMED]))
-        ).all()
+        )).all()
         if not bookings:
             return []
         changed = []
-        for booking in bookings:
+        for booking in list(bookings):
             booking.status = Status.COMPLETED
             changed.append(booking)
-        self.session.commit()
+        await self.session.commit()
         return changed
 
-    def edit_booking_user_side(
+    async def edit_booking_user_side(
             self,
             user_id: int,
             booking_id: int,
             edit,
             commit: bool = True
     ):
-        booking = self.session.scalar(
+        booking = await self.session.scalar(
             select(Booking)
             .where(Booking.id == booking_id)
         )
@@ -226,11 +226,11 @@ class BookingService:
         new_check_out = edit.check_out if edit.check_out is not None else booking.check_out
         new_r_id = edit.r_id if edit.r_id is not None else booking.r_id
 
-        room_exists = self.session.scalar(select(exists().where(Room.id == new_r_id)))
+        room_exists = await self.session.scalar(select(exists().where(Room.id == new_r_id)))
         if not room_exists:
             raise RoomNotFoundError
 
-        overlapping = self.session.scalar(
+        overlapping = await self.session.scalar(
             select(Booking)
             .where(Booking.r_id == new_r_id,
                    Booking.id != booking.id,
@@ -248,15 +248,15 @@ class BookingService:
         booking.r_id = new_r_id
 
         if commit:
-            self.session.commit()
-            self.session.refresh(booking)
+            await self.session.commit()
+            await self.session.refresh(booking)
 
         return booking
 
-    def edit_booking_admin_side(self, user_id: int, booking_id: int, edit) -> Booking:
-        booking = self.edit_booking_user_side(user_id, booking_id, edit, commit=False)
+    async def edit_booking_admin_side(self,booking_id: int, edit) -> Booking:
+        booking = await self.edit_booking_user_side(edit.user_id, booking_id, edit, commit=False)
         if edit.user_id is not None:
-            user_exists = self.session.scalar(
+            user_exists = await self.session.scalar(
                 select(exists().where(User.id == edit.user_id))
             )
             if not user_exists:
@@ -270,6 +270,6 @@ class BookingService:
                 raise InvalidNumberError
             booking.total_price = edit.total_price
 
-        self.session.commit()
-        self.session.refresh(booking)
+        await self.session.commit()
+        await self.session.refresh(booking)
         return booking

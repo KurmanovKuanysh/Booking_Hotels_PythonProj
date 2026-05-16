@@ -1,7 +1,7 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from backend.app.core.exceptions import ( InvalidCityError, DuplicateRoomError, RoomNotAvailableError, RoomNotFoundError, \
+from backend.app.core.exceptions import ( InvalidCityError, DuplicateRoomError, RoomNotFoundError, \
     DatesConflictError, InvalidRoomNumberLength, RoomCapacityError, RoomTypeNotFoundError, InvalidNumberError, \
     InvalidLengthError )
 from backend.app.models import Hotel
@@ -17,10 +17,10 @@ from backend.app.models.booking import Status
 
 
 class RoomService:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def add_room(
+    async def add_room(
             self,
             h_id:int,
             room_number:str,
@@ -30,12 +30,12 @@ class RoomService:
             floor:int,
             description:str
     ):
-        if self.session.scalars(
+        if (await self.session.scalars(
             select(Room)
             .join(Hotel, Hotel.id == Room.h_id)
             .where(Hotel.id == h_id,
                 Room.room_number == room_number)
-        ).all():
+        )).all():
             raise DuplicateRoomError
         room = Room(
             h_id=h_id,
@@ -47,44 +47,44 @@ class RoomService:
             description=description
         )
         self.session.add(room)
-        self.session.commit()
-        self.session.refresh(room)
+        await self.session.commit()
+        await self.session.refresh(room)
         return room
 
-    def delete_room(self, r_id:int) -> bool:
+    async def delete_room(self, r_id:int) -> bool:
         try:
-            room = self.get_room_by_id(r_id)
-            self.session.delete(room)
-            self.session.commit()
+            room = await self.get_room_by_id(r_id)
+            await self.session.delete(room)
+            await self.session.commit()
             return True
         except HTTPException:
             raise
         except Exception as e:
-            self.session.rollback()
+            await self.session.rollback()
             raise HTTPException(
                 status_code=500,
                 detail=f"Error deleting room here ->: {e}"
             )
 
-    def get_all_rooms(self) -> list[Room]:
-        return list(self.session.scalars(select(Room)).all())
+    async def get_all_rooms(self) -> list[Room]:
+        return list((await self.session.scalars(select(Room))).all())
 
-    def list_rooms_by_hotel_id(self, h_id:int) -> list[Room]:
-        return list(self.session.scalars(select(Room).where(Room.h_id == h_id)).all())
+    async def list_rooms_by_hotel_id(self, h_id:int) -> list[Room]:
+        return list((await self.session.scalars(select(Room).where(Room.h_id == h_id))).all())
 
-    def get_room_by_id(self, r_id:int) -> Room | None:
-        room = self.session.scalars(select(Room).where(Room.id == r_id)).first()
+    async def get_room_by_id(self, r_id:int) -> Room | None:
+        room = await self.session.scalar(select(Room).where(Room.id == r_id))
         if not room:
             raise RoomNotFoundError
         return room
 
-    def is_room_available(
+    async def is_room_available(
             self,
             room_id: int,
             check_in: datetime,
             check_out: datetime,
     ) -> bool:
-        booking = self.session.scalar(
+        booking = await self.session.scalar(
             select(Booking)
             .where(
                 Booking.r_id == room_id,
@@ -95,14 +95,19 @@ class RoomService:
         )
         return not booking
 
-    def get_available_rooms_hotel_dates(self, rooms: list[Room], check_in: datetime, check_out: datetime) -> list[Room]:
+    async def get_available_rooms_hotel_dates(
+            self,
+            rooms: list[Room],
+            check_in: datetime,
+            check_out: datetime
+    ) -> list[Room]:
         if check_in > check_out:
             raise DatesConflictError
         if check_in < datetime.now():
             raise DatesConflictError
         available_rooms = []
         for room in rooms:
-            if self.is_room_available(
+            if await self.is_room_available(
                     room.id,
                     check_in=check_in,
                     check_out=check_out
@@ -111,7 +116,7 @@ class RoomService:
         return available_rooms
 
     @staticmethod
-    def get_rooms_price_range(rooms:list[Room]) -> dict[str,float]:
+    async def get_rooms_price_range(rooms:list[Room]) -> dict[str,float]:
         min_price = min(room.price_per_day for room in rooms)
         max_price = max(room.price_per_day for room in rooms)
         return {
@@ -119,7 +124,7 @@ class RoomService:
             "max": float(max_price),
         }
 
-    def get_rooms_by_filter(
+    async def get_rooms_by_filter(
             self,
             hotel_id:int,
             filters
@@ -134,9 +139,9 @@ class RoomService:
         if filters.room_type is not None:
             rooms = rooms.join(RoomType, RoomType.id == Room.r_t_id).where(RoomType.type_name == filters.room_type)
 
-        return list(self.session.scalars(rooms).all())
+        return list((await self.session.scalars(rooms)).all())
 
-    def edit_room(
+    async def edit_room(
             self,
             hotel_id:int,
             room_id:int,
@@ -147,13 +152,13 @@ class RoomService:
             floor:int | None = None,
             description:str | None = None
     ):
-        room = self.get_room_by_id(room_id)
+        room = await self.get_room_by_id(room_id)
         if room.h_id != hotel_id:
             raise RoomNotFoundError
         if room_number is not None:
             if len(room_number) > 10:
                 raise InvalidRoomNumberLength
-            same_room_number = self.session.scalar(
+            same_room_number = await self.session.scalar(
                 select(Room)
                 .where(
                     Room.h_id == hotel_id,
@@ -165,7 +170,7 @@ class RoomService:
                 raise DuplicateRoomError
             room.room_number = room_number.strip()
         if r_t_id is not None:
-            room_type = self.session.scalars(select(RoomType).where(RoomType.id == r_t_id)).first()
+            room_type = await self.session.scalar(select(RoomType).where(RoomType.id == r_t_id))
             if room_type is None:
                 raise RoomTypeNotFoundError
             room.r_t_id = r_t_id
@@ -185,49 +190,49 @@ class RoomService:
             if len(description) > 255:
                 raise InvalidLengthError
             room.description = description
-        self.session.commit()
-        self.session.refresh(room)
+        await self.session.commit()
+        await self.session.refresh(room)
         return room
 
-    def get_past_booked_rooms(
+    async def get_past_booked_rooms(
             self,
             user_id: int
     ) -> list[RoomRead]:
-        past_booked_rooms = list(self.session.scalars(
+        past_booked_rooms = list((await self.session.scalars(
             select(Room)
             .join(Booking, Booking.r_id == Room.id)
             .where(Booking.user_id == user_id,
                    Booking.status.in_([Status.COMPLETED])
                    )
-        ).all())
+        )).all())
         return past_booked_rooms
 
-    def get_current_booked_rooms(
+    async def get_current_booked_rooms(
             self,
             user_id: int
     ) -> list[RoomRead]:
         current_booked_rooms = list(
-            self.session.scalars(
+            (await self.session.scalars(
                 select(Room)
                 .join(Booking, Booking.r_id == Room.id)
                 .where(Booking.user_id == user_id,
                        Booking.status.in_([Status.CONFIRMED, Status.PENDING])
                        )
-            ).all()
+            )).all()
         )
         return current_booked_rooms
 
-    def get_all_booked_rooms_of_user(self, user_id: int) -> list[RoomRead]:
-        current_booked_rooms = self.get_current_booked_rooms(user_id)
-        paste_booked_rooms = self.get_past_booked_rooms(user_id)
+    async def get_all_booked_rooms_of_user(self, user_id: int) -> list[RoomRead]:
+        current_booked_rooms = await self.get_current_booked_rooms(user_id)
+        paste_booked_rooms = await self.get_past_booked_rooms(user_id)
         for i in paste_booked_rooms:
             current_booked_rooms.append(i)
         return current_booked_rooms
 
-    def get_active_cities(self) -> list[str]:
-        return list(self.session.scalars(select(Hotel.city).distinct()).all())
+    async def get_active_cities(self) -> list[str]:
+        return list((await self.session.scalars(select(Hotel.city).distinct())).all())
 
-    def get_all_available_rooms(
+    async def get_all_available_rooms(
             self,
             city: str,
             check_in: datetime,
@@ -237,7 +242,7 @@ class RoomService:
         query = select(Room).join(Hotel, Room.h_id == Hotel.id)
 
         if city is not None:
-            if city.strip() == "" or city.strip().title() not in self.get_active_cities():
+            if city.strip() == "" or city.strip().title() not in await self.get_active_cities():
                 raise InvalidCityError()
             query = query.where(
                 Hotel.city == city.strip().title()
@@ -259,4 +264,4 @@ class RoomService:
             )
             query = query.where(Room.id.not_in(conflicting_rooms))
 
-        return list(self.session.scalars(query).all())
+        return list((await self.session.scalars(query)).all())

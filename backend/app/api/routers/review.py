@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.api.deps import get_db, get_current_user
 from backend.app.schemas.review import ReviewRead, ReviewCreate, ReviewEdit
@@ -8,44 +8,54 @@ from backend.app.services.review import ReviewService
 
 router = APIRouter(tags=["Reviews"])
 
-@router.get("/users/reviews", response_model=list[ReviewRead])
-def get_user_reviews(
-        user: UserRead = Depends(get_current_user),
-        db: Session = Depends(get_db),
+async def get_review_service(
+        db: AsyncSession = Depends(get_db)
 ):
-    service = ReviewService(db)
-    return service.get_user_reviews(user)
+    return ReviewService(db)
+
+@router.get("/users/reviews", response_model=list[ReviewRead])
+async def get_user_reviews(
+        user: UserRead = Depends(get_current_user),
+        service: ReviewService = Depends(get_review_service),
+):
+    return await service.get_user_reviews(user)
+
+@router.get("/hotels/{hotel_id}/reviews", response_model=list[ReviewRead])
+async def get_hotel_review(
+        hotel_id: int,
+        service: ReviewService = Depends(get_review_service),
+):
+    return await service.get_reviews(hotel_id=hotel_id)
+
 @router.post("/hotels/{hotel_id}/reviews", response_model=ReviewRead)
-def add_hotel_review(
+async def add_hotel_review(
         hotel_id: int,
         data: ReviewCreate,
-        db: Session = Depends(get_db),
+        service: ReviewService = Depends(get_review_service),
         user: UserRead = Depends(get_current_user),
 ):
-    service = ReviewService(db)
-    return service.add_review(
+    return await service.add_review(
         user=user,
         data=data,
         hotel_id=hotel_id,
     )
+
 @router.patch("/reviews/{review_id}", response_model=ReviewRead)
-def edit_review(
+async def edit_review(
         review_id: int,
         data: ReviewEdit,
-        db: Session = Depends(get_db),
+        service: ReviewService = Depends(get_review_service),
         user: UserRead = Depends(get_current_user),
 ):
-    service = ReviewService(db)
-    return service.edit_review(
+    return await service.edit_review(
         review_id=review_id,
         user=user,
         data=data,
     )
 @router.delete("/reviews/{review_id}", status_code=204)
-def delete_review(
+async def delete_review(
         review_id: int,
-        db: Session = Depends(get_db),
+        service: ReviewService = Depends(get_review_service),
         user: UserRead = Depends(get_current_user),
 ):
-    service = ReviewService(db)
-    return service.delete_review(review_id, user)
+    return await service.delete_review(review_id, user)

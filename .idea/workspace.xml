@@ -5,15 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="705cc28b-c47f-4c97-8d2f-f1ab2faf96df" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/alembic/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/deps.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/deps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/hotel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/review.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/room.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/routers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/routers/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/core/middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/core/middleware.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/db/session.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/db/session.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/booking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/booking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/cancellation_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/hotel.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/hotel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/review.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/review.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/room.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/room_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/room_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/token.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/token.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/services/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/services/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,7 +33,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="131" />
+    <option name="cachedIndexableFilesCount" value="134" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -364,6 +376,13 @@
       <workItem from="1777704831841" duration="4289000" />
       <workItem from="1777720853576" duration="9430000" />
       <workItem from="1777921901099" duration="2258000" />
+      <workItem from="1777970046492" duration="739000" />
+      <workItem from="1777979222804" duration="36000" />
+      <workItem from="1778040081831" duration="202000" />
+      <workItem from="1778040320142" duration="5285000" />
+      <workItem from="1778338829540" duration="954000" />
+      <workItem from="1778382125672" duration="12242000" />
+      <workItem from="1778419921283" duration="17000" />
     </task>
     <servers />
   </component>
